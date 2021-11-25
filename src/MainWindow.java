@@ -1,16 +1,11 @@
-import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Container;
-import java.awt.FlowLayout;
-import java.awt.Frame;
-import java.awt.Graphics;
-import java.awt.GridLayout;
 import java.awt.HeadlessException;
-import java.io.IOException;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
-import javax.swing.JButton;
 import javax.swing.JFrame;
 
+@SuppressWarnings("serial")
 public final class MainWindow extends JFrame {
 	private static final int GAME_WITH = 1000;
 	private static final int GAME_HIGHT = 1000;
@@ -27,6 +22,7 @@ public final class MainWindow extends JFrame {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setVisible(true);
 	}
+	
 	public void startgame() throws InterruptedException {
 		while(true) {
 			Thread.sleep(10);

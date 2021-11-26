@@ -37,17 +37,6 @@ public class DrawPanel extends JPanel {
 	private class ControlKeyListener extends KeyAdapter {
 
 		@Override
-		public void keyTyped(KeyEvent e) {
-			
-		}
-
-		@Override
-		public void keyReleased(KeyEvent e) {
-			// TODO Auto-generated method stub
-			super.keyReleased(e);
-		}
-
-		@Override
 		public void keyPressed(KeyEvent e) {// 键盘按下去
 			switch (e.getKeyCode()) {
 			case KeyEvent.VK_W:

@@ -10,8 +10,8 @@ public class DrawPanel extends JPanel {
 
 	final private int TANK_WITH = 50;
 	final private int TANK_HIGHT = 50;
-	int TANK_X = 10;
-	int TANK_Y = 10;
+	int TANK_X = 150;
+	int TANK_Y = 150;
 
 	public DrawPanel() {
 		super();

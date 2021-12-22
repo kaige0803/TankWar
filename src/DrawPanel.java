@@ -10,15 +10,19 @@ public class DrawPanel extends JPanel {
 
 	final private int TANK_WITH = 50;
 	final private int TANK_HIGHT = 50;
-	int TANK_X = 150;
-	int TANK_Y = 150;
+	private int TANK_X = 150;
+	private int TANK_Y = 150;
+	private int TANK_SPEED = 10;
+	State state = State.STAY;// 初始状态设置为：静止
 
 	public DrawPanel() {
 		super();
 		setLayout(null);
+		// 下面两步很关键，否则dpanel无法响应键盘事件
+		requestFocus(true);
 		setFocusable(true);
-		requestFocus(true);// 这步很关键，否则dpanel无法响应键盘事件
 		addKeyListener(new ControlKeyListener());// 给面板添加键盘事件
+
 	}
 
 	@Override
@@ -35,27 +39,58 @@ public class DrawPanel extends JPanel {
 	}
 
 	private class ControlKeyListener extends KeyAdapter {
-
+		Boolean BL = false;
+		Boolean BR = false;
+		Boolean BU = false;
+		Boolean BD = false;
+		private void setdir() {
+			
+		}
+		
 		@Override
-		public void keyPressed(KeyEvent e) {// 键盘按下去
+		public void keyPressed(KeyEvent e) {// 键盘按下去，大约20-40毫秒触发一次
+
 			switch (e.getKeyCode()) {
 			case KeyEvent.VK_W:
-				TANK_Y -= 10;
+				BU = true;
 				break;
 			case KeyEvent.VK_S:
-				TANK_Y += 10;
+				BD = true;
 				break;
 			case KeyEvent.VK_A:
-				TANK_X -= 10;
+				BL = true;
 				break;
 			case KeyEvent.VK_D:
-				TANK_X += 10;
+				BR = true;
 				break;
 			default:
 				break;
 
 			}
 		}
+
+		@Override
+		public void keyReleased(KeyEvent e) {
+			switch (e.getKeyCode()) {
+			case KeyEvent.VK_W:
+				BU = false;
+				break;
+			case KeyEvent.VK_S:
+				BD = false;
+				break;
+			case KeyEvent.VK_A:
+				BL = false;
+				break;
+			case KeyEvent.VK_D:
+				BR = false;
+				break;
+			default:
+				break;
+
+			}
+
+		}
+
 	}
 
 }

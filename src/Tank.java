@@ -2,18 +2,18 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 
-public class Tank {
+
+public class Tank{
+	
 	private static final int TANK_WITH = 50, TANK_HIGHT = 50;//坦克尺寸
 	private int tank_x, tank_y;//坦克位置
 	private int tank_speed = 10;//坦克速度
-	State state = State.UP_STAY;//坦克初始状态为向上静止
-	List<Bullet> bullets = new ArrayList<>();//用于存放坦克发射过的子弹
-	KeyEvent e;//用于接收dpanel的键盘事件
-	
-	
+	private State state = State.UP_STAY;//坦克初始状态为向上静止
+	private List<Bullet> bullets = new ArrayList<>();//用于存放坦克发射过的子弹
 	
 	public Tank(int tank_x, int tank_y) {
 		super();
@@ -21,7 +21,11 @@ public class Tank {
 		this.tank_y = tank_y;
 	}
 
-	public void paintMyself(Graphics2D g2d) {
+	public List<Bullet> getBullets() {
+		return bullets;
+	}
+
+	public void paintMyself(Graphics2D g2d) {//接受dpanel传来的画笔g2d，将坦克自己画在dpanel上
 		Color color = g2d.getColor();
 		g2d.setColor(Color.BLACK);
 		g2d.fillRect(tank_x, tank_y, TANK_HIGHT, TANK_WITH);
@@ -43,16 +47,20 @@ public class Tank {
 			break;
 		}
 		
-		for (Bullet bullet : bullets) {//将画笔传给Bullet集合中的每个元素，画出自己
-			bullet.drawMyself(g2d);
+		//遍历已经打出去的子弹集合，如果越界就删除，否则画在dpanel面板上
+		Iterator<Bullet> iterator = bullets.iterator();
+		while (iterator.hasNext()) {
+			Bullet bullet = (Bullet) iterator.next();
+			if(bullet.getBullet_x() < 0 || bullet.getBullet_x() > 1000 || bullet.getBullet_y() < 0 || bullet.getBullet_y() > 1000) { 
+				iterator.remove();}
+			else bullet.drawMyself(g2d);// 将dpanel的g2d画笔传给bullet来绘制子弹
 		}
+		
 		g2d.setColor(color);
 	}
 	
-	//处理dpanel传过来的keyPressed键盘事件
-	
+	//处理dpanel传过来的keyPressed键盘事件e，改变状态state，供paintMyself函数画图
 	public void setKeyPressedEvent(KeyEvent e) {
-		this.e = e;
 		switch (e.getKeyCode()) {//如果用swith的话只能垂直和水平走，因为swith中有break 所以只能响应最先按下的键。如果用if-else就可以斜着走了。
 		case KeyEvent.VK_W:
 			state = State.UP_MOVING;
@@ -72,9 +80,8 @@ public class Tank {
 		}
 	}
 	
-	//处理dpanel传过来的keyReleased键盘事件
+	//处理dpanel传过来的keyReleased键盘事件e，来确定抬起按键后坦克的状态
 	public void setKeyReleasedEvent(KeyEvent e) {
-		this.e = e;
 		switch (e.getKeyCode()) {
 		case KeyEvent.VK_W:
 			state = State.UP_STAY;
@@ -91,7 +98,7 @@ public class Tank {
 		default:
 			break;
 		}
-		if(e.getKeyCode() == KeyEvent.VK_CONTROL) {//没敲击一下ctrl键就new一个子弹加入集合，需要告诉子弹起始位置和方向。
+		if(e.getKeyCode() == KeyEvent.VK_H) {//每敲击一下h键就new一个子弹加入集合，需要告诉子弹起始位置和方向。
 			bullets.add(new Bullet(tank_x, tank_y, state));
 		}
 	}
@@ -112,6 +119,14 @@ public class Tank {
 			this.state = state;
 		}
 
+		public int getBullet_x() {
+			return bullet_x;
+		}
+
+		public int getBullet_y() {
+			return bullet_y;
+		}
+
 		public void drawMyself(Graphics2D g2d) {
 			Color color = g2d.getColor();
 			g2d.setColor(Color.red);
@@ -122,10 +137,7 @@ public class Tank {
 			if((state == State.RIGHT_MOVING) || (state == State.RIGHT_STAY)) bullet_x += bullet_speed;
 			if((state == State.UP_MOVING) || (state == State.UP_STAY)) bullet_y -= bullet_speed;
 			g2d.setColor(color);
-			
 		}
-		
-		
 		
 	}
 	

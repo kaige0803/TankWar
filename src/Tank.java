@@ -5,13 +5,11 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-
-
 public class Tank{
 	
-	private static final int TANK_WITH = 50, TANK_HIGHT = 50;//坦克尺寸
+	//private static final int TANK_WITH = 50, TANK_HIGHT = 50;//坦克尺寸
 	private int tank_x, tank_y;//坦克位置
-	private int tank_speed = 10;//坦克速度
+	private int tank_speed = 5;//坦克速度
 	private State state = State.UP_STAY;//坦克初始状态为向上静止
 	private List<Bullet> bullets = new ArrayList<>();//用于存放坦克发射过的子弹
 	
@@ -27,20 +25,36 @@ public class Tank{
 
 	public void paintMyself(Graphics2D g2d) {//接受dpanel传来的画笔g2d，将坦克自己画在dpanel上
 		Color color = g2d.getColor();
-		g2d.setColor(Color.BLACK);
-		g2d.fillRect(tank_x, tank_y, TANK_HIGHT, TANK_WITH);
-		switch (state) {
+		//g2d.setColor(Color.BLACK);
+		//g2d.fillRect(tank_x, tank_y, TANK_HIGHT, TANK_WITH);
+		switch (state) {//根据不同的状态调用不同的图片
 		case LEFT_MOVING:
+			g2d.drawImage(ImageUtill.mytank1[3], tank_x, tank_y, null);
 			tank_x -= tank_speed;
 			break;
 		case RIGHT_MOVING:
+			g2d.drawImage(ImageUtill.mytank1[1], tank_x, tank_y, null);
 			tank_x += tank_speed;
 			break;
 		case UP_MOVING:
+			g2d.drawImage(ImageUtill.mytank1[0], tank_x, tank_y, null);
 			tank_y -= tank_speed;
 			break;
 		case DOWN_MOVING :
+			g2d.drawImage(ImageUtill.mytank1[2], tank_x, tank_y, null);
 			tank_y += tank_speed;
+			break;
+		case LEFT_STAY:
+			g2d.drawImage(ImageUtill.mytank1[3], tank_x, tank_y, null);
+			break;
+		case RIGHT_STAY:
+			g2d.drawImage(ImageUtill.mytank1[1], tank_x, tank_y, null);
+			break;
+		case UP_STAY:
+			g2d.drawImage(ImageUtill.mytank1[0], tank_x, tank_y, null);
+			break;
+		case DOWN_STAY:
+			g2d.drawImage(ImageUtill.mytank1[2], tank_x, tank_y, null);
 			break;
 
 		default:
@@ -98,7 +112,7 @@ public class Tank{
 		default:
 			break;
 		}
-		if(e.getKeyCode() == KeyEvent.VK_H) {//每敲击一下h键就new一个子弹加入集合，需要告诉子弹起始位置和方向。
+		if(e.getKeyCode() == KeyEvent.VK_H) {//每敲击一下h键就new一个子弹加入集合，需要告诉子弹此时的坦克起始位置和方向。
 			bullets.add(new Bullet(tank_x, tank_y, state));
 		}
 	}
@@ -107,15 +121,15 @@ public class Tank{
 	
 	public class Bullet{
 		
-		private static final int BULLET_HIGHT = 8, BULLET_WITH = 8;//子弹大小
+		//private static final int BULLET_HIGHT = 8, BULLET_WITH = 8;//子弹大小
 		private int bullet_speed = 20;
-		private int bullet_x, bullet_y;//子弹起始位置（需关联坦克位置）
-		private State state;//子弹起始状态（需关联坦克位置）
+		private int bullet_x, bullet_y;//用于接收生成子弹的这一时刻坦克的位置
+		private State state;//用于接收生成子弹的这一时刻坦克的状态
 		
-		public Bullet(int bullet_x, int bullet_y, State state) {//需传入这颗子弹在生成的时候的坦克的位置和状态
+		public Bullet(int tank_x, int tank_y, State state) {//需传入这颗子弹在生成的时候的坦克的位置和状态。
 			super();
-			this.bullet_x = bullet_x;
-			this.bullet_y = bullet_y;
+			this.bullet_x = tank_x;
+			this.bullet_y = tank_y;
 			this.state = state;
 		}
 
@@ -129,13 +143,25 @@ public class Tank{
 
 		public void drawMyself(Graphics2D g2d) {
 			Color color = g2d.getColor();
-			g2d.setColor(Color.red);
-			g2d.fillOval(bullet_x, bullet_y, BULLET_WITH, BULLET_HIGHT);
-			//我需要知道你按ctrl键的时候坦克是什么位置
-			if((state == State.DOWN_MOVING) || (state == State.DOWN_STAY)) bullet_y += bullet_speed;
-			if((state == State.LEFT_MOVING) || (state == State.LEFT_STAY)) bullet_x -= bullet_speed;
-			if((state == State.RIGHT_MOVING) || (state == State.RIGHT_STAY)) bullet_x += bullet_speed;
-			if((state == State.UP_MOVING) || (state == State.UP_STAY)) bullet_y -= bullet_speed;
+			//g2d.setColor(Color.red);
+			//g2d.fillOval(bullet_x, bullet_y, BULLET_WITH, BULLET_HIGHT);
+			//根据坦克的状态调用不同的子弹图潘，并调整子弹位置。
+			if((state == State.DOWN_MOVING) || (state == State.DOWN_STAY)) {
+				g2d.drawImage(ImageUtill.bullet[2], bullet_x + 27, bullet_y + 50, null);
+				bullet_y += bullet_speed;
+			}
+			if((state == State.LEFT_MOVING) || (state == State.LEFT_STAY)) {
+				g2d.drawImage(ImageUtill.bullet[3], bullet_x - 16, bullet_y + 27, null);
+				bullet_x -= bullet_speed;
+			}
+			if((state == State.RIGHT_MOVING) || (state == State.RIGHT_STAY)) {
+				g2d.drawImage(ImageUtill.bullet[1], bullet_x + 50, bullet_y + 27, null);
+				bullet_x += bullet_speed;
+			}
+			if((state == State.UP_MOVING) || (state == State.UP_STAY)) {
+				g2d.drawImage(ImageUtill.bullet[0], bullet_x + 27, bullet_y - 16, null);
+				bullet_y -= bullet_speed;
+			}
 			g2d.setColor(color);
 		}
 		

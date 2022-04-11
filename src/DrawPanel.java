@@ -23,14 +23,16 @@ public class DrawPanel extends JPanel {
 
 	@Override
 	protected void paintComponent(Graphics g) {
+		super.paintComponent(g);
 		Color c = g.getColor();
 		Graphics2D g2d = (Graphics2D) g;
+		g2d.drawImage(ImageUtill.backgrounds[0], 0, 0, null);
 //		System.out.println(g.hashCode());通过调用g和g2d的hashcode值我们发现是相等的，强转后指向同一对象。
 //		System.out.println(g2d.hashCode());
 		
 		// 绘制背景（注意：背景需要最先画，否则背景处于最上层，看不到其他图形了）
-		g2d.setColor(new Color(255, 200, 200));
-		g2d.fillRect(0, 0, getWidth(), getHeight());
+		//g2d.setColor(new Color(255, 200, 200));
+		//g2d.fillRect(0, 0, getWidth(), getHeight());
 		//绘制字符串
 		g2d.setColor(Color.blue);
 		g2d.drawString("子弹数量："+myTank.getBullets().size(), 100, 100);

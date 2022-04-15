@@ -7,9 +7,8 @@ import javax.swing.JPanel;
 
 @SuppressWarnings("serial")
 public class DrawPanel extends JPanel {
-
-	Tank myTank = new Tank(50, 50);
-	
+	private Tank myTank;
+	private EnemyTank enemyTank = new EnemyTank(400, 400);
 	private long temp, begin, time;//用于计算帧率
 	
 	public DrawPanel() {
@@ -19,6 +18,8 @@ public class DrawPanel extends JPanel {
 		requestFocus(true);
 		setFocusable(true);
 		addKeyListener(new ControlKeyListener());// 给面板添加键盘事件
+		myTank = new Tank(50, 50);
+		new Thread(enemyTank).start();
 	}
 
 	@Override
@@ -35,9 +36,10 @@ public class DrawPanel extends JPanel {
 		//g2d.fillRect(0, 0, getWidth(), getHeight());
 		//绘制字符串
 		g2d.setColor(Color.blue);
-		g2d.drawString("子弹数量："+myTank.getBullets().size(), 100, 100);
+		g2d.drawString("子弹数量："+ (myTank.getBullets().size() + enemyTank.getBullets().size()), 100, 100);
 		// 将dpanel的g2d画笔传给myTank来绘制坦克和子弹
 		myTank.paintMyself(g2d);
+		enemyTank.paintMyself(g2d);
 		
 		//计算帧率
 		begin = System.currentTimeMillis();

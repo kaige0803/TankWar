@@ -65,7 +65,7 @@ public class Tank{
 		Iterator<Bullet> iterator = bullets.iterator();
 		while (iterator.hasNext()) {
 			Bullet bullet = (Bullet) iterator.next();
-			if(bullet.getBullet_x() < 0 || bullet.getBullet_x() > 1000 || bullet.getBullet_y() < 0 || bullet.getBullet_y() > 1000) { 
+			if(bullet.getBullet_x() < 0 || bullet.getBullet_x() > 1080 || bullet.getBullet_y() < 0 || bullet.getBullet_y() > 780) { 
 				iterator.remove();}
 			else bullet.drawMyself(g2d);// 将dpanel的g2d画笔传给bullet来绘制子弹
 		}

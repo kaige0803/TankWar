@@ -7,9 +7,7 @@ public class ImageUtill {
 	public static BufferedImage[] mytank1 = new BufferedImage[4]; 
 	public static BufferedImage[] mytank2 = new BufferedImage[4]; 
 	public static BufferedImage[] obstacles = new BufferedImage[4]; 
-	public static BufferedImage[] enemytank1 = new BufferedImage[4]; 
-	public static BufferedImage[] enemytank2 = new BufferedImage[4]; 
-	public static BufferedImage[] enemytank3 = new BufferedImage[4]; 
+	public static BufferedImage[][] enemytank = new BufferedImage[3][4]; 
 	public static BufferedImage[] backgrounds = new BufferedImage[4]; 
 	public static BufferedImage[] bullet = new BufferedImage[4]; 
 	public static BufferedImage[] blasts = new BufferedImage[4];
@@ -25,12 +23,14 @@ public class ImageUtill {
 			bullet[1] = ImageIO.read(ImageUtill.class.getClassLoader().getResourceAsStream("images/bullet/bullet_right.png"));
 			bullet[2] = ImageIO.read(ImageUtill.class.getClassLoader().getResourceAsStream("images/bullet/bullet_down.png"));
 			bullet[3] = ImageIO.read(ImageUtill.class.getClassLoader().getResourceAsStream("images/bullet/bullet_left.png"));
-			enemytank1[0] = ImageIO.read(ImageUtill.class.getClassLoader().getResourceAsStream("images/enemytanks/enemytank1_up.png"));
-			enemytank1[1] = ImageIO.read(ImageUtill.class.getClassLoader().getResourceAsStream("images/enemytanks/enemytank1_right.png"));
-			enemytank1[2] = ImageIO.read(ImageUtill.class.getClassLoader().getResourceAsStream("images/enemytanks/enemytank1_down.png"));
-			enemytank1[3] = ImageIO.read(ImageUtill.class.getClassLoader().getResourceAsStream("images/enemytanks/enemytank1_left.png"));
+			
+			for (int i = 0; i < 3; i++) {
+				for (int j = 0; j < 4; j++) {
+					enemytank[i][j] = ImageIO.read(ImageUtill.class.getClassLoader().getResourceAsStream("images/enemytanks/enemytank" + i + j + ".png"));
+				}
+			}
+			
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

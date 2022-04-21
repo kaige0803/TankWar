@@ -3,14 +3,17 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
+import java.util.Random;
+
 import javax.swing.JPanel;
 
 @SuppressWarnings("serial")
 public class DrawPanel extends JPanel {
 	private Tank myTank;
-	private EnemyTank enemyTank = new EnemyTank(400, 400);
+	private ArrayList<EnemyTank> enemytanks = new ArrayList<>();
 	private long temp, begin, time;//用于计算帧率
-	
+	private Random r = new Random();//用于产生随机产生敌人坦克的类型和位置。
 	public DrawPanel() {
 		super();
 		setLayout(null);
@@ -19,7 +22,12 @@ public class DrawPanel extends JPanel {
 		setFocusable(true);
 		addKeyListener(new ControlKeyListener());// 给面板添加键盘事件
 		myTank = new Tank(50, 50);
-		new Thread(enemyTank).start();
+		for (int i = 0; i < 10; i++) {
+			enemytanks.add(new EnemyTank(r.nextInt(1140), r.nextInt(840), r.nextInt(3)));
+		}
+		for (EnemyTank enemyTank : enemytanks) {
+			new Thread(enemyTank).start();
+		}
 	}
 
 	@Override
@@ -36,10 +44,13 @@ public class DrawPanel extends JPanel {
 		//g2d.fillRect(0, 0, getWidth(), getHeight());
 		//绘制字符串
 		g2d.setColor(Color.blue);
-		g2d.drawString("子弹数量："+ (myTank.getBullets().size() + enemyTank.getBullets().size()), 100, 100);
+		//g2d.drawString("子弹数量："+ (myTank.getBullets().size() + enemyTank.getBullets().size()), 100, 100);
 		// 将dpanel的g2d画笔传给myTank来绘制坦克和子弹
 		myTank.paintMyself(g2d);
-		enemyTank.paintMyself(g2d);
+		for (EnemyTank enemyTank : enemytanks) {
+			enemyTank.paintMyself(g2d);
+		}
+		//enemyTank.paintMyself(g2d);
 		
 		//计算帧率
 		begin = System.currentTimeMillis();

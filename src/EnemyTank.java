@@ -9,12 +9,14 @@ public class EnemyTank implements Runnable{
 	//private static final int TANK_WITH = 50, TANK_HIGHT = 50;//坦克尺寸
 	private int tank_x, tank_y;//坦克位置
 	private int tank_speed = 1;//坦克速度
+	private int type ;
 	private Random r = new Random();//用于产生随机方向和随机的时间间隔。
 	private State state = State.values()[r.nextInt(8)];//随机生成敌方坦克状态。
 	private List<Bullet> bullets = new ArrayList<>();//用于存放坦克发射过的子弹
 	public boolean isalive = true;
-	public EnemyTank(int tank_x, int tank_y) {
+	public EnemyTank(int tank_x, int tank_y, int type) {
 		super();
+		this.type = type;
 		this.tank_x = tank_x;
 		this.tank_y = tank_y;
 	}
@@ -29,32 +31,32 @@ public class EnemyTank implements Runnable{
 		//g2d.fillRect(tank_x, tank_y, TANK_HIGHT, TANK_WITH);
 		switch (state) {//根据不同的状态调用不同的图片
 		case LEFT_MOVING:
-			g2d.drawImage(ImageUtill.enemytank1[3], tank_x, tank_y, null);
+			g2d.drawImage(ImageUtill.enemytank[type][3], tank_x, tank_y, null);
 			tank_x -= tank_speed;
 			break;
 		case RIGHT_MOVING:
-			g2d.drawImage(ImageUtill.enemytank1[1], tank_x, tank_y, null);
+			g2d.drawImage(ImageUtill.enemytank[type][1], tank_x, tank_y, null);
 			tank_x += tank_speed;
 			break;
 		case UP_MOVING:
-			g2d.drawImage(ImageUtill.enemytank1[0], tank_x, tank_y, null);
+			g2d.drawImage(ImageUtill.enemytank[type][0], tank_x, tank_y, null);
 			tank_y -= tank_speed;
 			break;
 		case DOWN_MOVING :
-			g2d.drawImage(ImageUtill.enemytank1[2], tank_x, tank_y, null);
+			g2d.drawImage(ImageUtill.enemytank[type][2], tank_x, tank_y, null);
 			tank_y += tank_speed;
 			break;
 		case LEFT_STAY:
-			g2d.drawImage(ImageUtill.enemytank1[3], tank_x, tank_y, null);
+			g2d.drawImage(ImageUtill.enemytank[type][3], tank_x, tank_y, null);
 			break;
 		case RIGHT_STAY:
-			g2d.drawImage(ImageUtill.enemytank1[1], tank_x, tank_y, null);
+			g2d.drawImage(ImageUtill.enemytank[type][1], tank_x, tank_y, null);
 			break;
 		case UP_STAY:
-			g2d.drawImage(ImageUtill.enemytank1[0], tank_x, tank_y, null);
+			g2d.drawImage(ImageUtill.enemytank[type][0], tank_x, tank_y, null);
 			break;
 		case DOWN_STAY:
-			g2d.drawImage(ImageUtill.enemytank1[2], tank_x, tank_y, null);
+			g2d.drawImage(ImageUtill.enemytank[type][2], tank_x, tank_y, null);
 			break;
 
 		default:

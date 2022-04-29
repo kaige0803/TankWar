@@ -32,19 +32,19 @@ public class EnemyTank implements Runnable{
 		switch (state) {//根据不同的状态调用不同的图片
 		case LEFT_MOVING:
 			g2d.drawImage(ImageUtill.enemytank[type][3], tank_x, tank_y, null);
-			tank_x -= tank_speed;
+			if(tank_x > 0) tank_x -= tank_speed;
 			break;
 		case RIGHT_MOVING:
 			g2d.drawImage(ImageUtill.enemytank[type][1], tank_x, tank_y, null);
-			tank_x += tank_speed;
+			if(tank_x < 1140) tank_x += tank_speed;
 			break;
 		case UP_MOVING:
 			g2d.drawImage(ImageUtill.enemytank[type][0], tank_x, tank_y, null);
-			tank_y -= tank_speed;
+			if(tank_y > 0) tank_y -= tank_speed;
 			break;
 		case DOWN_MOVING :
 			g2d.drawImage(ImageUtill.enemytank[type][2], tank_x, tank_y, null);
-			tank_y += tank_speed;
+			if(tank_y < 840) tank_y += tank_speed;
 			break;
 		case LEFT_STAY:
 			g2d.drawImage(ImageUtill.enemytank[type][3], tank_x, tank_y, null);

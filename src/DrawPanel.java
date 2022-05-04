@@ -26,7 +26,7 @@ public class DrawPanel extends JPanel implements Runnable {
 		requestFocus(true);
 		setFocusable(true);
 		addKeyListener(new ControlKeyListener());// 给面板添加键盘事件
-		myTanks.add(new MyTank(400, 400, 1));//生成一辆我方坦克
+		myTanks.add(new MyTank(400, 400, 0));//生成一辆我方坦克
 		for (int i = 0; i < 10; i++) {//生成敌方坦克并加入集合
 			enemyTanks.add(new EnemyTank(r.nextInt(1140), r.nextInt(840), r.nextInt(3)));
 		}
@@ -88,7 +88,6 @@ public class DrawPanel extends JPanel implements Runnable {
 			for (MyTank myTank : myTanks) myTank.setKeyReleasedEvent(e);//遍历我方坦克，将得到的keyEvent传给myTank。
 		}
 	}
-
 
 	@Override
 	public void run() {//用于检测子弹和坦克的碰撞

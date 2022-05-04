@@ -36,36 +36,36 @@ public class MyTank{
 		if (isalive) {//如果还活着，根据不同的状态调用不同的图片，并根据边界条件改变坦克坐标。
 			switch (state) {
 			case LEFT_MOVING:
-				g2d.drawImage(ImageUtill.myTank1[3], tank_x, tank_y, null);
+				g2d.drawImage(ImageUtill.myTanks[type][3], tank_x, tank_y, null);
 				if (tank_x > 0)
 					tank_x -= tank_speed;
 				break;
 			case RIGHT_MOVING:
-				g2d.drawImage(ImageUtill.myTank1[1], tank_x, tank_y, null);
+				g2d.drawImage(ImageUtill.myTanks[type][1], tank_x, tank_y, null);
 				if (tank_x < 1140)
 					tank_x += tank_speed;
 				break;
 			case UP_MOVING:
-				g2d.drawImage(ImageUtill.myTank1[0], tank_x, tank_y, null);
+				g2d.drawImage(ImageUtill.myTanks[type][0], tank_x, tank_y, null);
 				if (tank_y > 0)
 					tank_y -= tank_speed;
 				break;
 			case DOWN_MOVING:
-				g2d.drawImage(ImageUtill.myTank1[2], tank_x, tank_y, null);
+				g2d.drawImage(ImageUtill.myTanks[type][2], tank_x, tank_y, null);
 				if (tank_y < 840)
 					tank_y += tank_speed;
 				break;
 			case LEFT_STAY:
-				g2d.drawImage(ImageUtill.myTank1[3], tank_x, tank_y, null);
+				g2d.drawImage(ImageUtill.myTanks[type][3], tank_x, tank_y, null);
 				break;
 			case RIGHT_STAY:
-				g2d.drawImage(ImageUtill.myTank1[1], tank_x, tank_y, null);
+				g2d.drawImage(ImageUtill.myTanks[type][1], tank_x, tank_y, null);
 				break;
 			case UP_STAY:
-				g2d.drawImage(ImageUtill.myTank1[0], tank_x, tank_y, null);
+				g2d.drawImage(ImageUtill.myTanks[type][0], tank_x, tank_y, null);
 				break;
 			case DOWN_STAY:
-				g2d.drawImage(ImageUtill.myTank1[2], tank_x, tank_y, null);
+				g2d.drawImage(ImageUtill.myTanks[type][2], tank_x, tank_y, null);
 				break;
 
 			default:
@@ -145,25 +145,7 @@ public class MyTank{
 			this.state = state;
 		}
 		
-		public Point getPoint() {
-			if((state == State.DOWN_MOVING) || (state == State.DOWN_STAY)) {
-				point = new Point(bullet_x + 27 + 3, bullet_y + 50 + 13);
-				return point;
-			}
-			if((state == State.LEFT_MOVING) || (state == State.LEFT_STAY)) {
-				point = new Point(bullet_x - 16 + 13, bullet_y + 27 + 3);
-				return point;
-			}
-			if((state == State.RIGHT_MOVING) || (state == State.RIGHT_STAY)) {
-				point = new Point(bullet_x + 50 + 13, bullet_y + 27 + 3);
-				return point;
-			}
-			if((state == State.UP_MOVING) || (state == State.UP_STAY)) {
-				point = new Point(bullet_x + 27 + 3, bullet_y - 16 + 13);
-				return point;
-			}
-			return null;
-		}
+		
 
 		public int getBullet_x() {
 			return bullet_x;

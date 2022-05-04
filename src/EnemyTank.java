@@ -98,25 +98,6 @@ public class EnemyTank implements Runnable{
 			this.state = state;
 		}
 		
-		public Point getPoint() {
-			if((state == State.DOWN_MOVING) || (state == State.DOWN_STAY)) {
-				point = new Point(bullet_x + 27 + 3, bullet_y + 50 + 13);
-				return point;
-			}
-			if((state == State.LEFT_MOVING) || (state == State.LEFT_STAY)) {
-				point = new Point(bullet_x - 16 + 13, bullet_y + 27 + 3);
-				return point;
-			}
-			if((state == State.RIGHT_MOVING) || (state == State.RIGHT_STAY)) {
-				point = new Point(bullet_x + 50 + 13, bullet_y + 27 + 3);
-				return point;
-			}
-			if((state == State.UP_MOVING) || (state == State.UP_STAY)) {
-				point = new Point(bullet_x + 27 + 3, bullet_y - 16 + 13);
-				return point;
-			}
-			return null;
-		}
 
 		public int getBullet_x() {
 			return bullet_x;

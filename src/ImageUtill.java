@@ -4,8 +4,7 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 public class ImageUtill {
-	public static BufferedImage[] myTank1 = new BufferedImage[4]; 
-	public static BufferedImage[] myTank2 = new BufferedImage[4]; 
+	public static BufferedImage[][] myTanks = new BufferedImage[2][4]; 
 	public static BufferedImage[] obstacles = new BufferedImage[4]; 
 	public static BufferedImage[][] enemyTank = new BufferedImage[3][4]; 
 	public static BufferedImage[] backgrounds = new BufferedImage[4]; 
@@ -14,10 +13,6 @@ public class ImageUtill {
 	
 	static {
 		try {
-			myTank1[0] = ImageIO.read(ImageUtill.class.getClassLoader().getResourceAsStream("images/mytank1/mytank1_up.png"));
-			myTank1[1] = ImageIO.read(ImageUtill.class.getClassLoader().getResourceAsStream("images/mytank1/mytank1_right.png"));
-			myTank1[2] = ImageIO.read(ImageUtill.class.getClassLoader().getResourceAsStream("images/mytank1/mytank1_down.png"));
-			myTank1[3] = ImageIO.read(ImageUtill.class.getClassLoader().getResourceAsStream("images/mytank1/mytank1_left.png"));
 			backgrounds[0] = ImageIO.read(ImageUtill.class.getClassLoader().getResourceAsStream("images/backgrounds/background1.jpg"));
 			bullet[0] = ImageIO.read(ImageUtill.class.getClassLoader().getResourceAsStream("images/bullet/bullet_up.png"));
 			bullet[1] = ImageIO.read(ImageUtill.class.getClassLoader().getResourceAsStream("images/bullet/bullet_right.png"));
@@ -27,6 +22,12 @@ public class ImageUtill {
 			for (int i = 0; i < 3; i++) {
 				for (int j = 0; j < 4; j++) {
 					enemyTank[i][j] = ImageIO.read(ImageUtill.class.getClassLoader().getResourceAsStream("images/enemytanks/enemytank" + i + j + ".png"));
+				}
+			}
+			
+			for (int i = 0; i < 2; i++) {
+				for (int j = 0; j < 4; j++) {
+					myTanks[i][j] = ImageIO.read(ImageUtill.class.getClassLoader().getResourceAsStream("images/mytanks/mytank" + i + j + ".png"));
 				}
 			}
 			

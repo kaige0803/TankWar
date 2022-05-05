@@ -10,6 +10,8 @@ public class ImageUtill {
 	public static BufferedImage[] backgrounds = new BufferedImage[4]; 
 	public static BufferedImage[] bullet = new BufferedImage[4]; 
 	public static BufferedImage[] blasts = new BufferedImage[4];
+	public static BufferedImage base = null;
+	
 	
 	static {
 		try {
@@ -18,6 +20,10 @@ public class ImageUtill {
 			bullet[1] = ImageIO.read(ImageUtill.class.getClassLoader().getResourceAsStream("images/bullet/bullet_right.png"));
 			bullet[2] = ImageIO.read(ImageUtill.class.getClassLoader().getResourceAsStream("images/bullet/bullet_down.png"));
 			bullet[3] = ImageIO.read(ImageUtill.class.getClassLoader().getResourceAsStream("images/bullet/bullet_left.png"));
+			obstacles[0] = ImageIO.read(ImageUtill.class.getClassLoader().getResourceAsStream("images/obstacles/steel.png"));
+			obstacles[1] = ImageIO.read(ImageUtill.class.getClassLoader().getResourceAsStream("images/obstacles/stone.png"));
+			obstacles[2] = ImageIO.read(ImageUtill.class.getClassLoader().getResourceAsStream("images/obstacles/grass.png"));
+			base = ImageIO.read(ImageUtill.class.getClassLoader().getResourceAsStream("images/base/base.png"));
 			
 			for (int i = 0; i < 3; i++) {
 				for (int j = 0; j < 4; j++) {

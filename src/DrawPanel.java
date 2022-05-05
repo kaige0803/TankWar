@@ -5,6 +5,7 @@ import java.awt.Graphics2D;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import javax.swing.JPanel;
@@ -13,13 +14,13 @@ import javax.swing.JPanel;
 public class DrawPanel extends JPanel implements Runnable {
 	private final int GAME_WITH = 1200;
 	private final int GAME_HIGHT = 900;
+	private List<Stage> stages = null;//存储每一关的场景
 	private ArrayList<MyTank> myTanks = new ArrayList<>();
 	private ArrayList<EnemyTank> enemyTanks = new ArrayList<>();
 	private long temp, begin, time;//用于计算帧率
 	private Random r = new Random();//用于产生随机产生敌人坦克的类型和位置。
 	private  Thread checkCrashThread  = null;//用于检测子弹和坦克的碰撞
 	public DrawPanel() {
-		super();
 		setPreferredSize(new Dimension(GAME_WITH, GAME_HIGHT));//当上一级容器不是绝对布局的时候，这里最好使用setPreferredSize。
 		setLayout(null);
 		// 下面两步很关键，否则dpanel无法响应键盘事件

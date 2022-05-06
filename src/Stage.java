@@ -32,8 +32,6 @@ public class Stage {
 			                                      };
 	public Stage(int sort) {
 		this.sort = sort;
-	}
-	public List<Obstacle> getObstacles() {
 		for(int i = 0; i < 15; i++) {
 			for(int j = 0; j < 20; j++) {
 				if(obstacleArray[sort][i][j] != 0) {
@@ -41,8 +39,5 @@ public class Stage {
 				}
 			}
 		}
-		return obstacles;
 	}
-	
-	
 }

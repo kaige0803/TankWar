@@ -34,7 +34,8 @@ public class DrawPanel extends JPanel implements Runnable {
 		for (EnemyTank enemyTank : enemyTanks) {//启动地方坦克线程
 			new Thread(enemyTank).start();
 		}
-		stages.add(new Stage(0));
+		Stage stage0 = new Stage(0);
+		stages.add(stage0);
 		checkCrashThread = new Thread(this);//创建检测线程
 		checkCrashThread.start();//启动检测线程
 	}
@@ -66,7 +67,9 @@ public class DrawPanel extends JPanel implements Runnable {
 				enemyTanks.remove(enemyTank);
 			}
 		}
-		//enemyTank.paintMyself(g2d);
+		for (Obstacle obstacle : stages.get(0).obstacles) {
+			g2d.drawImage(obstacle.show, obstacle.x, obstacle.y, this);
+		}
 		
 		//计算帧率
 		begin = System.currentTimeMillis();

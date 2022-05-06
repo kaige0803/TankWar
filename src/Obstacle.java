@@ -14,7 +14,7 @@ public class Obstacle {
 		this.type = type;
 		this.stage = stage;
 		if(type == 0) canDisdroyed = false; else canDisdroyed = true;//只有钢铁无法被摧毁。
-		show = ImageUtill.obstacles[type];
+		show = ImageUtill.obstacles[type - 1];
 	}
 	
 }

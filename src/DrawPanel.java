@@ -14,7 +14,7 @@ import javax.swing.JPanel;
 public class DrawPanel extends JPanel implements Runnable {
 	private final int GAME_WITH = 1200;
 	private final int GAME_HIGHT = 900;
-	private List<Stage> stages = null;//存储每一关的场景
+	private List<Stage> stages = new ArrayList<>();//存储每一关的场景
 	private ArrayList<MyTank> myTanks = new ArrayList<>();
 	private ArrayList<EnemyTank> enemyTanks = new ArrayList<>();
 	private long temp, begin, time;//用于计算帧率
@@ -34,6 +34,7 @@ public class DrawPanel extends JPanel implements Runnable {
 		for (EnemyTank enemyTank : enemyTanks) {//启动地方坦克线程
 			new Thread(enemyTank).start();
 		}
+		stages.add(new Stage(0));
 		checkCrashThread = new Thread(this);//创建检测线程
 		checkCrashThread.start();//启动检测线程
 	}
@@ -50,6 +51,7 @@ public class DrawPanel extends JPanel implements Runnable {
 		g2d.setColor(Color.blue);
 		//g2d.drawString("子弹数量："+ (myTank.getBullets().size() + enemyTank.getBullets().size()), 100, 100);
 		// 将dpanel的g2d画笔传给myTank来绘制坦克和子弹
+		
 		for (MyTank myTank : myTanks) {//遍历我方坦克，如果还活着就画出来，否则就从集合中删除。
 			if(myTank.isalive) {
 				myTank.paintMyself(g2d);

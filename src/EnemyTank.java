@@ -11,21 +11,17 @@ public class EnemyTank implements Runnable{
 	private int tank_x, tank_y;//坦克位置
 	private int tank_speed = 1;//坦克速度
 	private int type;
+	private DrawPanel drawPanel = null;
 	private Random r = new Random();//用于产生随机方向和随机的时间间隔。
 	private State state = State.values()[r.nextInt(8)];//随机生成敌方坦克状态。
 	private List<Bullet> bullets = new ArrayList<>();//用于存放坦克发射过的子弹
 	public boolean isalive = true;
-	private Rectangle rectangle = null;//用于检测碰撞的矩形模型
-	public EnemyTank(int tank_x, int tank_y, int type) {
+	public EnemyTank(int tank_x, int tank_y, int type, DrawPanel drawPanel) {
 		super();
 		this.type = type;
 		this.tank_x = tank_x;
 		this.tank_y = tank_y;
-	}
-
-	public Rectangle getRectangle() {
-		rectangle = new Rectangle(tank_x, tank_y, 60, 60);
-		return rectangle;
+		this.drawPanel = drawPanel;
 	}
 
 	public List<Bullet> getBullets() {
@@ -87,7 +83,7 @@ public class EnemyTank implements Runnable{
 	
 	public class Bullet{
 		
-		private int bullet_speed = 20;
+		private int bullet_speed = 15;
 		private int bullet_x, bullet_y;//用于接收生成子弹的这一时刻坦克的位置
 		private State state;//用于接收生成子弹的这一时刻坦克的状态
 		public Point point = null;//用于检测碰撞的点模型

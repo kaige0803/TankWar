@@ -11,25 +11,19 @@ public class MyTank{
 	private int tank_x, tank_y;//坦克位置
 	private int tank_speed = 5;//坦克速度
 	private int type;
-	private Stage stage = null;
+	private DrawPanel drawPanel = null;
 	private State state = State.UP_STAY;//坦克初始状态为向上静止
 	public boolean isalive = true;
-	private Rectangle rectangle = null;//用于检测碰撞的矩形模型
 	private List<Bullet> bullets = new ArrayList<>();//用于存放坦克发射过的子弹
 	
-	public MyTank(int tank_x, int tank_y, int type, Stage stage) {
+	public MyTank(int tank_x, int tank_y, int type, DrawPanel drawPanel) {
 		super();
 		this.type = type;
 		this.tank_x = tank_x;
 		this.tank_y = tank_y;
-		this.stage = stage;
+		this.drawPanel = drawPanel;
 	}
 	
-	public Rectangle getRectangle() {
-		rectangle = new Rectangle(tank_x, tank_y, 60, 60);
-		return rectangle;
-	}
-
 	public List<Bullet> getBullets() {
 		return bullets;
 	}
@@ -89,8 +83,12 @@ public class MyTank{
 	}
 	
 	private boolean canMoveLeft() {
-		// TODO Auto-generated method stub
-		return false;
+		for (Obstacle obstacle : drawPanel.nowStage.obstacles) {
+			if((tank_x == obstacle.x + 60) && (tank_y < obstacle.y + 60) && (tank_y > obstacle.y - 60)){
+				return false;
+			}
+		}
+		return true;
 	}
 
 	//处理dpanel传过来的keyPressed键盘事件e，改变状态state，供paintMyself函数画图
@@ -141,7 +139,7 @@ public class MyTank{
 	
 	public class Bullet{
 		
-		private int bullet_speed = 20;
+		private int bullet_speed = 15;
 		private int bullet_x, bullet_y;//用于接收生成子弹的这一时刻坦克的位置
 		private State state;//用于接收生成子弹的这一时刻坦克的状态
 		public Point point = null;//用于检测碰撞的点模型

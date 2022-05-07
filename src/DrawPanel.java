@@ -15,8 +15,9 @@ public class DrawPanel extends JPanel implements Runnable {
 	private final int GAME_WITH = 1200;
 	private final int GAME_HIGHT = 900;
 	private List<Stage> stages = new ArrayList<>();//存储每一关的场景
-	private ArrayList<MyTank> myTanks = new ArrayList<>();
-	private ArrayList<EnemyTank> enemyTanks = new ArrayList<>();
+	public Stage nowStage = null;
+	private List<MyTank> myTanks = new ArrayList<>();
+	public List<EnemyTank> enemyTanks = new ArrayList<>();
 	private long temp, begin, time;//用于计算帧率
 	private Random r = new Random();//用于产生随机产生敌人坦克的类型和位置。
 	private  Thread checkCrashThread  = null;//用于检测子弹和坦克的碰撞
@@ -29,14 +30,15 @@ public class DrawPanel extends JPanel implements Runnable {
 		addKeyListener(new ControlKeyListener());// 给面板添加键盘事件
 		
 		for (int i = 0; i < 10; i++) {//生成敌方坦克并加入集合
-			enemyTanks.add(new EnemyTank(r.nextInt(1140), r.nextInt(840), r.nextInt(3)));
+			enemyTanks.add(new EnemyTank(r.nextInt(1140), r.nextInt(840), r.nextInt(3), this));
 		}
 		for (EnemyTank enemyTank : enemyTanks) {//启动地方坦克线程
 			new Thread(enemyTank).start();
 		}
 		Stage stage0 = new Stage(0);
 		stages.add(stage0);
-		myTanks.add(new MyTank(400, 400, 0, stage0));//生成一辆我方坦克
+		nowStage = stages.get(0);
+		myTanks.add(new MyTank(400, 400, 0, this));//生成一辆我方坦克
 		checkCrashThread = new Thread(this);//创建检测线程
 		checkCrashThread.start();//启动检测线程
 	}

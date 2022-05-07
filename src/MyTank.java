@@ -11,16 +11,18 @@ public class MyTank{
 	private int tank_x, tank_y;//坦克位置
 	private int tank_speed = 5;//坦克速度
 	private int type;
+	private Stage stage = null;
 	private State state = State.UP_STAY;//坦克初始状态为向上静止
 	public boolean isalive = true;
 	private Rectangle rectangle = null;//用于检测碰撞的矩形模型
 	private List<Bullet> bullets = new ArrayList<>();//用于存放坦克发射过的子弹
 	
-	public MyTank(int tank_x, int tank_y, int type) {
+	public MyTank(int tank_x, int tank_y, int type, Stage stage) {
 		super();
 		this.type = type;
 		this.tank_x = tank_x;
 		this.tank_y = tank_y;
+		this.stage = stage;
 	}
 	
 	public Rectangle getRectangle() {
@@ -37,7 +39,7 @@ public class MyTank{
 			switch (state) {
 			case LEFT_MOVING:
 				g2d.drawImage(ImageUtill.myTanks[type][3], tank_x, tank_y, null);
-				if (tank_x > 0)
+				if ((tank_x > 0) && canMoveLeft())//判断坦克是否到达边界或者遇到障碍物。
 					tank_x -= tank_speed;
 				break;
 			case RIGHT_MOVING:
@@ -86,6 +88,11 @@ public class MyTank{
 		//g2d.setColor(color);
 	}
 	
+	private boolean canMoveLeft() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 	//处理dpanel传过来的keyPressed键盘事件e，改变状态state，供paintMyself函数画图
 	public void setKeyPressedEvent(KeyEvent e) {
 		switch (e.getKeyCode()) {//如果用swith的话只能垂直和水平走，因为swith中有break 所以只能响应最先按下的键。如果用if-else就可以斜着走了。

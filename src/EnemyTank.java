@@ -1,6 +1,5 @@
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -8,7 +7,7 @@ import java.util.Random;
 
 public class EnemyTank implements Runnable{
 	
-	private int tank_x, tank_y;//坦克位置
+	public  int tank_x, tank_y;//坦克位置
 	private int tank_speed = 1;//坦克速度
 	private int type;
 	private DrawPanel drawPanel = null;
@@ -33,22 +32,22 @@ public class EnemyTank implements Runnable{
 			switch (state) {
 			case LEFT_MOVING:
 				g2d.drawImage(ImageUtill.enemyTank[type][3], tank_x, tank_y, null);
-				if (tank_x > 0)
+				if (tank_x > 0 && canMoveLeft())
 					tank_x -= tank_speed;
 				break;
 			case RIGHT_MOVING:
 				g2d.drawImage(ImageUtill.enemyTank[type][1], tank_x, tank_y, null);
-				if (tank_x < 1140)
+				if (tank_x < 1140 && canMoveRight())
 					tank_x += tank_speed;
 				break;
 			case UP_MOVING:
 				g2d.drawImage(ImageUtill.enemyTank[type][0], tank_x, tank_y, null);
-				if (tank_y > 0)
+				if (tank_y > 0 && canMoveUp())
 					tank_y -= tank_speed;
 				break;
 			case DOWN_MOVING:
 				g2d.drawImage(ImageUtill.enemyTank[type][2], tank_x, tank_y, null);
-				if (tank_y < 840)
+				if (tank_y < 840 && canMoveDown())
 					tank_y += tank_speed;
 				break;
 			case LEFT_STAY:
@@ -78,7 +77,58 @@ public class EnemyTank implements Runnable{
 				iterator.remove();}
 			else bullet.drawMyself(g2d);// 将dpanel的g2d画笔传给bullet来绘制子弹
 		}
-		
+	}
+	
+	private boolean canMoveDown() {
+		for (Obstacle obstacle : drawPanel.nowStage.obstacles) {
+			if((tank_y == obstacle.y - 60) && (tank_x < obstacle.x + 60) && (tank_x > obstacle.x - 60)) return false;
+		}
+		for (EnemyTank enemyTank : drawPanel.enemyTanks) {
+			if((tank_y == enemyTank.tank_y - 60) && (tank_x < enemyTank.tank_x + 60) && (tank_x > enemyTank.tank_x - 60)) return false;
+		}
+		for (MyTank myTank : drawPanel.myTanks) {
+			if((tank_y == myTank.tank_y - 60) && (tank_x < myTank.tank_x + 60) && (tank_x > myTank.tank_x - 60)) return false;
+		}
+		return true;
+	}
+
+	private boolean canMoveUp() {
+		for (Obstacle obstacle : drawPanel.nowStage.obstacles) {
+			if((tank_y == obstacle.y + 60) && (tank_x < obstacle.x + 60) && (tank_x > obstacle.x - 60)) return false;
+		}
+		for (EnemyTank enemyTank : drawPanel.enemyTanks) {
+			if((tank_y == enemyTank.tank_y + 60) && (tank_x < enemyTank.tank_x + 60) && (tank_x > enemyTank.tank_x - 60)) return false;
+		}
+		for (MyTank myTank : drawPanel.myTanks) {
+			if((tank_y == myTank.tank_y + 60) && (tank_x < myTank.tank_x + 60) && (tank_x > myTank.tank_x - 60)) return false;
+		}
+		return true;
+	}
+
+	private boolean canMoveRight() {
+		for (Obstacle obstacle : drawPanel.nowStage.obstacles) {
+			if((tank_x == obstacle.x - 60) && (tank_y < obstacle.y + 60) && (tank_y > obstacle.y - 60)) return false;
+		}
+		for (EnemyTank enemyTank : drawPanel.enemyTanks) {
+			if((tank_x == enemyTank.tank_x - 60) && (tank_y < enemyTank.tank_y + 60) && (tank_y > enemyTank.tank_y - 60)) return false;
+		}
+		for (MyTank myTank : drawPanel.myTanks) {
+			if((tank_x == myTank.tank_x - 60) && (tank_y < myTank.tank_y + 60) && (tank_y > myTank.tank_y - 60)) return false;
+		}
+		return true;
+	}
+
+	private boolean canMoveLeft() {
+		for (Obstacle obstacle : drawPanel.nowStage.obstacles) {
+			if((tank_x == obstacle.x + 60) && (tank_y < obstacle.y + 60) && (tank_y > obstacle.y - 60)) return false;
+		}
+		for (EnemyTank enemyTank : drawPanel.enemyTanks) {
+			if((tank_x == enemyTank.tank_x + 60) && (tank_y < enemyTank.tank_y + 60) && (tank_y > enemyTank.tank_y - 60)) return false;
+		}
+		for (MyTank myTank : drawPanel.myTanks) {
+			if((tank_x == myTank.tank_x + 60) && (tank_y < myTank.tank_y + 60) && (tank_y > myTank.tank_y - 60)) return false;
+		}
+		return true;
 	}
 	
 	public class Bullet{

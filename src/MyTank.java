@@ -8,7 +8,7 @@ import java.util.List;
 
 public class MyTank{
 	
-	private int tank_x, tank_y;//坦克位置
+	public  int tank_x, tank_y;//坦克位置
 	private int tank_speed = 5;//坦克速度
 	private int type;
 	private DrawPanel drawPanel = null;
@@ -33,22 +33,22 @@ public class MyTank{
 			switch (state) {
 			case LEFT_MOVING:
 				g2d.drawImage(ImageUtill.myTanks[type][3], tank_x, tank_y, null);
-				if ((tank_x > 0) && canMoveLeft())//判断坦克是否到达边界或者遇到障碍物。
+				if (tank_x > 0 && canMoveLeft())//判断坦克是否到达边界或者遇到障碍物。
 					tank_x -= tank_speed;
 				break;
 			case RIGHT_MOVING:
 				g2d.drawImage(ImageUtill.myTanks[type][1], tank_x, tank_y, null);
-				if (tank_x < 1140)
+				if (tank_x < 1140 && canMoveRight())
 					tank_x += tank_speed;
 				break;
 			case UP_MOVING:
 				g2d.drawImage(ImageUtill.myTanks[type][0], tank_x, tank_y, null);
-				if (tank_y > 0)
+				if (tank_y > 0 && canMoveUp())
 					tank_y -= tank_speed;
 				break;
 			case DOWN_MOVING:
 				g2d.drawImage(ImageUtill.myTanks[type][2], tank_x, tank_y, null);
-				if (tank_y < 840)
+				if (tank_y < 840 && canMoveDown())
 					tank_y += tank_speed;
 				break;
 			case LEFT_STAY:
@@ -78,15 +78,44 @@ public class MyTank{
 				iterator.remove();}
 			else bullet.drawMyself(g2d);// 将dpanel的g2d画笔传给bullet来绘制子弹
 		}
-		
-		//g2d.setColor(color);
 	}
 	
+	private boolean canMoveDown() {
+		for (Obstacle obstacle : drawPanel.nowStage.obstacles) {
+			if((tank_y == obstacle.y - 60) && (tank_x < obstacle.x + 60) && (tank_x > obstacle.x - 60)) return false;
+		}
+		for (EnemyTank enemyTank : drawPanel.enemyTanks) {
+			if((tank_y == enemyTank.tank_y - 60) && (tank_x < enemyTank.tank_x + 60) && (tank_x > enemyTank.tank_x - 60)) return false;
+		}
+		return true;
+	}
+
+	private boolean canMoveUp() {
+		for (Obstacle obstacle : drawPanel.nowStage.obstacles) {
+			if((tank_y == obstacle.y + 60) && (tank_x < obstacle.x + 60) && (tank_x > obstacle.x - 60)) return false;
+		}
+		for (EnemyTank enemyTank : drawPanel.enemyTanks) {
+			if((tank_y == enemyTank.tank_y + 60) && (tank_x < enemyTank.tank_x + 60) && (tank_x > enemyTank.tank_x - 60)) return false;
+		}
+		return true;
+	}
+
+	private boolean canMoveRight() {
+		for (Obstacle obstacle : drawPanel.nowStage.obstacles) {
+			if((tank_x == obstacle.x - 60) && (tank_y < obstacle.y + 60) && (tank_y > obstacle.y - 60)) return false;
+		}
+		for (EnemyTank enemyTank : drawPanel.enemyTanks) {
+			if((tank_x == enemyTank.tank_x - 60) && (tank_y < enemyTank.tank_y + 60) && (tank_y > enemyTank.tank_y - 60)) return false;
+		}
+		return true;
+	}
+
 	private boolean canMoveLeft() {
 		for (Obstacle obstacle : drawPanel.nowStage.obstacles) {
-			if((tank_x == obstacle.x + 60) && (tank_y < obstacle.y + 60) && (tank_y > obstacle.y - 60)){
-				return false;
-			}
+			if((tank_x == obstacle.x + 60) && (tank_y < obstacle.y + 60) && (tank_y > obstacle.y - 60)) return false;
+		}
+		for (EnemyTank enemyTank : drawPanel.enemyTanks) {
+			if((tank_x == enemyTank.tank_x + 60) && (tank_y < enemyTank.tank_y + 60) && (tank_y > enemyTank.tank_y - 60)) return false;
 		}
 		return true;
 	}
@@ -95,16 +124,16 @@ public class MyTank{
 	public void setKeyPressedEvent(KeyEvent e) {
 		switch (e.getKeyCode()) {//如果用swith的话只能垂直和水平走，因为swith中有break 所以只能响应最先按下的键。如果用if-else就可以斜着走了。
 		case KeyEvent.VK_W:
-			state = State.UP_MOVING;
+			state = State.UP_MOVING; 
 			break;
 		case KeyEvent.VK_S:
-			state = State.DOWN_MOVING;
+			state = State.DOWN_MOVING; 
 			break;
 		case KeyEvent.VK_A:
-			state = State.LEFT_MOVING;
+			state = State.LEFT_MOVING; 
 			break;
 		case KeyEvent.VK_D:
-			state = State.RIGHT_MOVING;
+			state = State.RIGHT_MOVING; 
 			break;
 		default:
 			break;

@@ -1,7 +1,5 @@
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -119,52 +117,6 @@ public class MyTank{
 		}
 		return true;
 	}
-
-	//处理dpanel传过来的keyPressed键盘事件e，改变状态state，供paintMyself函数画图
-	public void setKeyPressedEvent(KeyEvent e) {
-		switch (e.getKeyCode()) {//如果用swith的话只能垂直和水平走，因为swith中有break 所以只能响应最先按下的键。如果用if-else就可以斜着走了。
-		case KeyEvent.VK_W:
-			state = State.UP_MOVING; 
-			break;
-		case KeyEvent.VK_S:
-			state = State.DOWN_MOVING; 
-			break;
-		case KeyEvent.VK_A:
-			state = State.LEFT_MOVING; 
-			break;
-		case KeyEvent.VK_D:
-			state = State.RIGHT_MOVING; 
-			break;
-		default:
-			break;
-
-		}
-	}
-	
-	//处理dpanel传过来的keyReleased键盘事件e，来确定抬起按键后坦克的状态
-	public void setKeyReleasedEvent(KeyEvent e) {
-		switch (e.getKeyCode()) {
-		case KeyEvent.VK_W:
-			state = State.UP_STAY;
-			break;
-		case KeyEvent.VK_S:
-			state = State.DOWN_STAY;
-			break;
-		case KeyEvent.VK_A:
-			state = State.LEFT_STAY;
-			break;
-		case KeyEvent.VK_D:
-			state = State.RIGHT_STAY;
-			break;
-		default:
-			break;
-		}
-		if(e.getKeyCode() == KeyEvent.VK_H) {//每敲击一下h键就new一个子弹加入集合，需要告诉子弹此时的坦克起始位置和方向。
-			bullets.add(new Bullet(tank_x, tank_y, state));
-		}
-	}
-
-	
 	
 	public class Bullet{
 		
@@ -209,6 +161,12 @@ public class MyTank{
 			}
 		}
 		
+	}
+
+
+
+	public void fire() {
+		bullets.add(new Bullet(tank_x, tank_y, state));
 	}
 	
 }

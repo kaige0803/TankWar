@@ -7,10 +7,7 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-
 import javax.swing.JPanel;
-
-import MyTank.Bullet;
 
 @SuppressWarnings("serial")
 public class DrawPanel extends JPanel implements Runnable {
@@ -90,8 +87,7 @@ public class DrawPanel extends JPanel implements Runnable {
 		g.setColor(c);
 	}
 
-	//将dpanel接收到的键盘信息都发送给坦克类的实例，由实例去实现各个键的功能。
-	//为了提高效率也可以在传之前先判断一下按键信息，如果是属于这个坦克类的控制键再传递给该坦克类。
+	//处理dpanel接收到的keyPressed键盘事件e，并改变状态所需要控制的坦克的state，供paintMyself函数画图
 	private class ControlKeyListener extends KeyAdapter {
 		
 		@Override//用于坦克移动
@@ -108,9 +104,6 @@ public class DrawPanel extends JPanel implements Runnable {
 				break;
 			case KeyEvent.VK_D:
 				myTanks.get(0).state = State.RIGHT_MOVING; 
-				break;
-			case KeyEvent.VK_H:
-				myTanks.get(0).bullets.add(new Bullet(tank_x, tank_y, state));
 				break;
 			default:
 				break;
@@ -132,6 +125,9 @@ public class DrawPanel extends JPanel implements Runnable {
 			case KeyEvent.VK_D:
 				myTanks.get(0).state = State.RIGHT_STAY;
 				break;
+			case KeyEvent.VK_H:
+				myTanks.get(0).fire();
+				break;
 			default:
 				break;
 			}
@@ -141,9 +137,7 @@ public class DrawPanel extends JPanel implements Runnable {
 	@Override
 	public void run() {//用于检测子弹和坦克的碰撞
 		while(true) {
-//			for (MyTank myTank : myTanks) {
-//				myTank.getBullets();
-//			}
+
 			repaint();
 			try {
 				Thread.sleep(20);

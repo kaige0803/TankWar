@@ -1,5 +1,4 @@
 import javax.swing.JFrame;
-import javax.swing.Timer;
 
 @SuppressWarnings("serial")
 public final class MainWindow extends JFrame {

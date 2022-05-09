@@ -8,7 +8,7 @@ import java.util.Random;
 public class EnemyTank implements Runnable{
 	
 	public  int tank_x, tank_y;//坦克位置
-	private int tank_speed = 1;//坦克速度
+	private int tank_speed = 5;//坦克速度
 	private int type;
 	private DrawPanel drawPanel = null;
 	private Random r = new Random();//用于产生随机方向和随机的时间间隔。

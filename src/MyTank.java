@@ -12,9 +12,9 @@ public class MyTank{
 	private int tank_speed = 5;//坦克速度
 	private int type;
 	private DrawPanel drawPanel = null;
-	private State state = State.UP_STAY;//坦克初始状态为向上静止
+	public State state = State.UP_STAY;//坦克初始状态为向上静止
 	public boolean isalive = true;
-	private List<Bullet> bullets = new ArrayList<>();//用于存放坦克发射过的子弹
+	public List<Bullet> bullets = new ArrayList<>();//用于存放坦克发射过的子弹
 	
 	public MyTank(int tank_x, int tank_y, int type, DrawPanel drawPanel) {
 		super();

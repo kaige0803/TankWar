@@ -5,6 +5,7 @@ public class Obstacle {
 	public int type;
 	public BufferedImage show;
 	public boolean canDisdroyed;
+	public boolean canCrossIn;
 	public boolean isalive;
 	public Stage stage = null;
 	
@@ -13,7 +14,8 @@ public class Obstacle {
 		this.y = y;
 		this.type = type;
 		this.stage = stage;
-		if(type == 0) canDisdroyed = false; else canDisdroyed = true;//只有钢铁无法被摧毁。
+		if(type == 1) canDisdroyed = false; else canDisdroyed = true;//只有钢铁无法被摧毁。
+		if(type == 3) canCrossIn = true; else canDisdroyed = false;//只有草丛可以穿越。
 		show = ImageUtill.obstacles[type - 1];
 	}
 	

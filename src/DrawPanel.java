@@ -11,10 +11,11 @@ import javax.swing.JPanel;
 
 @SuppressWarnings("serial")
 public class DrawPanel extends JPanel implements Runnable {
-	private final int GAME_WITH = 1200;
+	private final int GAME_WITH = 1260;
 	private final int GAME_HIGHT = 900;
 	private List<Stage> stages = new ArrayList<>();//存储每一关的场景
 	public Stage nowStage = null;
+	public Base base = null;
 	public List<MyTank> myTanks = new ArrayList<>();
 	public List<EnemyTank> enemyTanks = new ArrayList<>();
 	private long temp, begin, time;//用于计算帧率
@@ -39,10 +40,11 @@ public class DrawPanel extends JPanel implements Runnable {
 		for (EnemyTank enemyTank : enemyTanks) {//启动地方坦克线程
 			new Thread(enemyTank).start();
 		}
+		base = new Base(600, 840);
 		Stage stage0 = new Stage(0);
 		stages.add(stage0);
 		nowStage = stages.get(0);
-		myTanks.add(new MyTank(360, 0, 0, this));//生成一辆我方坦克
+		myTanks.add(new MyTank(480, 840, 0, this));//生成一辆我方坦克
 		checkCrashThread = new Thread(this);//创建检测线程
 		checkCrashThread.start();//启动检测线程
 	}
@@ -77,7 +79,7 @@ public class DrawPanel extends JPanel implements Runnable {
 		for (Obstacle obstacle : stages.get(0).obstacles) {
 			g2d.drawImage(obstacle.show, obstacle.x, obstacle.y, this);
 		}
-		
+		g2d.drawImage(base.show, base.x, base.y, this);
 		//计算帧率
 		begin = System.currentTimeMillis();
 		time = begin-temp;

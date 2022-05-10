@@ -1,4 +1,5 @@
 import javax.swing.JFrame;
+import javax.swing.SwingUtilities;
 
 @SuppressWarnings("serial")
 public final class MainWindow extends JFrame {
@@ -17,5 +18,8 @@ public final class MainWindow extends JFrame {
 		setVisible(true);
 		new ImageUtill();//加载资源文件。
 		new Thread(dPanel).start();// 启动定时刷新dPanel，每50毫秒一次
+	}
+	public static void main(String[] args) {
+		SwingUtilities.invokeLater(() -> new MainWindow());
 	}
 }

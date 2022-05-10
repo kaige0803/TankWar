@@ -36,7 +36,7 @@ public class MyTank{
 				break;
 			case RIGHT_MOVING:
 				g2d.drawImage(ImageUtill.myTanks[type][1], tank_x, tank_y, null);
-				if (tank_x < 1140 && canMoveRight())
+				if (tank_x < 1200 && canMoveRight())
 					tank_x += tank_speed;
 				break;
 			case UP_MOVING:
@@ -72,7 +72,7 @@ public class MyTank{
 		Iterator<Bullet> iterator = bullets.iterator();
 		while (iterator.hasNext()) {
 			Bullet bullet = (Bullet) iterator.next();
-			if(bullet.getBullet_x() < 0 || bullet.getBullet_x() > 1200 || bullet.getBullet_y() < 0 || bullet.getBullet_y() > 900) { 
+			if(bullet.getBullet_x() < 0 || bullet.getBullet_x() > 1260 || bullet.getBullet_y() < 0 || bullet.getBullet_y() > 900) { 
 				iterator.remove();}
 			else bullet.drawMyself(g2d);// 将dpanel的g2d画笔传给bullet来绘制子弹
 		}

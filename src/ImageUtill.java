@@ -7,12 +7,12 @@ public class ImageUtill {
 	public static BufferedImage[][] myTanks = new BufferedImage[2][4]; 
 	public static BufferedImage[] obstacles = new BufferedImage[4]; 
 	public static BufferedImage[][] enemyTank = new BufferedImage[3][4]; 
-	public static BufferedImage[] backgrounds = new BufferedImage[4]; 
+	public static BufferedImage[] backgrounds = new BufferedImage[10]; 
 	public static BufferedImage[] bullet = new BufferedImage[4]; 
 	public static BufferedImage[] blasts = new BufferedImage[4];
 	public static BufferedImage base = null;
 	
-	
+	 
 	static {
 		try {
 			backgrounds[0] = ImageIO.read(ImageUtill.class.getClassLoader().getResourceAsStream("images/backgrounds/background1.jpg"));
@@ -26,7 +26,7 @@ public class ImageUtill {
 			base = ImageIO.read(ImageUtill.class.getClassLoader().getResourceAsStream("images/base/base.png"));
 			
 			for (int i = 0; i < 3; i++) {
-				for (int j = 0; j < 4; j++) {
+				for (int j = 0; j < 4; j++) { 
 					enemyTank[i][j] = ImageIO.read(ImageUtill.class.getClassLoader().getResourceAsStream("images/enemytanks/enemytank" + i + j + ".png"));
 				}
 			}

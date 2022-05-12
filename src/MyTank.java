@@ -20,7 +20,7 @@ public class MyTank{
 		this.tank_x = tank_x;
 		this.tank_y = tank_y;
 		this.drawPanel = drawPanel;
-	}
+	} 
 	
 	public List<Bullet> getBullets() {
 		return bullets;
@@ -82,7 +82,7 @@ public class MyTank{
 		for (Obstacle obstacle : drawPanel.nowStage.obstacles) {
 			if((tank_y == obstacle.y - 60) && (tank_x < obstacle.x + 60) && (tank_x > obstacle.x - 60)) return false;
 		}
-		for (EnemyTank enemyTank : drawPanel.enemyTanks) {
+		for (EnemyTank enemyTank : drawPanel.nowStage.enemyTanks) {
 			if((tank_y == enemyTank.tank_y - 60) && (tank_x < enemyTank.tank_x + 60) && (tank_x > enemyTank.tank_x - 60)) return false;
 		}
 		return true;
@@ -92,7 +92,7 @@ public class MyTank{
 		for (Obstacle obstacle : drawPanel.nowStage.obstacles) {
 			if((tank_y == obstacle.y + 60) && (tank_x < obstacle.x + 60) && (tank_x > obstacle.x - 60)) return false;
 		}
-		for (EnemyTank enemyTank : drawPanel.enemyTanks) {
+		for (EnemyTank enemyTank : drawPanel.nowStage.enemyTanks) {
 			if((tank_y == enemyTank.tank_y + 60) && (tank_x < enemyTank.tank_x + 60) && (tank_x > enemyTank.tank_x - 60)) return false;
 		}
 		return true;
@@ -102,7 +102,7 @@ public class MyTank{
 		for (Obstacle obstacle : drawPanel.nowStage.obstacles) {
 			if((tank_x == obstacle.x - 60) && (tank_y < obstacle.y + 60) && (tank_y > obstacle.y - 60)) return false;
 		}
-		for (EnemyTank enemyTank : drawPanel.enemyTanks) {
+		for (EnemyTank enemyTank : drawPanel.nowStage.enemyTanks) {
 			if((tank_x == enemyTank.tank_x - 60) && (tank_y < enemyTank.tank_y + 60) && (tank_y > enemyTank.tank_y - 60)) return false;
 		}
 		return true;
@@ -112,7 +112,7 @@ public class MyTank{
 		for (Obstacle obstacle : drawPanel.nowStage.obstacles) {
 			if((tank_x == obstacle.x + 60) && (tank_y < obstacle.y + 60) && (tank_y > obstacle.y - 60)) return false;
 		}
-		for (EnemyTank enemyTank : drawPanel.enemyTanks) {
+		for (EnemyTank enemyTank : drawPanel.nowStage.enemyTanks) {
 			if((tank_x == enemyTank.tank_x + 60) && (tank_y < enemyTank.tank_y + 60) && (tank_y > enemyTank.tank_y - 60)) return false;
 		}
 		return true;

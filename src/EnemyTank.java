@@ -12,7 +12,7 @@ public class EnemyTank implements Runnable{
 	private int type;
 	private DrawPanel drawPanel = null;
 	private Random r = new Random();//用于产生随机方向和随机的时间间隔。
-	private State state = State.values()[r.nextInt(8)];//随机生成敌方坦克状态。
+	private State state = State.DOWN_MOVING;//初始方向向下运动。
 	private List<Bullet> bullets = new ArrayList<>();//用于存放坦克发射过的子弹
 	public boolean isalive = true;
 	public EnemyTank(int tank_x, int tank_y, int type, DrawPanel drawPanel) {
@@ -21,6 +21,7 @@ public class EnemyTank implements Runnable{
 		this.tank_x = tank_x;
 		this.tank_y = tank_y;
 		this.drawPanel = drawPanel;
+		new Thread(this).start();//开启地方坦克线程。
 	}
 
 	public List<Bullet> getBullets() {
@@ -83,7 +84,7 @@ public class EnemyTank implements Runnable{
 		for (Obstacle obstacle : drawPanel.nowStage.obstacles) {
 			if((tank_y == obstacle.y - 60) && (tank_x < obstacle.x + 60) && (tank_x > obstacle.x - 60)) return false;
 		}
-		for (EnemyTank enemyTank : drawPanel.enemyTanks) {
+		for (EnemyTank enemyTank : drawPanel.nowStage.enemyTanks) {
 			if((tank_y == enemyTank.tank_y - 60) && (tank_x < enemyTank.tank_x + 60) && (tank_x > enemyTank.tank_x - 60)) return false;
 		}
 		for (MyTank myTank : drawPanel.myTanks) {
@@ -96,7 +97,7 @@ public class EnemyTank implements Runnable{
 		for (Obstacle obstacle : drawPanel.nowStage.obstacles) {
 			if((tank_y == obstacle.y + 60) && (tank_x < obstacle.x + 60) && (tank_x > obstacle.x - 60)) return false;
 		}
-		for (EnemyTank enemyTank : drawPanel.enemyTanks) {
+		for (EnemyTank enemyTank : drawPanel.nowStage.enemyTanks) {
 			if((tank_y == enemyTank.tank_y + 60) && (tank_x < enemyTank.tank_x + 60) && (tank_x > enemyTank.tank_x - 60)) return false;
 		}
 		for (MyTank myTank : drawPanel.myTanks) {
@@ -109,7 +110,7 @@ public class EnemyTank implements Runnable{
 		for (Obstacle obstacle : drawPanel.nowStage.obstacles) {
 			if((tank_x == obstacle.x - 60) && (tank_y < obstacle.y + 60) && (tank_y > obstacle.y - 60)) return false;
 		}
-		for (EnemyTank enemyTank : drawPanel.enemyTanks) {
+		for (EnemyTank enemyTank : drawPanel.nowStage.enemyTanks) {
 			if((tank_x == enemyTank.tank_x - 60) && (tank_y < enemyTank.tank_y + 60) && (tank_y > enemyTank.tank_y - 60)) return false;
 		}
 		for (MyTank myTank : drawPanel.myTanks) {
@@ -122,7 +123,7 @@ public class EnemyTank implements Runnable{
 		for (Obstacle obstacle : drawPanel.nowStage.obstacles) {
 			if((tank_x == obstacle.x + 60) && (tank_y < obstacle.y + 60) && (tank_y > obstacle.y - 60)) return false;
 		}
-		for (EnemyTank enemyTank : drawPanel.enemyTanks) {
+		for (EnemyTank enemyTank : drawPanel.nowStage.enemyTanks) {
 			if((tank_x == enemyTank.tank_x + 60) && (tank_y < enemyTank.tank_y + 60) && (tank_y > enemyTank.tank_y - 60)) return false;
 		}
 		for (MyTank myTank : drawPanel.myTanks) {

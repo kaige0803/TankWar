@@ -12,6 +12,7 @@ public class MyTank{
 	public State state = State.UP_STAY;//坦克初始状态为向上静止
 	public boolean isalive = true;
 	public List<Bullet> bullets = new ArrayList<>();//用于存放坦克发射过的子弹
+	public Iterator<Bullet> iterator = null;
 	
 	public MyTank(int tank_x, int tank_y, int type, DrawPanel drawPanel) {
 		super();
@@ -68,7 +69,7 @@ public class MyTank{
 			//如果已死，在坦克的中心位置生成爆炸gif，并调用音频。
 		}
 		//遍历已经打出去的子弹集合，如果越界就删除，否则画在dpanel面板上
-		Iterator<Bullet> iterator = bullets.iterator();
+		iterator = bullets.iterator();
 		while (iterator.hasNext()) {
 			Bullet bullet = (Bullet) iterator.next();
 			if(bullet.bullet_x < 0 || bullet.bullet_x > 1260 || bullet.bullet_y < 0 || bullet.bullet_y > 900) { 
@@ -116,51 +117,6 @@ public class MyTank{
 		}
 		return true;
 	}
-	
-	public class Bullet{
-		
-		private int bullet_speed = 15;
-		private int bullet_x, bullet_y;//用于接收生成子弹的这一时刻坦克的位置
-		private State state;//用于接收生成子弹的这一时刻坦克的状态
-		
-		public Bullet(int tank_x, int tank_y, State state) {//需要根据生成这颗子弹的时候的坦克的位置和状态，来确定子弹的初始位置和状态。
-			this.state = state;//方向和坦克的保持一致。
-			if((state == State.DOWN_MOVING) || (state == State.DOWN_STAY)) {
-				this.bullet_x = tank_x + 27; this.bullet_y = tank_y + 50;
-			}
-			if((state == State.LEFT_MOVING) || (state == State.LEFT_STAY)) {
-				this.bullet_x = tank_x - 16; this.bullet_y = tank_y + 27;
-			}
-			if((state == State.RIGHT_MOVING) || (state == State.RIGHT_STAY)) {
-				this.bullet_x = tank_x + 50; this.bullet_y = tank_y + 27;
-			}
-			if((state == State.UP_MOVING) || (state == State.UP_STAY)) {
-				this.bullet_x = tank_x + 27; this.bullet_y = tank_y - 16;
-			}
-		}
-
-		public void drawMyself(Graphics2D g2d) {
-			//根据坦克的状态调用不同的子弹图潘，并调整子弹位置。
-			if((state == State.DOWN_MOVING) || (state == State.DOWN_STAY)) {
-				g2d.drawImage(ImageUtill.bullet[2], bullet_x, bullet_y, null);
-				bullet_y += bullet_speed;
-			}
-			if((state == State.LEFT_MOVING) || (state == State.LEFT_STAY)) {
-				g2d.drawImage(ImageUtill.bullet[3], bullet_x, bullet_y, null);
-				bullet_x -= bullet_speed;
-			}
-			if((state == State.RIGHT_MOVING) || (state == State.RIGHT_STAY)) {
-				g2d.drawImage(ImageUtill.bullet[1], bullet_x, bullet_y, null);
-				bullet_x += bullet_speed;
-			}
-			if((state == State.UP_MOVING) || (state == State.UP_STAY)) {
-				g2d.drawImage(ImageUtill.bullet[0], bullet_x, bullet_y, null);
-				bullet_y -= bullet_speed;
-			}
-		}
-	}
-
-
 
 	public void fire() {
 		bullets.add(new Bullet(tank_x, tank_y, state));

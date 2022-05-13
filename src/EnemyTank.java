@@ -6,13 +6,14 @@ import java.util.Random;
 
 public class EnemyTank implements Runnable{
 	
-	public  int tank_x, tank_y;//坦克位置
+	public int tank_x, tank_y;//坦克位置
 	private int tank_speed = 5;//坦克速度
 	private int type;
 	private DrawPanel drawPanel = null;
 	private Random r = new Random();//用于产生随机方向和随机的时间间隔。
 	private State state = State.DOWN_MOVING;//初始方向向下运动。
-	public  List<Bullet> bullets = new ArrayList<>();//用于存放坦克发射过的子弹
+	public List<Bullet> bullets = new ArrayList<>();//用于存放坦克发射过的子弹
+	public Iterator<Bullet> iterator = null;
 	public boolean isalive = true;
 	public EnemyTank(int tank_x, int tank_y, int type, DrawPanel drawPanel) {
 		super();
@@ -70,7 +71,7 @@ public class EnemyTank implements Runnable{
 			
 		}
 		//遍历已经打出去的子弹集合，如果越界就删除，否则画在dpanel面板上
-		Iterator<Bullet> iterator = bullets.iterator();
+		iterator = bullets.iterator();
 		while (iterator.hasNext()) {
 			Bullet bullet = (Bullet) iterator.next();
 			if(bullet.bullet_x < 0 || bullet.bullet_x > 1260 || bullet.bullet_y < 0 || bullet.bullet_y > 900) { 
@@ -131,49 +132,6 @@ public class EnemyTank implements Runnable{
 		return true;
 	}
 	
-	public class Bullet{
-		
-		private int bullet_speed = 15;
-		public int bullet_x, bullet_y;//用于接收生成子弹的这一时刻坦克的位置
-		private State state;//用于接收生成子弹的这一时刻坦克的状态
-		
-		public Bullet(int tank_x, int tank_y, State state) {//需传入这颗子弹在生成的时候的坦克的位置和状态。
-			this.state = state;
-			if((state == State.DOWN_MOVING) || (state == State.DOWN_STAY)) {
-				this.bullet_x = tank_x + 27; this.bullet_y = tank_y + 50;
-			}
-			if((state == State.LEFT_MOVING) || (state == State.LEFT_STAY)) {
-				this.bullet_x = tank_x - 16; this.bullet_y = tank_y + 27;
-			}
-			if((state == State.RIGHT_MOVING) || (state == State.RIGHT_STAY)) {
-				this.bullet_x = tank_x + 50; this.bullet_y = tank_y + 27;
-			}
-			if((state == State.UP_MOVING) || (state == State.UP_STAY)) {
-				this.bullet_x = tank_x + 27; this.bullet_y = tank_y - 16;
-			}
-		}
-
-		public void drawMyself(Graphics2D g2d) {
-			//根据坦克的状态调用不同的子弹图潘，并调整子弹位置。
-			if((state == State.DOWN_MOVING) || (state == State.DOWN_STAY)) {
-				g2d.drawImage(ImageUtill.bullet[2], bullet_x, bullet_y, null);
-				bullet_y += bullet_speed;
-			}
-			if((state == State.LEFT_MOVING) || (state == State.LEFT_STAY)) {
-				g2d.drawImage(ImageUtill.bullet[3], bullet_x, bullet_y, null);
-				bullet_x -= bullet_speed;
-			}
-			if((state == State.RIGHT_MOVING) || (state == State.RIGHT_STAY)) {
-				g2d.drawImage(ImageUtill.bullet[1], bullet_x, bullet_y, null);
-				bullet_x += bullet_speed;
-			}
-			if((state == State.UP_MOVING) || (state == State.UP_STAY)) {
-				g2d.drawImage(ImageUtill.bullet[0], bullet_x, bullet_y, null);
-				bullet_y -= bullet_speed;
-			}
-		}
-	}
-
 	@Override
 	public void run() {
 		while(isalive) {

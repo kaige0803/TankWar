@@ -5,9 +5,12 @@ import java.awt.Graphics2D;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 //import java.util.Random;
 import javax.swing.JPanel;
+
+import MyTank.Bullet;
 
 @SuppressWarnings("serial")
 public class DrawPanel extends JPanel implements Runnable {
@@ -129,7 +132,17 @@ public class DrawPanel extends JPanel implements Runnable {
 	@Override
 	public void run() {//用于检测子弹和坦克的碰撞并刷新dpanel。
 		while(true) {
-			
+			//检测我方坦克的子弹是否遇到地方坦克、主基地或者障碍物。
+			for (MyTank myTank : myTanks) {
+				Iterator<Bullet> iterator = myTank.bullets.listIterator()
+				while (iterator.hasNext()) {
+					Bullet bullet = (Bullet) iterator.next();
+					if(bullet.bullet_x < 0 || bullet.bullet_x > 1260 || bullet.bullet_y < 0 || bullet.bullet_y > 900) { 
+						iterator.remove();}
+					else   ;// 将dpanel的g2d画笔传给bullet来绘制子弹
+				}
+			}
+			//检测敌方坦克子弹是否遇到我方坦克、主基地或者障碍物。
 			repaint();
 			try {
 				Thread.sleep(50);

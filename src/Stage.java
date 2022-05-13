@@ -4,7 +4,6 @@ import java.util.List;
 
 public class Stage {
 	public int sort;//当前关卡。
-	private DrawPanel drawPanel = null;
 	public Base base = null;
 	public List<EnemyTank> enemyTanks = new ArrayList<>();
 	public BufferedImage backgroundImage = null;
@@ -37,11 +36,10 @@ public class Stage {
 			                                      };
 	public Stage(int sort, DrawPanel drawPanel) {
 		this.sort = sort;
-		this.drawPanel = drawPanel;
 		for(int i = 0; i < 15; i++) {//根据关卡生成障碍物列表obstacles<Obstacle>。
 			for(int j = 0; j < 21; j++) {
 				if(obstacleArray[sort][i][j] != 0) {
-					obstacles.add(new Obstacle(j*60, i*60, obstacleArray[sort][i][j] - 1, this));
+					obstacles.add(new Obstacle(j*60, i*60, obstacleArray[sort][i][j] - 1));
 				}
 			}
 		}

@@ -1,5 +1,4 @@
 import java.awt.Graphics2D;
-import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -72,7 +71,7 @@ public class MyTank{
 		Iterator<Bullet> iterator = bullets.iterator();
 		while (iterator.hasNext()) {
 			Bullet bullet = (Bullet) iterator.next();
-			if(bullet.getBullet_x() < 0 || bullet.getBullet_x() > 1260 || bullet.getBullet_y() < 0 || bullet.getBullet_y() > 900) { 
+			if(bullet.bullet_x < 0 || bullet.bullet_x > 1260 || bullet.bullet_y < 0 || bullet.bullet_y > 900) { 
 				iterator.remove();}
 			else bullet.drawMyself(g2d);// 将dpanel的g2d画笔传给bullet来绘制子弹
 		}
@@ -123,44 +122,42 @@ public class MyTank{
 		private int bullet_speed = 15;
 		private int bullet_x, bullet_y;//用于接收生成子弹的这一时刻坦克的位置
 		private State state;//用于接收生成子弹的这一时刻坦克的状态
-		public Point point = null;//用于检测碰撞的点模型
 		
-		public Bullet(int tank_x, int tank_y, State state) {//需传入这颗子弹在生成的时候的坦克的位置和状态。
-			this.bullet_x = tank_x;
-			this.bullet_y = tank_y;
-			this.state = state;
-		}
-		
-		
-
-		public int getBullet_x() {
-			return bullet_x;
-		}
-
-		public int getBullet_y() {
-			return bullet_y;
+		public Bullet(int tank_x, int tank_y, State state) {//需要根据生成这颗子弹的时候的坦克的位置和状态，来确定子弹的初始位置和状态。
+			this.state = state;//方向和坦克的保持一致。
+			if((state == State.DOWN_MOVING) || (state == State.DOWN_STAY)) {
+				this.bullet_x = tank_x + 27; this.bullet_y = tank_y + 50;
+			}
+			if((state == State.LEFT_MOVING) || (state == State.LEFT_STAY)) {
+				this.bullet_x = tank_x - 16; this.bullet_y = tank_y + 27;
+			}
+			if((state == State.RIGHT_MOVING) || (state == State.RIGHT_STAY)) {
+				this.bullet_x = tank_x + 50; this.bullet_y = tank_y + 27;
+			}
+			if((state == State.UP_MOVING) || (state == State.UP_STAY)) {
+				this.bullet_x = tank_x + 27; this.bullet_y = tank_y - 16;
+			}
 		}
 
 		public void drawMyself(Graphics2D g2d) {
 			//根据坦克的状态调用不同的子弹图潘，并调整子弹位置。
 			if((state == State.DOWN_MOVING) || (state == State.DOWN_STAY)) {
-				g2d.drawImage(ImageUtill.bullet[2], bullet_x + 27, bullet_y + 50, null);
+				g2d.drawImage(ImageUtill.bullet[2], bullet_x, bullet_y, null);
 				bullet_y += bullet_speed;
 			}
 			if((state == State.LEFT_MOVING) || (state == State.LEFT_STAY)) {
-				g2d.drawImage(ImageUtill.bullet[3], bullet_x - 16, bullet_y + 27, null);
+				g2d.drawImage(ImageUtill.bullet[3], bullet_x, bullet_y, null);
 				bullet_x -= bullet_speed;
 			}
 			if((state == State.RIGHT_MOVING) || (state == State.RIGHT_STAY)) {
-				g2d.drawImage(ImageUtill.bullet[1], bullet_x + 50, bullet_y + 27, null);
+				g2d.drawImage(ImageUtill.bullet[1], bullet_x, bullet_y, null);
 				bullet_x += bullet_speed;
 			}
 			if((state == State.UP_MOVING) || (state == State.UP_STAY)) {
-				g2d.drawImage(ImageUtill.bullet[0], bullet_x + 27, bullet_y - 16, null);
+				g2d.drawImage(ImageUtill.bullet[0], bullet_x, bullet_y, null);
 				bullet_y -= bullet_speed;
 			}
 		}
-		
 	}
 
 

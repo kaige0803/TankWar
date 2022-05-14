@@ -49,19 +49,19 @@ public class DrawPanel extends JPanel implements Runnable {
 //		System.out.println(g2d.hashCode());
 		Graphics2D g2d = (Graphics2D) g;
 		g2d.drawImage(nowStage.backgroundImage, 0, 0, null);// 绘制背景（注意：背景需要最先画，否则背景处于最上层，看不到其他图形了）
-		//g2d.drawString("子弹数量："+ (myTank.getBullets().size() + enemyTank.getBullets().size()), 100, 100);
+		//g2d.drawString("子弹数量："+ (myTanks.get(0).getBullets().size() + nowStage.enemyTanks.getBullets().size()), 100, 100);
 		// 将dpanel的g2d画笔传给myTank来绘制坦克和子弹
 		
-		for (MyTank myTank : myTanks) {//遍历当前关卡我方坦克，如果还活着就画出来，否则就从集合中删除。
+		for (Iterator<MyTank> iterator = myTanks.iterator(); iterator.hasNext();) {//遍历当前关卡我方坦克，如果还活着就画出来，否则就从集合中删除。
+			MyTank myTank = iterator.next();
 			if(myTank.isalive) {
 				myTank.paintMyself(g2d);
 			}else {
-				myTanks.remove(myTank);
+				iterator.remove();
 			}
 		}
 		
-		Iterator<EnemyTank> iterator = nowStage.enemyTanks.iterator();
-		while (iterator.hasNext()) {
+		for(Iterator<EnemyTank> iterator = nowStage.enemyTanks.iterator(); iterator.hasNext();) {
 			EnemyTank enemyTank = iterator.next();
 			if (enemyTank.isalive) {
 				enemyTank.paintMyself(g2d);
@@ -70,13 +70,15 @@ public class DrawPanel extends JPanel implements Runnable {
 			}
 		}
 		
-		for (Obstacle obstacle : nowStage.obstacles) {//遍历当前关卡障碍物，如果还活着就画出来，否则就从集合中删除。
+		for (Iterator<Obstacle> iterator = nowStage.obstacles.iterator(); iterator.hasNext();) {//遍历当前关卡障碍物，如果还活着就画出来，否则就从集合中删除。
+			Obstacle obstacle = iterator.next();
 			if (obstacle.isalive) {
 			g2d.drawImage(obstacle.show, obstacle.x, obstacle.y, this);
 			}else {
-				nowStage.obstacles.remove(obstacle);
+				iterator.remove();
 			}
 		}
+		
 		g2d.drawImage(nowStage.base.show, nowStage.base.x, nowStage.base.y, this);//画出主基地。
 		
 		//计算帧率并绘制字符串
@@ -139,9 +141,12 @@ public class DrawPanel extends JPanel implements Runnable {
 	@Override
 	public void run() {//用于检测子弹和坦克的碰撞并刷新dpanel。
 		while(true) {
+			repaint();
+			
 			//检测我方坦克的子弹是否遇到敌方方坦克、主基地或者障碍物。
 			for (MyTank myTank : myTanks) {
 				iterator = myTank.bullets.iterator();
+				outer:
 				while(iterator.hasNext()) {
 					Bullet bullet = (Bullet) iterator.next();
 					//是否碰到敌方坦克？
@@ -151,20 +156,25 @@ System.out.println("enemytank!!!!");
 						//显示爆炸和音效
 						//将我方子弹和敌方坦克从列表中去除
 							enemyTank.isalive = false;
-							continue;
+							bullet.isalve = false;
+							break outer;
 						}
 					}
 					//是否碰到障碍物？
 					for (Obstacle obstacle : nowStage.obstacles) {
 						if(new Rectangle(obstacle.x, obstacle.y, 60, 60).contains(new Rectangle(bullet.bullet_x, bullet.bullet_y, 6, 6))) {
 System.out.println("obstacle!!!!");
-							continue;
+							obstacle.isalive = false;
+							bullet.isalve = false;
+							break outer;
 						}
 					}
 					//是否碰到主基地？
 					if(new Rectangle(nowStage.base.x, nowStage.base.y, 60, 60).contains(new Rectangle(bullet.bullet_x, bullet.bullet_y, 6, 6))) {
 System.out.println("base!!!!");
-						continue;
+						nowStage.base.isalive = false;
+						bullet.isalve = false;
+						break outer;
 					}
 				}
 			}
@@ -174,32 +184,36 @@ System.out.println("base!!!!");
 			//检测敌方坦克子弹是否遇到我方坦克、主基地或者障碍物。
 			for (EnemyTank enemyTank : nowStage.enemyTanks) {
 				iterator = enemyTank.bullets.iterator();
+				outer:
 				while(iterator.hasNext()) {
 					Bullet bullet = (Bullet) iterator.next();
 					//是否碰到我方坦克？
 					for (MyTank myTank : myTanks) {
 						if(new Rectangle(myTank.tank_x, myTank.tank_y, 60, 60).contains(new Rectangle(bullet.bullet_x, bullet.bullet_y, 6, 6))) {
 System.out.println("mytank!!!!");
-							continue;
+							myTank.isalive = false;
+							bullet.isalve = false;
+							break outer;
 						}
 					}
 					//是否碰到障碍物？
 					for (Obstacle obstacle : nowStage.obstacles) {
 						if(new Rectangle(obstacle.x, obstacle.y, 60, 60).contains(new Rectangle(bullet.bullet_x, bullet.bullet_y, 6, 6))) {
 System.out.println("obstacle!!!!");
-							continue;
+							obstacle.isalive = false;
+							bullet.isalve = false;
+							break outer;
 						}
 					}
 					//是否碰到主基地？
 					if(new Rectangle(nowStage.base.x, nowStage.base.y, 60, 60).contains(new Rectangle(bullet.bullet_x, bullet.bullet_y, 6, 6))) {
 System.out.println("base!!!!");
-						continue;
+                        nowStage.base.isalive = false;
+                        bullet.isalve = false;
+                        break outer;
 					}
 				}
 			}
-			
-			
-			repaint();
 			try {
 				Thread.sleep(50);
 			} catch (InterruptedException e) {

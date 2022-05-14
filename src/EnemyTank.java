@@ -3,6 +3,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
+import java.util.Vector;
 
 public class EnemyTank implements Runnable{
 	
@@ -12,7 +13,7 @@ public class EnemyTank implements Runnable{
 	private DrawPanel drawPanel = null;
 	private Random r = new Random();//用于产生随机方向和随机的时间间隔。
 	private State state = State.DOWN_MOVING;//初始方向向下运动。
-	public List<Bullet> bullets = new ArrayList<>();//用于存放坦克发射过的子弹
+	public List<Bullet> bullets = new Vector<>();//用于存放坦克发射过的子弹
 	public Iterator<Bullet> iterator = null;
 	public boolean isalive = true;
 	public EnemyTank(int tank_x, int tank_y, int type, DrawPanel drawPanel) {
@@ -74,7 +75,7 @@ public class EnemyTank implements Runnable{
 		iterator = bullets.iterator();
 		while (iterator.hasNext()) {
 			Bullet bullet = (Bullet) iterator.next();
-			if(bullet.bullet_x < 0 || bullet.bullet_x > 1260 || bullet.bullet_y < 0 || bullet.bullet_y > 900) { 
+			if(bullet.bullet_x < 0 || bullet.bullet_x > 1260 || bullet.bullet_y < 0 || bullet.bullet_y > 900 || bullet.isalve == false) { 
 				iterator.remove();}
 			else bullet.drawMyself(g2d);// 将dpanel的g2d画笔传给bullet来绘制子弹
 		}

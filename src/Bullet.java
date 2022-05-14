@@ -3,6 +3,7 @@ import java.awt.Graphics2D;
 public class Bullet {
 	private int bullet_speed = 15;
 	public  int bullet_x, bullet_y;//用于接收生成子弹的这一时刻坦克的位置
+	public boolean isalve = true;
 	private State state;//用于接收生成子弹的这一时刻坦克的状态
 	
 	public Bullet(int tank_x, int tank_y, State state) {//需要根据生成这颗子弹的时候的坦克的位置和状态，来确定子弹的初始位置和状态。

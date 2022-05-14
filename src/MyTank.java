@@ -2,6 +2,7 @@ import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Vector;
 
 public class MyTank{
 	
@@ -11,7 +12,7 @@ public class MyTank{
 	private DrawPanel drawPanel = null;
 	public State state = State.UP_STAY;//坦克初始状态为向上静止
 	public boolean isalive = true;
-	public List<Bullet> bullets = new ArrayList<>();//用于存放坦克发射过的子弹
+	public List<Bullet> bullets = new Vector<>();//用于存放坦克发射过的子弹
 	public Iterator<Bullet> iterator = null;
 	
 	public MyTank(int tank_x, int tank_y, int type, DrawPanel drawPanel) {
@@ -72,7 +73,7 @@ public class MyTank{
 		iterator = bullets.iterator();
 		while (iterator.hasNext()) {
 			Bullet bullet = (Bullet) iterator.next();
-			if(bullet.bullet_x < 0 || bullet.bullet_x > 1260 || bullet.bullet_y < 0 || bullet.bullet_y > 900) { 
+			if(bullet.bullet_x < 0 || bullet.bullet_x > 1260 || bullet.bullet_y < 0 || bullet.bullet_y > 900 || bullet.isalve == false) { 
 				iterator.remove();}
 			else bullet.drawMyself(g2d);// 将dpanel的g2d画笔传给bullet来绘制子弹
 		}

@@ -12,7 +12,7 @@ public class MyTank{
 	private DrawPanel drawPanel = null;
 	public State state = State.UP_STAY;//坦克初始状态为向上静止
 	public boolean isalive = true;
-	public List<Bullet> bullets = new Vector<>();//用于存放坦克发射过的子弹
+	//public List<Bullet> bullets = new Vector<>();//用于存放坦克发射过的子弹
 	public Iterator<Bullet> iterator = null;
 	
 	public MyTank(int tank_x, int tank_y, int type, DrawPanel drawPanel) {
@@ -23,9 +23,9 @@ public class MyTank{
 		this.drawPanel = drawPanel;
 	} 
 	
-	public List<Bullet> getBullets() {
-		return bullets;
-	}
+//	public List<Bullet> getBullets() {
+//		return bullets;
+//	}
 
 	public void paintMyself(Graphics2D g2d) {//接受dpanel传来的画笔g2d，将坦克自己画在dpanel上
 		if (isalive) {//如果还活着，根据不同的状态调用不同的图片，并根据边界条件改变坦克坐标。
@@ -70,13 +70,13 @@ public class MyTank{
 			//如果已死，在坦克的中心位置生成爆炸gif，并调用音频。
 		}
 		//遍历已经打出去的子弹集合，如果越界就删除，否则画在dpanel面板上
-		iterator = bullets.iterator();
-		while (iterator.hasNext()) {
-			Bullet bullet = (Bullet) iterator.next();
-			if(bullet.bullet_x < 0 || bullet.bullet_x > 1260 || bullet.bullet_y < 0 || bullet.bullet_y > 900 || bullet.isalve == false) { 
-				iterator.remove();}
-			else bullet.drawMyself(g2d);// 将dpanel的g2d画笔传给bullet来绘制子弹
-		}
+//		iterator = bullets.iterator();
+//		while (iterator.hasNext()) {
+//			Bullet bullet = (Bullet) iterator.next();
+//			if(bullet.bullet_x < 0 || bullet.bullet_x > 1260 || bullet.bullet_y < 0 || bullet.bullet_y > 900 || bullet.isalve == false) { 
+//				iterator.remove();}
+//			else bullet.drawMyself(g2d);// 将dpanel的g2d画笔传给bullet来绘制子弹
+//		}
 	}
 	
 	private boolean canMoveDown() {
@@ -120,7 +120,7 @@ public class MyTank{
 	}
 
 	public void fire() {
-		bullets.add(new Bullet(tank_x, tank_y, state));
+		drawPanel.bullets.add(new Bullet(tank_x, tank_y, state, "mytank"));
 	}
 	
 }

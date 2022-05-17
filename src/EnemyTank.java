@@ -13,7 +13,7 @@ public class EnemyTank implements Runnable{
 	private DrawPanel drawPanel = null;
 	private Random r = new Random();//用于产生随机方向和随机的时间间隔。
 	private State state = State.DOWN_MOVING;//初始方向向下运动。
-	public List<Bullet> bullets = new Vector<>();//用于存放坦克发射过的子弹
+	//public List<Bullet> bullets = new Vector<>();//用于存放坦克发射过的子弹
 	public Iterator<Bullet> iterator = null;
 	public boolean isalive = true;
 	public EnemyTank(int tank_x, int tank_y, int type, DrawPanel drawPanel) {
@@ -25,9 +25,9 @@ public class EnemyTank implements Runnable{
 		new Thread(this).start();//开启地方坦克线程。
 	}
 
-	public List<Bullet> getBullets() {
-		return bullets;
-	}
+//	public List<Bullet> getBullets() {
+//		return bullets;
+//	}
 
 	public void paintMyself(Graphics2D g2d) {//接受dpanel传来的画笔g2d，将坦克自己画在dpanel上
 		if (isalive) {//如果还活着，根据不同的状态调用不同的图片，并根据边界条件改变坦克坐标。
@@ -72,13 +72,13 @@ public class EnemyTank implements Runnable{
 			
 		}
 		//遍历已经打出去的子弹集合，如果越界就删除，否则画在dpanel面板上
-		iterator = bullets.iterator();
-		while (iterator.hasNext()) {
-			Bullet bullet = (Bullet) iterator.next();
-			if(bullet.bullet_x < 0 || bullet.bullet_x > 1260 || bullet.bullet_y < 0 || bullet.bullet_y > 900 || bullet.isalve == false) { 
-				iterator.remove();}
-			else bullet.drawMyself(g2d);// 将dpanel的g2d画笔传给bullet来绘制子弹
-		}
+//		iterator = bullets.iterator();
+//		while (iterator.hasNext()) {
+//			Bullet bullet = (Bullet) iterator.next();
+//			if(bullet.bullet_x < 0 || bullet.bullet_x > 1260 || bullet.bullet_y < 0 || bullet.bullet_y > 900 || bullet.isalve == false) { 
+//				iterator.remove();}
+//			else bullet.drawMyself(g2d);// 将dpanel的g2d画笔传给bullet来绘制子弹
+//		}
 	}
 	
 	private boolean canMoveDown() {
@@ -145,11 +145,11 @@ public class EnemyTank implements Runnable{
 			state = State.values()[r.nextInt(8)];
 			//随机加入子弹
 			try {
-				Thread.sleep(1000+r.nextInt(1000));
+				Thread.sleep(1000 + r.nextInt(1000));
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-			bullets.add(new Bullet(tank_x, tank_y, state));
+			drawPanel.bullets.add(new Bullet(tank_x, tank_y, state, "enemytank"));
 		}
 	}
 	

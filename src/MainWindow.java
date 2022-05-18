@@ -1,11 +1,12 @@
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
+import javax.swing.Timer;
 
 @SuppressWarnings("serial")
 public final class MainWindow extends JFrame {
 	
 	private DrawPanel dPanel = new DrawPanel();// 绘图首选JPane类，实现了双缓冲
-	//private Timer timer = new Timer(50, e -> dPanel.repaint());// 定时刷新,每20毫秒一次
+	private Timer timer = new Timer(10, e -> dPanel.repaint());// 定时刷新,每10毫秒一次
 
 	public MainWindow(){
 		setUndecorated(true);//去掉窗口所有的装饰，这句最好写在最前。
@@ -17,7 +18,7 @@ public final class MainWindow extends JFrame {
 		setTitle("坦克大战");
 		setVisible(true);
 		new ImageUtill();//加载资源文件。
-		new Thread(dPanel).start();// 启动定时刷新dPanel，每50毫秒一次
+		timer.start();// 启动定时刷新dPanel
 	}
 	public static void main(String[] args) {
 		SwingUtilities.invokeLater(() -> new MainWindow());

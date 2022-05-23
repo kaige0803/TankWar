@@ -1,5 +1,4 @@
 import java.awt.Graphics2D;
-import java.util.Iterator;
 
 public class MyTank{
 	
@@ -8,9 +7,6 @@ public class MyTank{
 	private int type;
 	private DrawPanel drawPanel = null;
 	public State state = State.UP_STAY;//坦克初始状态为向上静止
-	public boolean isalive = true;
-	//public List<Bullet> bullets = new Vector<>();//用于存放坦克发射过的子弹
-	public Iterator<Bullet> iterator = null;
 	
 	public MyTank(int tank_x, int tank_y, int type, DrawPanel drawPanel) {
 		super();
@@ -66,7 +62,7 @@ public class MyTank{
 
 	private boolean canMoveDown() {
 		for (Obstacle obstacle : drawPanel.nowStage.obstacles) {
-			if((tank_y == obstacle.y - 60) && (tank_x < obstacle.x + 60) && (tank_x > obstacle.x - 60) && (obstacle.type != 2)) return false;
+			if((tank_y == obstacle.y - 60) && (tank_x < obstacle.x + 60) && (tank_x > obstacle.x - 60) && (!obstacle.canCrossIn)) return false;
 		}
 		for (EnemyTank enemyTank : drawPanel.nowStage.enemyTanks) {
 			if((tank_y == enemyTank.tank_y - 60) && (tank_x < enemyTank.tank_x + 60) && (tank_x > enemyTank.tank_x - 60)) return false;
@@ -76,7 +72,7 @@ public class MyTank{
 
 	private boolean canMoveUp() {
 		for (Obstacle obstacle : drawPanel.nowStage.obstacles) {
-			if((tank_y == obstacle.y + 60) && (tank_x < obstacle.x + 60) && (tank_x > obstacle.x - 60) && (obstacle.type != 2)) return false;
+			if((tank_y == obstacle.y + 60) && (tank_x < obstacle.x + 60) && (tank_x > obstacle.x - 60) && (!obstacle.canCrossIn)) return false;
 		}
 		for (EnemyTank enemyTank : drawPanel.nowStage.enemyTanks) {
 			if((tank_y == enemyTank.tank_y + 60) && (tank_x < enemyTank.tank_x + 60) && (tank_x > enemyTank.tank_x - 60)) return false;
@@ -86,7 +82,7 @@ public class MyTank{
 
 	private boolean canMoveRight() {
 		for (Obstacle obstacle : drawPanel.nowStage.obstacles) {
-			if((tank_x == obstacle.x - 60) && (tank_y < obstacle.y + 60) && (tank_y > obstacle.y - 60) && (obstacle.type != 2)) return false;
+			if((tank_x == obstacle.x - 60) && (tank_y < obstacle.y + 60) && (tank_y > obstacle.y - 60) && (!obstacle.canCrossIn)) return false;
 		}
 		for (EnemyTank enemyTank : drawPanel.nowStage.enemyTanks) {
 			if((tank_x == enemyTank.tank_x - 60) && (tank_y < enemyTank.tank_y + 60) && (tank_y > enemyTank.tank_y - 60)) return false;
@@ -96,7 +92,7 @@ public class MyTank{
 
 	private boolean canMoveLeft() {
 		for (Obstacle obstacle : drawPanel.nowStage.obstacles) {
-			if((tank_x == obstacle.x + 60) && (tank_y < obstacle.y + 60) && (tank_y > obstacle.y - 60) && (obstacle.type != 2)) return false;
+			if((tank_x == obstacle.x + 60) && (tank_y < obstacle.y + 60) && (tank_y > obstacle.y - 60) && (!obstacle.canCrossIn)) return false;
 		}
 		for (EnemyTank enemyTank : drawPanel.nowStage.enemyTanks) {
 			if((tank_x == enemyTank.tank_x + 60) && (tank_y < enemyTank.tank_y + 60) && (tank_y > enemyTank.tank_y - 60)) return false;

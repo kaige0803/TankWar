@@ -56,69 +56,72 @@ public class DrawPanel extends JPanel{
 				enemyTank.paintMyself(g2d);
 		}
 
-		for (Iterator<Obstacle> iterator = nowStage.obstacles.iterator(); iterator.hasNext();) {// 遍历当前关卡障碍物，如果还活着就画出来，否则就从集合中删除。
+		//子弹的碰撞检测。
+		
+			outer: for (Iterator<Bullet> iterator = bullets.iterator(); iterator.hasNext();) {
+				Bullet bullet = iterator.next();
+				Iterator<MyTank> iterator2 = myTanks.iterator();
+				while (iterator2.hasNext()) {
+					MyTank myTank = iterator2.next();
+					if ((bullet.owner.equals("enemytank")) && (new Rectangle(myTank.tank_x, myTank.tank_y, 60, 60)
+							.contains(new Rectangle(bullet.bullet_x, bullet.bullet_y, 6, 6)))) {
+						System.out.println("mytank!!!!");
+						iterator.remove();
+						iterator2.remove();
+						break outer;
+					}
+				}
+
+				for (Iterator<EnemyTank> iterator3 = nowStage.enemyTanks.iterator(); iterator3.hasNext();) {
+					EnemyTank enemyTank = iterator3.next();
+					if ((bullet.owner.equals("mytank")) && (new Rectangle(enemyTank.tank_x, enemyTank.tank_y, 60, 60)
+							.contains(new Rectangle(bullet.bullet_x, bullet.bullet_y, 6, 6)))) {
+						System.out.println("enemytank!!!!");
+						enemyTank.isalive = false;
+						iterator.remove();
+						iterator3.remove();
+						break outer;
+					}
+				}
+				for (Iterator<Obstacle> iterator4 = nowStage.obstacles.iterator(); iterator4.hasNext();) {
+					Obstacle obstacle = iterator4.next();
+					if (new Rectangle(obstacle.x, obstacle.y, 60, 60)
+							.contains(new Rectangle(bullet.bullet_x, bullet.bullet_y, 6, 6))) {
+						System.out.println("obstacle!!!!");
+						if (!obstacle.canCrossIn) {
+							if (obstacle.canDisdroyed) {
+								iterator4.remove();
+								iterator.remove();
+							} else {
+								iterator.remove();
+							}
+							break outer;
+						}
+						
+					}
+				}
+				if (new Rectangle(nowStage.base.x, nowStage.base.y, 60, 60)
+						.contains(new Rectangle(bullet.bullet_x, bullet.bullet_y, 6, 6))) {
+					System.out.println("base!!!!");
+					nowStage.base.isalive = false;
+					iterator.remove();
+					break outer;
+				}
+				if (bullet.bullet_x < 0 || bullet.bullet_x > 1260 || bullet.bullet_y < 0 || bullet.bullet_y > 900) {
+					iterator.remove();
+					break outer;
+				}
+				bullet.drawMyself(g2d);
+			}
+		
+		
+		
+		for (Iterator<Obstacle> iterator = nowStage.obstacles.iterator(); iterator.hasNext();) {// 遍历当前关卡障碍物。
 			Obstacle obstacle = iterator.next();
 				g2d.drawImage(obstacle.show, obstacle.x, obstacle.y, this);
 		}
-
-		for (Iterator<Bullet> iterator = bullets.iterator(); iterator.hasNext();) {
-			Bullet bullet = iterator.next();
-				bullet.drawMyself(g2d);
-		}
-
+		
 		g2d.drawImage(nowStage.base.show, nowStage.base.x, nowStage.base.y, this);// 画出主基地。
-
-		//子弹的碰撞检测。
-		outer: for (Iterator<Bullet> iterator = bullets.iterator(); iterator.hasNext();) {
-			Bullet bullet = iterator.next();
-			Iterator<MyTank> iterator2 = myTanks.iterator();
-			while (iterator2.hasNext()) {
-				MyTank myTank = iterator2.next();
-				if ((bullet.owner.equals("enemytank")) && (new Rectangle(myTank.tank_x, myTank.tank_y, 60, 60)
-						.contains(new Rectangle(bullet.bullet_x, bullet.bullet_y, 6, 6)))) {
-					System.out.println("mytank!!!!");
-					bullet.isalve = false;
-					myTank.isalive = false;
-					iterator.remove();
-					iterator2.remove();
-					break outer;
-				}
-			}
-
-			for (Iterator<EnemyTank> iterator3 = nowStage.enemyTanks.iterator(); iterator3.hasNext();) {
-				EnemyTank enemyTank = iterator3.next();
-				if ((bullet.owner.equals("mytank")) && (new Rectangle(enemyTank.tank_x, enemyTank.tank_y, 60, 60)
-						.contains(new Rectangle(bullet.bullet_x, bullet.bullet_y, 6, 6)))) {
-					System.out.println("enemytank!!!!");
-					enemyTank.isalive = false;
-					bullet.isalve = false;
-					iterator.remove();
-					iterator3.remove();
-					break outer;
-				}
-			}
-			for (Iterator<Obstacle> iterator4 = nowStage.obstacles.iterator(); iterator4.hasNext();) {
-				Obstacle obstacle = iterator4.next();
-				if (new Rectangle(obstacle.x, obstacle.y, 60, 60)
-						.contains(new Rectangle(bullet.bullet_x, bullet.bullet_y, 6, 6))) {
-					System.out.println("obstacle!!!!");
-					obstacle.isalive = false;
-					bullet.isalve = false;
-					iterator.remove();
-					iterator4.remove();
-					break outer;
-				}
-			}
-			if (new Rectangle(nowStage.base.x, nowStage.base.y, 60, 60)
-					.contains(new Rectangle(bullet.bullet_x, bullet.bullet_y, 6, 6))) {
-				System.out.println("base!!!!");
-				nowStage.base.isalive = false;
-				break outer;
-			}
-			if (bullet.bullet_x < 0 || bullet.bullet_x > 1260 || bullet.bullet_y < 0 || bullet.bullet_y > 900) {
-				iterator.remove();
-			}
-		}
 
 		// 计算帧率并绘制字符串
 		g2d.setColor(Color.blue);

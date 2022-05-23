@@ -65,7 +65,7 @@ public class EnemyTank implements Runnable{
 	
 	private boolean canMoveDown() {
 		for (Obstacle obstacle : drawPanel.nowStage.obstacles) {
-			if((tank_y == obstacle.y - 60) && (tank_x < obstacle.x + 60) && (tank_x > obstacle.x - 60) && (obstacle.type != 2)) return false;
+			if((tank_y == obstacle.y - 60) && (tank_x < obstacle.x + 60) && (tank_x > obstacle.x - 60) && (!obstacle.canCrossIn)) return false;
 		}
 		for (EnemyTank enemyTank : drawPanel.nowStage.enemyTanks) {
 			if((tank_y == enemyTank.tank_y - 60) && (tank_x < enemyTank.tank_x + 60) && (tank_x > enemyTank.tank_x - 60)) return false;
@@ -78,7 +78,7 @@ public class EnemyTank implements Runnable{
 
 	private boolean canMoveUp() {
 		for (Obstacle obstacle : drawPanel.nowStage.obstacles) {
-			if((tank_y == obstacle.y + 60) && (tank_x < obstacle.x + 60) && (tank_x > obstacle.x - 60) && (obstacle.type != 2)) return false;
+			if((tank_y == obstacle.y + 60) && (tank_x < obstacle.x + 60) && (tank_x > obstacle.x - 60) && (!obstacle.canCrossIn)) return false;
 		}
 		for (EnemyTank enemyTank : drawPanel.nowStage.enemyTanks) {
 			if((tank_y == enemyTank.tank_y + 60) && (tank_x < enemyTank.tank_x + 60) && (tank_x > enemyTank.tank_x - 60)) return false;
@@ -91,7 +91,7 @@ public class EnemyTank implements Runnable{
 
 	private boolean canMoveRight() {
 		for (Obstacle obstacle : drawPanel.nowStage.obstacles) {
-			if((tank_x == obstacle.x - 60) && (tank_y < obstacle.y + 60) && (tank_y > obstacle.y - 60) && (obstacle.type != 2)) return false;
+			if((tank_x == obstacle.x - 60) && (tank_y < obstacle.y + 60) && (tank_y > obstacle.y - 60) && (!obstacle.canCrossIn)) return false;
 		}
 		for (EnemyTank enemyTank : drawPanel.nowStage.enemyTanks) {
 			if((tank_x == enemyTank.tank_x - 60) && (tank_y < enemyTank.tank_y + 60) && (tank_y > enemyTank.tank_y - 60)) return false;
@@ -104,7 +104,7 @@ public class EnemyTank implements Runnable{
 
 	private boolean canMoveLeft() {
 		for (Obstacle obstacle : drawPanel.nowStage.obstacles) {
-			if((tank_x == obstacle.x + 60) && (tank_y < obstacle.y + 60) && (tank_y > obstacle.y - 60) && (obstacle.type != 2)) return false;
+			if((tank_x == obstacle.x + 60) && (tank_y < obstacle.y + 60) && (tank_y > obstacle.y - 60) && (!obstacle.canCrossIn)) return false;
 		}
 		for (EnemyTank enemyTank : drawPanel.nowStage.enemyTanks) {
 			if((tank_x == enemyTank.tank_x + 60) && (tank_y < enemyTank.tank_y + 60) && (tank_y > enemyTank.tank_y - 60)) return false;
@@ -120,7 +120,7 @@ public class EnemyTank implements Runnable{
 		while(isalive) {
 			drawPanel.bullets.add(new Bullet(tank_x, tank_y, state, "enemytank"));
 			try {//随机加入子弹
-				Thread.sleep(1000 + r.nextInt(2000));
+				Thread.sleep(500 + r.nextInt(500));
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}

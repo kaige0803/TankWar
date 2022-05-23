@@ -6,7 +6,7 @@ import javax.swing.Timer;
 public final class MainWindow extends JFrame {
 	
 	private DrawPanel dPanel = new DrawPanel();// 绘图首选JPane类，实现了双缓冲
-	private Timer timer = new Timer(10, e -> dPanel.repaint());// 定时刷新,每10毫秒一次
+	private Timer timer = new Timer(20, e -> dPanel.repaint());// 定时刷新,每10毫秒一次
 
 	public MainWindow(){
 		setUndecorated(true);//去掉窗口所有的装饰，这句最好写在最前。

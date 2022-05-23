@@ -64,6 +64,10 @@ public class Stage {
 		enemyTanks.add(new EnemyTank(0, 0, 0, drawPanel));
 		enemyTanks.add(new EnemyTank(180, 0, 1, drawPanel));
 		enemyTanks.add(new EnemyTank(360, 0, 2, drawPanel));
+		enemyTanks.add(new EnemyTank(540, 0, 0, drawPanel));
+		enemyTanks.add(new EnemyTank(720, 0, 1, drawPanel));
+		enemyTanks.add(new EnemyTank(900, 0, 2, drawPanel));
+		enemyTanks.add(new EnemyTank(1080, 0, 2, drawPanel));
 		
 	}
 }

@@ -61,6 +61,7 @@ public class EnemyTank implements Runnable{
 		default:
 			break;
 		}
+		if(r.nextInt(20) > 18) drawPanel.bullets.add(new Bullet(tank_x, tank_y, state, "enemytank"));
 	}
 	
 	private boolean canMoveDown() {
@@ -118,12 +119,6 @@ public class EnemyTank implements Runnable{
 	@Override
 	public void run() {
 		while(isalive) {
-			drawPanel.bullets.add(new Bullet(tank_x, tank_y, state, "enemytank"));
-			try {//随机加入子弹
-				Thread.sleep(500 + r.nextInt(500));
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
 			//随机生成坦克状态
 			state = State.values()[r.nextInt(8)];
 			try {

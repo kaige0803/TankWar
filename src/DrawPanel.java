@@ -1,5 +1,6 @@
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
@@ -11,7 +12,7 @@ import java.util.List;
 import javax.swing.JPanel;
 
 @SuppressWarnings("serial")
-public class DrawPanel extends JPanel{
+public class DrawPanel extends JPanel {
 	private final int GAME_WITH = 1260;
 	private final int GAME_HIGHT = 900;
 	public Iterator<Bullet> iterator = null;
@@ -20,6 +21,7 @@ public class DrawPanel extends JPanel{
 	public List<MyTank> myTanks = new ArrayList<>();
 	public List<Bullet> bullets = new ArrayList<>();
 	private long temp, begin, time;// 用于计算帧率
+	private Font font = new Font("微软雅黑", Font.BOLD, 18);
 
 	public DrawPanel() {
 		setPreferredSize(new Dimension(GAME_WITH, GAME_HIGHT));// 当上一级容器不是绝对布局的时候，这里最好使用setPreferredSize。
@@ -28,7 +30,6 @@ public class DrawPanel extends JPanel{
 		requestFocus(true);
 		setFocusable(true);
 		addKeyListener(new ControlKeyListener());// 给面板添加键盘事件
-
 		Stage stage0 = new Stage(0, this);
 		// Stage stage1 = new Stage(1, this);
 		stages.add(stage0);
@@ -48,90 +49,89 @@ public class DrawPanel extends JPanel{
 
 		for (Iterator<MyTank> iterator = myTanks.iterator(); iterator.hasNext();) {// 遍历当前关卡我方坦克，如果还活着就画出来，否则就从集合中删除。
 			MyTank myTank = iterator.next();
-				myTank.paintMyself(g2d);
+			myTank.paintMyself(g2d);
 		}
 
 		for (Iterator<EnemyTank> iterator = nowStage.enemyTanks.iterator(); iterator.hasNext();) {
 			EnemyTank enemyTank = iterator.next();
-				enemyTank.paintMyself(g2d);
+			enemyTank.paintMyself(g2d);
 		}
 
-		//子弹的碰撞检测。
-		
-			outer: for (Iterator<Bullet> iterator = bullets.iterator(); iterator.hasNext();) {
-				Bullet bullet = iterator.next();
-				Iterator<MyTank> iterator2 = myTanks.iterator();
-				while (iterator2.hasNext()) {
-					MyTank myTank = iterator2.next();
-					if ((bullet.owner.equals("enemytank")) && (new Rectangle(myTank.tank_x, myTank.tank_y, 60, 60)
-							.contains(new Rectangle(bullet.bullet_x, bullet.bullet_y, 6, 6)))) {
-						System.out.println("mytank!!!!");
-						iterator.remove();
-						iterator2.remove();
-						break outer;
-					}
-				}
+		// 子弹的碰撞检测。
 
-				for (Iterator<EnemyTank> iterator3 = nowStage.enemyTanks.iterator(); iterator3.hasNext();) {
-					EnemyTank enemyTank = iterator3.next();
-					if ((bullet.owner.equals("mytank")) && (new Rectangle(enemyTank.tank_x, enemyTank.tank_y, 60, 60)
-							.contains(new Rectangle(bullet.bullet_x, bullet.bullet_y, 6, 6)))) {
-						System.out.println("enemytank!!!!");
-						enemyTank.isalive = false;
-						iterator.remove();
-						iterator3.remove();
+		outer: for (Iterator<Bullet> iterator = bullets.iterator(); iterator.hasNext();) {
+			Bullet bullet = iterator.next();
+			Iterator<MyTank> iterator2 = myTanks.iterator();
+			while (iterator2.hasNext()) {
+				MyTank myTank = iterator2.next();
+				if ((bullet.owner.equals("enemytank")) && (new Rectangle(myTank.tank_x, myTank.tank_y, 60, 60)
+						.contains(new Rectangle(bullet.bullet_x, bullet.bullet_y, 6, 6)))) {
+					//System.out.println("mytank!!!!");
+					iterator.remove();
+					iterator2.remove();
+					break outer;
+				}
+			}
+
+			for (Iterator<EnemyTank> iterator3 = nowStage.enemyTanks.iterator(); iterator3.hasNext();) {
+				EnemyTank enemyTank = iterator3.next();
+				if ((bullet.owner.equals("mytank")) && (new Rectangle(enemyTank.tank_x, enemyTank.tank_y, 60, 60)
+						.contains(new Rectangle(bullet.bullet_x, bullet.bullet_y, 6, 6)))) {
+					//System.out.println("enemytank!!!!");
+					enemyTank.isalive = false;
+					iterator.remove();
+					iterator3.remove();
+					break outer;
+				}
+			}
+			for (Iterator<Obstacle> iterator4 = nowStage.obstacles.iterator(); iterator4.hasNext();) {
+				Obstacle obstacle = iterator4.next();
+				if (new Rectangle(obstacle.x, obstacle.y, 60, 60)
+						.contains(new Rectangle(bullet.bullet_x, bullet.bullet_y, 6, 6))) {
+					//System.out.println("obstacle!!!!");
+					if (!obstacle.canCrossIn) {
+						if (obstacle.canDisdroyed) {
+							iterator4.remove();
+							iterator.remove();
+						} else {
+							iterator.remove();
+						}
 						break outer;
 					}
+
 				}
-				for (Iterator<Obstacle> iterator4 = nowStage.obstacles.iterator(); iterator4.hasNext();) {
-					Obstacle obstacle = iterator4.next();
-					if (new Rectangle(obstacle.x, obstacle.y, 60, 60)
-							.contains(new Rectangle(bullet.bullet_x, bullet.bullet_y, 6, 6))) {
-						System.out.println("obstacle!!!!");
-						if (!obstacle.canCrossIn) {
-							if (obstacle.canDisdroyed) {
-								iterator4.remove();
-								iterator.remove();
-							} else {
-								iterator.remove();
-							}
-							break outer;
-						}
-						
-					}
-				}
-				if (new Rectangle(nowStage.base.x, nowStage.base.y, 60, 60)
-						.contains(new Rectangle(bullet.bullet_x, bullet.bullet_y, 6, 6))) {
-					System.out.println("base!!!!");
-					nowStage.base.isalive = false;
-					iterator.remove();
-					break outer;
-				}
-				if (bullet.bullet_x < 0 || bullet.bullet_x > 1260 || bullet.bullet_y < 0 || bullet.bullet_y > 900) {
-					iterator.remove();
-					break outer;
-				}
-				bullet.drawMyself(g2d);
 			}
-		
-		
-		
+			if (new Rectangle(nowStage.base.x, nowStage.base.y, 60, 60)
+					.contains(new Rectangle(bullet.bullet_x, bullet.bullet_y, 6, 6))) {
+				//System.out.println("base!!!!");
+				nowStage.base.isalive = false;
+				iterator.remove();
+				break outer;
+			}
+			if (bullet.bullet_x < 0 || bullet.bullet_x > 1260 || bullet.bullet_y < 0 || bullet.bullet_y > 900) {
+				iterator.remove();
+				break outer;
+			}
+			bullet.drawMyself(g2d);
+		}
+
 		for (Iterator<Obstacle> iterator = nowStage.obstacles.iterator(); iterator.hasNext();) {// 遍历当前关卡障碍物。
 			Obstacle obstacle = iterator.next();
-				g2d.drawImage(obstacle.show, obstacle.x, obstacle.y, this);
+			g2d.drawImage(obstacle.show, obstacle.x, obstacle.y, this);
 		}
-		
+
 		g2d.drawImage(nowStage.base.show, nowStage.base.x, nowStage.base.y, this);// 画出主基地。
 
 		// 计算帧率并绘制字符串
-		g2d.setColor(Color.blue);
+		g2d.setColor(Color.DARK_GRAY);
+		g2d.setFont(font);
 		begin = System.currentTimeMillis();
 		time = begin - temp;
 		if (time != 0)
-		g.drawString("fps：" + (int) (1000 / (time)), 100, 50);
+			g.drawString("fps：" + (int) (1000 / (time)), 30, 790);
 		temp = begin;
-		g2d.drawString("子弹数量：" + (bullets.size()), 100, 100);
-		g2d.drawString("敌方坦克数量：" + nowStage.enemyTanks.size(), 100, 150);
+		g2d.drawString("子弹数量：" + (bullets.size()), 30, 830);
+		g2d.drawString("敌方坦克数量：" + nowStage.enemyTanks.size(), 30, 870);
 		g.setColor(c);
 	}
 

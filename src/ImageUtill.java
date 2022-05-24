@@ -9,7 +9,7 @@ public class ImageUtill {
 	public static BufferedImage[][] enemyTank = new BufferedImage[3][4]; 
 	public static BufferedImage[] backgrounds = new BufferedImage[10]; 
 	public static BufferedImage[] bullet = new BufferedImage[4]; 
-	public static BufferedImage[] blasts = new BufferedImage[4];
+	public static BufferedImage[] tank_blasts = new BufferedImage[11];
 	public static BufferedImage base = null;
 	
 	 
@@ -35,6 +35,9 @@ public class ImageUtill {
 				for (int j = 0; j < 4; j++) {
 					myTanks[i][j] = ImageIO.read(ImageUtill.class.getClassLoader().getResourceAsStream("images/mytanks/mytank" + i + j + ".png"));
 				}
+			}
+			for(int i = 0; i < 11; i++) {
+				tank_blasts[i] = ImageIO.read(ImageUtill.class.getClassLoader().getResourceAsStream("images/blasts/tank_blast" + i + ".gif"));
 			}
 			
 		} catch (IOException e) {

@@ -61,7 +61,7 @@ public class EnemyTank implements Runnable{
 		default:
 			break;
 		}
-		if(r.nextInt(20) > 18) drawPanel.bullets.add(new Bullet(tank_x, tank_y, state, "enemytank"));
+		if(r.nextInt(100) > 98) drawPanel.bullets.add(new Bullet(tank_x, tank_y, state, "enemytank"));
 	}
 	
 	private boolean canMoveDown() {

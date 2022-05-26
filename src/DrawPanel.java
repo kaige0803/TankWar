@@ -67,7 +67,6 @@ public class DrawPanel extends JPanel {
 				if ((bullet.owner.equals("enemytank")) && (new Rectangle(myTank.tank_x, myTank.tank_y, 60, 60)
 						.contains(new Rectangle(bullet.bullet_x, bullet.bullet_y, 6, 6)))) {
 					//System.out.println("mytank!!!!");
-					new BlastThead(myTank.tank_x, myTank.tank_y, g2d).start();
 					iterator.remove();
 					iterator2.remove();
 					break outer;
@@ -80,7 +79,6 @@ public class DrawPanel extends JPanel {
 						.contains(new Rectangle(bullet.bullet_x, bullet.bullet_y, 6, 6)))) {
 					//System.out.println("enemytank!!!!");
 					enemyTank.isalive = false;
-					new BlastThead(enemyTank.tank_x, enemyTank.tank_y, g2d).start();
 					iterator.remove();
 					iterator3.remove();
 					break outer;
@@ -183,31 +181,4 @@ public class DrawPanel extends JPanel {
 			}
 		}
 	}
-
-	public class BlastThead extends Thread {
-		private int x, y;
-		private Graphics2D g2d;
-		
-		public BlastThead(int x, int y, Graphics2D g2d) {
-			super();
-			this.x = x;
-			this.y = y;
-			this.g2d = g2d;
-		}
-
-		@Override
-		public void run() {
-			for(int i = 0; i < 11; i++) {
-				g2d.drawImage(ImageUtill.tank_blasts[0], x, y, null);
-				try {
-					Thread.sleep(50);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		}
-		
-	}
-	
 }

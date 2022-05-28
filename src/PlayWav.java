@@ -15,9 +15,9 @@ public class PlayWav {
             AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(PlayWav.class.getClassLoader().getResourceAsStream(file));
             // read audio format from stream
             AudioFormat audioFormat = audioInputStream.getFormat();
-            System.out.println("采样率：" + audioFormat.getSampleRate());
-            System.out.println("总帧数：" + audioInputStream.getFrameLength());
-            System.out.println("时长（秒）：" + audioInputStream.getFrameLength() / audioFormat.getSampleRate());
+//            System.out.println("采样率：" + audioFormat.getSampleRate());
+//            System.out.println("总帧数：" + audioInputStream.getFrameLength());
+//            System.out.println("时长（秒）：" + audioInputStream.getFrameLength() / audioFormat.getSampleRate());
             // SourceDataLine info
             Info dataLineInfo = new Info(SourceDataLine.class, audioFormat);
 
@@ -45,9 +45,9 @@ public class PlayWav {
     }
 
     
-    public static void main(String[] args) {
-        new PlayWav("audio/bulletflying.wav");
-        new PlayWav("audio/tankblast.wav");
-
-    }
+//    public static void main(String[] args) {
+//        new PlayWav("audio/bulletflying.wav");
+//        new PlayWav("audio/tankblast.wav");
+//
+//    }
 }

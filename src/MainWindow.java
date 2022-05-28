@@ -6,7 +6,7 @@ import javax.swing.Timer;
 public final class MainWindow extends JFrame {
 	
 	private DrawPanel dPanel = new DrawPanel();// 绘图首选JPane类，实现了双缓冲
-	private Timer timer = new Timer(20, e -> dPanel.repaint());// 定时刷新,每10毫秒一次
+	private Timer timer = new Timer(20, e -> dPanel.repaint());// 定时刷新,每20毫秒一次
 
 	public MainWindow(){
 		setUndecorated(true);//去掉窗口所有的装饰，这句最好写在最前。
@@ -17,7 +17,6 @@ public final class MainWindow extends JFrame {
 		setLocationRelativeTo(null);// 窗口居中显示。这句要加在窗口添加完所有组件并打包之后。
 		setTitle("坦克大战");
 		setVisible(true);
-		new ImageUtill();//加载资源文件。
 		timer.start();// 启动定时刷新dPanel
 	}
 	public static void main(String[] args) {

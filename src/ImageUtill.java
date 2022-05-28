@@ -11,6 +11,7 @@ public class ImageUtill {
 	public static BufferedImage[] bullet = new BufferedImage[4]; 
 	public static BufferedImage[] tank_blasts = new BufferedImage[11];
 	public static BufferedImage base = null;
+	public static BufferedImage destroyed = null;
 	
 	 
 	static {
@@ -24,6 +25,7 @@ public class ImageUtill {
 			obstacles[1] = ImageIO.read(ImageUtill.class.getClassLoader().getResourceAsStream("images/obstacles/stone.png"));
 			obstacles[2] = ImageIO.read(ImageUtill.class.getClassLoader().getResourceAsStream("images/obstacles/grass.png"));
 			base = ImageIO.read(ImageUtill.class.getClassLoader().getResourceAsStream("images/base/base.png"));
+			destroyed = ImageIO.read(ImageUtill.class.getClassLoader().getResourceAsStream("images/destroyed/destroyed.png"));
 			
 			for (int i = 0; i < 3; i++) {
 				for (int j = 0; j < 4; j++) { 
@@ -39,7 +41,6 @@ public class ImageUtill {
 			for(int i = 0; i < 11; i++) {
 				tank_blasts[i] = ImageIO.read(ImageUtill.class.getClassLoader().getResourceAsStream("images/blasts/tank_blast" + i + ".gif"));
 			}
-			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

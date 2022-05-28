@@ -1,4 +1,5 @@
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 
 public class MyTank{
 	
@@ -7,6 +8,7 @@ public class MyTank{
 	private int type;
 	private DrawPanel drawPanel = null;
 	public State state = State.UP_STAY;//坦克初始状态为向上静止
+	public Rectangle rectangle;
 	
 	public MyTank(int tank_x, int tank_y, int type, DrawPanel drawPanel) {
 		super();
@@ -14,6 +16,7 @@ public class MyTank{
 		this.tank_x = tank_x;
 		this.tank_y = tank_y;
 		this.drawPanel = drawPanel;
+		rectangle = new Rectangle(tank_x, tank_y, 60, 60);
 	} 
 	
 //	public List<Bullet> getBullets() {
@@ -24,23 +27,31 @@ public class MyTank{
 		switch (state) {
 		case LEFT_MOVING:
 			g2d.drawImage(ImageUtill.myTanks[type][3], tank_x, tank_y, null);
-			if (tank_x > 0 && canMoveLeft())// 判断坦克是否到达边界或者遇到障碍物。
+			if (tank_x > 0 && canMoveLeft()) {// 判断坦克是否到达边界或者遇到障碍物。
 				tank_x -= tank_speed;
+				rectangle.x = tank_x;
+			}
 			break;
 		case RIGHT_MOVING:
 			g2d.drawImage(ImageUtill.myTanks[type][1], tank_x, tank_y, null);
-			if (tank_x < 1200 && canMoveRight())
+			if (tank_x < 1200 && canMoveRight()) {
 				tank_x += tank_speed;
+				rectangle.x = tank_x;
+			}
 			break;
 		case UP_MOVING:
 			g2d.drawImage(ImageUtill.myTanks[type][0], tank_x, tank_y, null);
-			if (tank_y > 0 && canMoveUp())
+			if (tank_y > 0 && canMoveUp()) {
 				tank_y -= tank_speed;
+				rectangle.y = tank_y;
+			}
 			break;
 		case DOWN_MOVING:
 			g2d.drawImage(ImageUtill.myTanks[type][2], tank_x, tank_y, null);
-			if (tank_y < 840 && canMoveDown())
+			if (tank_y < 840 && canMoveDown()) {
 				tank_y += tank_speed;
+				rectangle.y = tank_y;
+			}
 			break;
 		case LEFT_STAY:
 			g2d.drawImage(ImageUtill.myTanks[type][3], tank_x, tank_y, null);
@@ -102,6 +113,7 @@ public class MyTank{
 
 	public void fire() {
 		drawPanel.bullets.add(new Bullet(tank_x, tank_y, state, "mytank"));
+		new Thread(() -> new PlayWav("audio/bulletflying.wav")).start();
 	}
 	
 }

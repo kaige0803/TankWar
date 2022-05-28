@@ -1,4 +1,5 @@
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.util.Random;
 
 public class EnemyTank implements Runnable{
@@ -10,12 +11,15 @@ public class EnemyTank implements Runnable{
 	private Random r = new Random();//用于产生随机方向和随机的时间间隔。
 	private State state = State.DOWN_MOVING;//初始方向向下运动。
 	public boolean isalive = true;
+	public Rectangle rectangle;
+	
 	public EnemyTank(int tank_x, int tank_y, int type, DrawPanel drawPanel) {
 		super();
 		this.type = type;
 		this.tank_x = tank_x;
 		this.tank_y = tank_y;
 		this.drawPanel = drawPanel;
+		rectangle = new Rectangle(tank_x, tank_y, 60, 60);
 		new Thread(this).start();//开启地方坦克线程。
 	}
 
@@ -23,27 +27,35 @@ public class EnemyTank implements Runnable{
 //		return bullets;
 //	}
 
-	public void paintMyself(Graphics2D g2d) {// 接受dpanel传来的画笔g2d，将坦克自己画在dpanel上
+	public void drawMyself(Graphics2D g2d) {// 接受dpanel传来的画笔g2d，将坦克自己画在dpanel上
 		switch (state) {
 		case LEFT_MOVING:
 			g2d.drawImage(ImageUtill.enemyTank[type][3], tank_x, tank_y, null);
-			if (tank_x > 0 && canMoveLeft())
+			if (tank_x > 0 && canMoveLeft()) {
 				tank_x -= tank_speed;
+				rectangle.x = tank_x;
+			}
 			break;
 		case RIGHT_MOVING:
 			g2d.drawImage(ImageUtill.enemyTank[type][1], tank_x, tank_y, null);
-			if (tank_x < 1200 && canMoveRight())
+			if (tank_x < 1200 && canMoveRight()) {
 				tank_x += tank_speed;
+				rectangle.x = tank_x;
+			}
 			break;
 		case UP_MOVING:
 			g2d.drawImage(ImageUtill.enemyTank[type][0], tank_x, tank_y, null);
-			if (tank_y > 0 && canMoveUp())
+			if (tank_y > 0 && canMoveUp()) {
 				tank_y -= tank_speed;
+				rectangle.y = tank_y;
+			}
 			break;
 		case DOWN_MOVING:
 			g2d.drawImage(ImageUtill.enemyTank[type][2], tank_x, tank_y, null);
-			if (tank_y < 840 && canMoveDown())
+			if (tank_y < 840 && canMoveDown()) {
 				tank_y += tank_speed;
+				rectangle.y = tank_y;
+			}
 			break;
 		case LEFT_STAY:
 			g2d.drawImage(ImageUtill.enemyTank[type][3], tank_x, tank_y, null);
@@ -120,7 +132,7 @@ public class EnemyTank implements Runnable{
 	public void run() {
 		while(isalive) {
 			//随机生成坦克状态
-			state = State.values()[r.nextInt(8)];
+			state = State.values()[r.nextInt(4)];
 			try {
 				Thread.sleep(1000 + r.nextInt(1000));
 			} catch (InterruptedException e) {

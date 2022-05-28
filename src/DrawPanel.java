@@ -12,14 +12,14 @@ import java.util.List;
 import javax.swing.JPanel;
 
 @SuppressWarnings("serial")
-public class DrawPanel extends JPanel {
+public class DrawPanel extends JPanel implements Runnable{
 	private final int GAME_WITH = 1260;
 	private final int GAME_HIGHT = 900;
-	public Iterator<Bullet> iterator = null;
 	private List<Stage> stages = new ArrayList<>();// 存储每一关的场景
 	public Stage nowStage = null;// 当前关卡
 	public List<MyTank> myTanks = new ArrayList<>();
 	public List<Bullet> bullets = new ArrayList<>();
+	public List<Blast> blasts = new ArrayList<>();
 	private long temp, begin, time;// 用于计算帧率
 	private Font font = new Font("微软雅黑", Font.BOLD, 18);
 
@@ -36,6 +36,7 @@ public class DrawPanel extends JPanel {
 		// stages.add(stage1);
 		nowStage = stages.get(0);
 		myTanks.add(new MyTank(480, 840, 0, this));// 生成一辆我方坦克
+		new Thread(this).start();
 	}
 
 	@Override
@@ -54,7 +55,7 @@ public class DrawPanel extends JPanel {
 
 		for (Iterator<EnemyTank> iterator = nowStage.enemyTanks.iterator(); iterator.hasNext();) {
 			EnemyTank enemyTank = iterator.next();
-			enemyTank.paintMyself(g2d);
+			enemyTank.drawMyself(g2d);
 		}
 
 		// 子弹的碰撞检测。
@@ -64,9 +65,10 @@ public class DrawPanel extends JPanel {
 			Iterator<MyTank> iterator2 = myTanks.iterator();
 			while (iterator2.hasNext()) {
 				MyTank myTank = iterator2.next();
-				if ((bullet.owner.equals("enemytank")) && (new Rectangle(myTank.tank_x, myTank.tank_y, 60, 60)
-						.contains(new Rectangle(bullet.bullet_x, bullet.bullet_y, 6, 6)))) {
+				if ((bullet.owner.equals("enemytank")) && (myTank.rectangle.contains(bullet.rectangle))) {
 					//System.out.println("mytank!!!!");
+					blasts.add(new Blast(myTank.tank_x, myTank.tank_y));
+					new Thread(() -> new PlayWav("audio/tankblast.wav")).start();
 					iterator.remove();
 					iterator2.remove();
 					break outer;
@@ -75,9 +77,10 @@ public class DrawPanel extends JPanel {
 
 			for (Iterator<EnemyTank> iterator3 = nowStage.enemyTanks.iterator(); iterator3.hasNext();) {
 				EnemyTank enemyTank = iterator3.next();
-				if ((bullet.owner.equals("mytank")) && (new Rectangle(enemyTank.tank_x, enemyTank.tank_y, 60, 60)
-						.contains(new Rectangle(bullet.bullet_x, bullet.bullet_y, 6, 6)))) {
+				if ((bullet.owner.equals("mytank")) && (enemyTank.rectangle.contains(bullet.rectangle))) {
 					//System.out.println("enemytank!!!!");
+					blasts.add(new Blast(enemyTank.tank_x, enemyTank.tank_y));
+					new Thread(() -> new PlayWav("audio/tankblast.wav")).start();
 					enemyTank.isalive = false;
 					iterator.remove();
 					iterator3.remove();
@@ -86,11 +89,12 @@ public class DrawPanel extends JPanel {
 			}
 			for (Iterator<Obstacle> iterator4 = nowStage.obstacles.iterator(); iterator4.hasNext();) {
 				Obstacle obstacle = iterator4.next();
-				if (new Rectangle(obstacle.x, obstacle.y, 60, 60)
-						.contains(new Rectangle(bullet.bullet_x, bullet.bullet_y, 6, 6))) {
+				if (new Rectangle(obstacle.x, obstacle.y, 60, 60).intersects(bullet.rectangle)) {
 					//System.out.println("obstacle!!!!");
 					if (!obstacle.canCrossIn) {
 						if (obstacle.canDisdroyed) {
+							blasts.add(new Blast(obstacle.x, obstacle.y));
+							new Thread(() -> new PlayWav("audio/tankblast.wav")).start();
 							iterator4.remove();
 							iterator.remove();
 						} else {
@@ -101,9 +105,10 @@ public class DrawPanel extends JPanel {
 
 				}
 			}
-			if (new Rectangle(nowStage.base.x, nowStage.base.y, 60, 60)
-					.contains(new Rectangle(bullet.bullet_x, bullet.bullet_y, 6, 6))) {
+			if (nowStage.base.rectangle.contains(bullet.rectangle)) {
 				//System.out.println("base!!!!");
+				blasts.add(new Blast(nowStage.base.x, nowStage.base.y));
+				new Thread(() -> new PlayWav("audio/tankblast.wav")).start();
 				nowStage.base.isalive = false;
 				iterator.remove();
 				break outer;
@@ -120,27 +125,37 @@ public class DrawPanel extends JPanel {
 			g2d.drawImage(obstacle.show, obstacle.x, obstacle.y, this);
 		}
 
-		g2d.drawImage(nowStage.base.show, nowStage.base.x, nowStage.base.y, this);// 画出主基地。
+		g2d.drawImage(nowStage.base.getshow(), nowStage.base.x, nowStage.base.y, this);// 画出主基地。
+		
+		for (Iterator<Blast> iterator = blasts.iterator(); iterator.hasNext();) {
+			Blast blast = iterator.next();
+			if(blast.step <= 10) blast.drawMyself(g2d);
+			else {
+				iterator.remove();
+			}
+		}
 
 		// 计算帧率并绘制字符串
 		g2d.setColor(Color.DARK_GRAY);
 		g2d.setFont(font);
+		g2d.drawString("爆炸数量：" + blasts.size(), 30, 770);
 		begin = System.currentTimeMillis();
 		time = begin - temp;
 		if (time != 0)
-			g.drawString("fps：" + (int) (1000 / (time)), 30, 790);
+			g.drawString("fps：" + (int) (1000 / (time)), 30, 800);
 		temp = begin;
 		g2d.drawString("子弹数量：" + (bullets.size()), 30, 830);
-		g2d.drawString("敌方坦克数量：" + nowStage.enemyTanks.size(), 30, 870);
+		g2d.drawString("敌方坦克数量：" + nowStage.enemyTanks.size(), 30, 860);
+		g2d.drawString("我方坦克数量：" + myTanks.size(), 30, 890);
 		g.setColor(c);
 	}
 
-	// 处理dpanel接收到的keyPressed键盘事件e，并改变状态所需要控制的坦克的state，供paintMyself函数画图
+	// 处理dpanel接收到的keyPressed键盘事件e，并改变控制坦克所需的state，供drawMyself函数画图
 	private class ControlKeyListener extends KeyAdapter {
 
 		@Override // 用于坦克移动
-		public void keyPressed(KeyEvent e) {// 键盘按下去，大约20-40毫秒触发一次
-			switch (e.getKeyCode()) {// 如果用swith的话只能垂直和水平走，因为swith中有break 所以只能响应最先按下的键。如果用if-else就可以斜着走了。
+		public void keyPressed(KeyEvent e) {
+			switch (e.getKeyCode()) {
 			case KeyEvent.VK_W:
 				myTanks.get(0).state = State.UP_MOVING;
 				break;
@@ -180,5 +195,15 @@ public class DrawPanel extends JPanel {
 				break;
 			}
 		}
+	}
+
+	@Override
+	public void run() {
+////		while (true) {
+////			System.out.println(nowStage.base.isalive);
+////			if (nowStage.base.isalive == false) {
+////				System.out.println("game over!!!");
+////			}
+//		}
 	}
 }

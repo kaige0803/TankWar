@@ -209,6 +209,7 @@ public class DrawPanel extends JPanel implements Runnable{
 				stages.set(sort, new Stage(sort, this));
 				nowStage = stages.get(sort);
 				myTanks.clear();
+				bullets.clear();
 				myTanks.add(new MyTank(480, 840, 0, "player1", this));
 			}
 			if(nowStage.enemyTanks.isEmpty()) {

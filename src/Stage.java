@@ -6,7 +6,6 @@ public class Stage {
 	public int sort;//当前关卡。
 	public Base base = null;
 	public List<EnemyTank> enemyTanks = new ArrayList<>();
-	public BufferedImage backgroundImage = null;
 	public List<Obstacle> obstacles = new ArrayList<>();//用于存放当前关卡的所有障碍物。
 	public static final int[][][] obstacleArray = { //一共10个关卡，每个关卡把屏幕分割成21✖15个单元。每个单元60✖60像素。用于标记障碍物的位置和type。
 			                                      {{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
@@ -59,7 +58,7 @@ public class Stage {
 				}
 			}
 		}
-		backgroundImage = ImageUtill.backgrounds[sort];//根据关卡生成该关卡的背景图片。
+		
 		base = new Base(600, 840);//生成主基地。
 		enemyTanks.add(new EnemyTank(0, 0, 0, drawPanel));
 		enemyTanks.add(new EnemyTank(180, 0, 1, drawPanel));
@@ -68,6 +67,10 @@ public class Stage {
 		enemyTanks.add(new EnemyTank(720, 0, 1, drawPanel));
 		enemyTanks.add(new EnemyTank(900, 0, 2, drawPanel));
 		enemyTanks.add(new EnemyTank(1080, 0, 2, drawPanel));
+	}
+	
+	public void reset() {
+		// TODO Auto-generated method stub
 		
 	}
 }

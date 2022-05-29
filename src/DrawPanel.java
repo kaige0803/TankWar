@@ -6,6 +6,7 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -17,6 +18,8 @@ public class DrawPanel extends JPanel implements Runnable{
 	private final int GAME_HIGHT = 900;
 	private List<Stage> stages = new ArrayList<>();// 存储每一关的场景
 	public Stage nowStage = null;// 当前关卡
+	public int sort;
+	public BufferedImage backgroundImage = null;
 	public List<MyTank> myTanks = new ArrayList<>();
 	public List<Bullet> bullets = new ArrayList<>();
 	public List<Blast> blasts = new ArrayList<>();
@@ -30,12 +33,13 @@ public class DrawPanel extends JPanel implements Runnable{
 		requestFocus(true);
 		setFocusable(true);
 		addKeyListener(new ControlKeyListener());// 给面板添加键盘事件
-		Stage stage0 = new Stage(0, this);
-		// Stage stage1 = new Stage(1, this);
-		stages.add(stage0);
-		// stages.add(stage1);
-		nowStage = stages.get(0);
-		myTanks.add(new MyTank(480, 840, 0, this));// 生成一辆我方坦克
+		stages.add(new Stage(0, this));
+		stages.add(new Stage(1, this));
+		sort = 0;
+		nowStage = stages.get(sort);
+		backgroundImage = ImageUtill.backgrounds[0];//根据关卡生成该关卡的背景图片。
+		myTanks.add(new MyTank(480, 840, 0, "player1", this));// 生成一辆我方坦克
+		//myTanks.add(new MyTank(720, 840, 1, "player2", this));// 生成一辆我方坦克
 		new Thread(this).start();
 	}
 
@@ -46,19 +50,19 @@ public class DrawPanel extends JPanel implements Runnable{
 		// System.out.println(g.hashCode());通过调用g和g2d的hashcode值我们发现是相等的，强转后指向同一对象。
 		// System.out.println(g2d.hashCode());
 		Graphics2D g2d = (Graphics2D) g;
-		g2d.drawImage(nowStage.backgroundImage, 0, 0, null);// 绘制背景（注意：背景需要最先画，否则背景处于最上层，看不到其他图形了）
+		g2d.drawImage(backgroundImage, 0, 0, null);// 绘制背景（注意：背景需要最先画，否则背景处于最上层，看不到其他图形了）
 
-		for (Iterator<MyTank> iterator = myTanks.iterator(); iterator.hasNext();) {// 遍历当前关卡我方坦克，如果还活着就画出来，否则就从集合中删除。
+		for (Iterator<MyTank> iterator = myTanks.iterator(); iterator.hasNext();) {// 画出我方坦克。
 			MyTank myTank = iterator.next();
 			myTank.paintMyself(g2d);
 		}
 
-		for (Iterator<EnemyTank> iterator = nowStage.enemyTanks.iterator(); iterator.hasNext();) {
+		for (Iterator<EnemyTank> iterator = nowStage.enemyTanks.iterator(); iterator.hasNext();) {//画出地方坦克。
 			EnemyTank enemyTank = iterator.next();
 			enemyTank.drawMyself(g2d);
 		}
 
-		// 子弹的碰撞检测。
+		// 子弹的碰撞检测后画出。
 
 		outer: for (Iterator<Bullet> iterator = bullets.iterator(); iterator.hasNext();) {
 			Bullet bullet = iterator.next();
@@ -120,14 +124,14 @@ public class DrawPanel extends JPanel implements Runnable{
 			bullet.drawMyself(g2d);
 		}
 
-		for (Iterator<Obstacle> iterator = nowStage.obstacles.iterator(); iterator.hasNext();) {// 遍历当前关卡障碍物。
+		for (Iterator<Obstacle> iterator = nowStage.obstacles.iterator(); iterator.hasNext();) {// 画出当前关卡障碍物。
 			Obstacle obstacle = iterator.next();
 			g2d.drawImage(obstacle.show, obstacle.x, obstacle.y, this);
 		}
 
 		g2d.drawImage(nowStage.base.getshow(), nowStage.base.x, nowStage.base.y, this);// 画出主基地。
 		
-		for (Iterator<Blast> iterator = blasts.iterator(); iterator.hasNext();) {
+		for (Iterator<Blast> iterator = blasts.iterator(); iterator.hasNext();) {//画出爆炸，每一帧画一张，一共11张图片。
 			Blast blast = iterator.next();
 			if(blast.step <= 10) blast.drawMyself(g2d);
 			else {
@@ -199,11 +203,23 @@ public class DrawPanel extends JPanel implements Runnable{
 
 	@Override
 	public void run() {
-////		while (true) {
-////			System.out.println(nowStage.base.isalive);
-////			if (nowStage.base.isalive == false) {
-////				System.out.println("game over!!!");
-////			}
-//		}
+		while (true) {
+			if (nowStage.base.isalive == false || myTanks.isEmpty()) {
+				System.out.println("game over!!!");
+				stages.set(sort, new Stage(sort, this));
+				nowStage = stages.get(sort);
+				myTanks.clear();
+				myTanks.add(new MyTank(480, 840, 0, "player1", this));
+			}
+			if(nowStage.enemyTanks.isEmpty()) {
+				sort++;
+				nowStage = stages.get(sort);
+			}
+			try {
+				Thread.sleep(1);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 }

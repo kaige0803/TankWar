@@ -6,15 +6,17 @@ public class MyTank{
 	public  int tank_x, tank_y;//坦克位置
 	private int tank_speed = 5;//坦克速度
 	private int type;
+	public String name;
 	private DrawPanel drawPanel = null;
 	public State state = State.UP_STAY;//坦克初始状态为向上静止
 	public Rectangle rectangle;
 	
-	public MyTank(int tank_x, int tank_y, int type, DrawPanel drawPanel) {
+	public MyTank(int tank_x, int tank_y, int type, String name, DrawPanel drawPanel) {
 		super();
 		this.type = type;
 		this.tank_x = tank_x;
 		this.tank_y = tank_y;
+		this.name = name;
 		this.drawPanel = drawPanel;
 		rectangle = new Rectangle(tank_x, tank_y, 60, 60);
 	} 

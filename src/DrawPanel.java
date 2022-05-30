@@ -112,7 +112,7 @@ public class DrawPanel extends JPanel implements Runnable{
 			if (nowStage.base.rectangle.contains(bullet.rectangle)) {
 				//System.out.println("base!!!!");
 				blasts.add(new Blast(nowStage.base.x, nowStage.base.y));
-				new Thread(() -> new PlayWav("audio/tankblast.wav")).start();
+				new Thread(() -> new PlayWav("audio/base_blast.wav")).start();
 				nowStage.base.isalive = false;
 				iterator.remove();
 				break outer;

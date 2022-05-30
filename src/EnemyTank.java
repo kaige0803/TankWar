@@ -138,7 +138,6 @@ public class EnemyTank implements Runnable{
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-			
 		}
 	}
 	

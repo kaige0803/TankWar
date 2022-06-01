@@ -115,7 +115,7 @@ public class MyTank{
 
 	public void fire() {
 		drawPanel.bullets.add(new Bullet(tank_x, tank_y, state, "mytank"));
-		new Thread(() -> new PlayWav("audio/bulletflying.wav")).start();
+		new Thread(() -> new PlayWav("audio/bullet_flying.wav")).start();
 	}
 	
 }

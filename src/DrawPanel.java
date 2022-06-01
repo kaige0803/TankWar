@@ -71,8 +71,8 @@ public class DrawPanel extends JPanel implements Runnable{
 				MyTank myTank = iterator2.next();
 				if ((bullet.owner.equals("enemytank")) && (myTank.rectangle.contains(bullet.rectangle))) {
 					//System.out.println("mytank!!!!");
-					blasts.add(new Blast(myTank.tank_x, myTank.tank_y));
-					new Thread(() -> new PlayWav("audio/tankblast.wav")).start();
+					blasts.add(new Blast(myTank.tank_x, myTank.tank_y, 0));
+					new Thread(() -> new PlayWav("audio/tank_blast.wav")).start();
 					iterator.remove();
 					iterator2.remove();
 					break outer;
@@ -83,8 +83,8 @@ public class DrawPanel extends JPanel implements Runnable{
 				EnemyTank enemyTank = iterator3.next();
 				if ((bullet.owner.equals("mytank")) && (enemyTank.rectangle.contains(bullet.rectangle))) {
 					//System.out.println("enemytank!!!!");
-					blasts.add(new Blast(enemyTank.tank_x, enemyTank.tank_y));
-					new Thread(() -> new PlayWav("audio/tankblast.wav")).start();
+					blasts.add(new Blast(enemyTank.tank_x, enemyTank.tank_y, 0));
+					new Thread(() -> new PlayWav("audio/tank_blast.wav")).start();
 					enemyTank.isalive = false;
 					iterator.remove();
 					iterator3.remove();
@@ -97,11 +97,13 @@ public class DrawPanel extends JPanel implements Runnable{
 					//System.out.println("obstacle!!!!");
 					if (!obstacle.canCrossIn) {
 						if (obstacle.canDisdroyed) {
-							blasts.add(new Blast(obstacle.x, obstacle.y));
-							new Thread(() -> new PlayWav("audio/tankblast.wav")).start();
+							blasts.add(new Blast(obstacle.x, obstacle.y, 0));
+							new Thread(() -> new PlayWav("audio/obstacle_blast.wav")).start();
 							iterator4.remove();
 							iterator.remove();
 						} else {
+							blasts.add(new Blast(obstacle.x, obstacle.y, 2));
+							new Thread(() -> new PlayWav("audio/steel_blast.wav")).start();
 							iterator.remove();
 						}
 						break outer;
@@ -109,9 +111,9 @@ public class DrawPanel extends JPanel implements Runnable{
 
 				}
 			}
-			if (nowStage.base.rectangle.contains(bullet.rectangle)) {
+			if (nowStage.base.isalive && nowStage.base.rectangle.contains(bullet.rectangle)) {
 				//System.out.println("base!!!!");
-				blasts.add(new Blast(nowStage.base.x, nowStage.base.y));
+				blasts.add(new Blast(nowStage.base.x, nowStage.base.y, 1));
 				new Thread(() -> new PlayWav("audio/base_blast.wav")).start();
 				nowStage.base.isalive = false;
 				iterator.remove();
@@ -133,7 +135,7 @@ public class DrawPanel extends JPanel implements Runnable{
 		
 		for (Iterator<Blast> iterator = blasts.iterator(); iterator.hasNext();) {//画出爆炸，每一帧画一张，一共11张图片。
 			Blast blast = iterator.next();
-			if(blast.step <= 10) blast.drawMyself(g2d);
+			if(blast.step <= blast.sum - 1) blast.drawMyself(g2d);
 			else {
 				iterator.remove();
 			}
@@ -206,6 +208,12 @@ public class DrawPanel extends JPanel implements Runnable{
 		while (true) {
 			if (nowStage.base.isalive == false || myTanks.isEmpty()) {
 				System.out.println("game over!!!");
+				try {
+					Thread.sleep(2000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				stages.set(sort, new Stage(sort, this));
 				nowStage = stages.get(sort);
 				myTanks.clear();
@@ -213,6 +221,12 @@ public class DrawPanel extends JPanel implements Runnable{
 				myTanks.add(new MyTank(480, 840, 0, "player1", this));
 			}
 			if(nowStage.enemyTanks.isEmpty()) {
+				try {
+					Thread.sleep(2000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				sort++;
 				nowStage = stages.get(sort);
 			}

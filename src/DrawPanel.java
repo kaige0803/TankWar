@@ -14,8 +14,10 @@ import javax.swing.JPanel;
 
 @SuppressWarnings("serial")
 public class DrawPanel extends JPanel implements Runnable{
-	private final int GAME_WITH = 1260;
-	private final int GAME_HIGHT = 900;
+	private static final int GAME_WITH = 1260;
+	private static final int GAME_HIGHT = 900;
+	public boolean[] keyboardPressing;//记录正在按的键
+	public boolean[] keyboardPressed;//当键盘释放时记录这个键
 	private List<Stage> stages = new ArrayList<>();// 存储每一关的场景
 	public Stage nowStage = null;// 当前关卡
 	public int sort;
@@ -32,14 +34,16 @@ public class DrawPanel extends JPanel implements Runnable{
 		// 下面两步很关键，否则dpanel无法响应键盘事件
 		requestFocus(true);
 		setFocusable(true);
+		keyboardPressing = new boolean[256];
+		keyboardPressed = new boolean[256];
 		addKeyListener(new ControlKeyListener());// 给面板添加键盘事件
 		stages.add(new Stage(0, this));
 		stages.add(new Stage(1, this));
 		sort = 0;
 		nowStage = stages.get(sort);
 		backgroundImage = ImageUtill.backgrounds[0];//根据关卡生成该关卡的背景图片。
-		myTanks.add(new MyTank(480, 840, 0, "player1", this));// 生成一辆我方坦克
-		//myTanks.add(new MyTank(720, 840, 1, "player2", this));// 生成一辆我方坦克
+		myTanks.add(new MyTank(480, 840, 0, this));// 生成一辆我方坦克
+		myTanks.add(new MyTank(720, 840, 1, this));// 生成一辆我方坦克
 		new Thread(this).start();
 	}
 
@@ -161,45 +165,15 @@ public class DrawPanel extends JPanel implements Runnable{
 
 		@Override // 用于坦克移动
 		public void keyPressed(KeyEvent e) {
-			switch (e.getKeyCode()) {
-			case KeyEvent.VK_W:
-				myTanks.get(0).state = State.UP_MOVING;
-				break;
-			case KeyEvent.VK_S:
-				myTanks.get(0).state = State.DOWN_MOVING;
-				break;
-			case KeyEvent.VK_A:
-				myTanks.get(0).state = State.LEFT_MOVING;
-				break;
-			case KeyEvent.VK_D:
-				myTanks.get(0).state = State.RIGHT_MOVING;
-				break;
-			default:
-				break;
-			}
+			keyboardPressing[e.getKeyCode()] = true;
+			keyboardPressed[e.getKeyCode()] = false;
 		}
 
 		@Override // 用于坦克恢复静止以及发射子弹
 		public void keyReleased(KeyEvent e) {// 键盘抬起触发一次
-			switch (e.getKeyCode()) {
-			case KeyEvent.VK_W:
-				myTanks.get(0).state = State.UP_STAY;
-				break;
-			case KeyEvent.VK_S:
-				myTanks.get(0).state = State.DOWN_STAY;
-				break;
-			case KeyEvent.VK_A:
-				myTanks.get(0).state = State.LEFT_STAY;
-				break;
-			case KeyEvent.VK_D:
-				myTanks.get(0).state = State.RIGHT_STAY;
-				break;
-			case KeyEvent.VK_H:
-				myTanks.get(0).fire();
-				break;
-			default:
-				break;
-			}
+			keyboardPressing[e.getKeyCode()] = false;
+			for(int i = 0; i < 256; i++) keyboardPressed[i] = false;
+			keyboardPressed[e.getKeyCode()] = true;
 		}
 	}
 
@@ -211,24 +185,34 @@ public class DrawPanel extends JPanel implements Runnable{
 				try {
 					Thread.sleep(2000);
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				stages.set(sort, new Stage(sort, this));
 				nowStage = stages.get(sort);
 				myTanks.clear();
 				bullets.clear();
-				myTanks.add(new MyTank(480, 840, 0, "player1", this));
+				myTanks.add(new MyTank(480, 840, 0, this));
+				myTanks.add(new MyTank(720, 840, 1, this));
 			}
 			if(nowStage.enemyTanks.isEmpty()) {
 				try {
 					Thread.sleep(2000);
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				sort++;
 				nowStage = stages.get(sort);
+				for (MyTank myTank : myTanks) {
+					if(myTank.player == 0) {
+						myTank.tank_x = 480;
+						myTank.tank_y = 840;
+					}
+					if(myTank.player == 1) {
+						myTank.tank_x = 720;
+						myTank.tank_y = 840;
+					}
+					
+				}
 			}
 			try {
 				Thread.sleep(1);

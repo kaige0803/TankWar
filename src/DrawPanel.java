@@ -10,6 +10,8 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+
 import javax.swing.JPanel;
 
 @SuppressWarnings("serial")
@@ -18,12 +20,11 @@ public class DrawPanel extends JPanel implements Runnable{
 	private static final int GAME_HIGHT = 900;
 	public boolean[] keyboardPressing;//记录正在按的键
 	public boolean[] keyboardPressed;//当键盘释放时记录这个键
-	private List<Stage> stages = new ArrayList<>();// 存储每一关的场景
 	public Stage nowStage = null;// 当前关卡
 	public int sort;
 	public BufferedImage backgroundImage = null;
 	public List<MyTank> myTanks = new ArrayList<>();
-	public List<Bullet> bullets = new ArrayList<>();
+	public List<Bullet> bullets = new CopyOnWriteArrayList<>();
 	public List<Blast> blasts = new ArrayList<>();
 	private long temp, begin, time;// 用于计算帧率
 	private Font font = new Font("微软雅黑", Font.BOLD, 18);
@@ -37,10 +38,10 @@ public class DrawPanel extends JPanel implements Runnable{
 		keyboardPressing = new boolean[256];
 		keyboardPressed = new boolean[256];
 		addKeyListener(new ControlKeyListener());// 给面板添加键盘事件
-		stages.add(new Stage(0, this));
-		stages.add(new Stage(1, this));
+		//stages.add(new Stage(0, this));
+		//stages.add(new Stage(1, this));
 		sort = 0;
-		nowStage = stages.get(sort);
+		nowStage = new Stage(0, this);
 		backgroundImage = ImageUtill.backgrounds[0];//根据关卡生成该关卡的背景图片。
 		myTanks.add(new MyTank(480, 840, 0, this));// 生成一辆我方坦克
 		myTanks.add(new MyTank(720, 840, 1, this));// 生成一辆我方坦克
@@ -67,9 +68,7 @@ public class DrawPanel extends JPanel implements Runnable{
 		}
 
 		// 子弹的碰撞检测后画出。
-
-		outer: for (Iterator<Bullet> iterator = bullets.iterator(); iterator.hasNext();) {
-			Bullet bullet = iterator.next();
+		outer: for (Bullet bullet : bullets) {
 			Iterator<MyTank> iterator2 = myTanks.iterator();
 			while (iterator2.hasNext()) {
 				MyTank myTank = iterator2.next();
@@ -77,7 +76,7 @@ public class DrawPanel extends JPanel implements Runnable{
 					//System.out.println("mytank!!!!");
 					blasts.add(new Blast(myTank.tank_x, myTank.tank_y, 0));
 					new Thread(() -> new PlayWav("audio/tank_blast.wav")).start();
-					iterator.remove();
+					bullets.remove(bullet);
 					iterator2.remove();
 					break outer;
 				}
@@ -90,7 +89,7 @@ public class DrawPanel extends JPanel implements Runnable{
 					blasts.add(new Blast(enemyTank.tank_x, enemyTank.tank_y, 0));
 					new Thread(() -> new PlayWav("audio/tank_blast.wav")).start();
 					enemyTank.isalive = false;
-					iterator.remove();
+					bullets.remove(bullet);
 					iterator3.remove();
 					break outer;
 				}
@@ -104,11 +103,11 @@ public class DrawPanel extends JPanel implements Runnable{
 							blasts.add(new Blast(obstacle.x, obstacle.y, 0));
 							new Thread(() -> new PlayWav("audio/obstacle_blast.wav")).start();
 							iterator4.remove();
-							iterator.remove();
+							bullets.remove(bullet);
 						} else {
 							blasts.add(new Blast(obstacle.x, obstacle.y, 2));
 							new Thread(() -> new PlayWav("audio/steel_blast.wav")).start();
-							iterator.remove();
+							bullets.remove(bullet);
 						}
 						break outer;
 					}
@@ -120,11 +119,11 @@ public class DrawPanel extends JPanel implements Runnable{
 				blasts.add(new Blast(nowStage.base.x, nowStage.base.y, 1));
 				new Thread(() -> new PlayWav("audio/base_blast.wav")).start();
 				nowStage.base.isalive = false;
-				iterator.remove();
+				bullets.remove(bullet);
 				break outer;
 			}
 			if (bullet.bullet_x < 0 || bullet.bullet_x > 1260 || bullet.bullet_y < 0 || bullet.bullet_y > 900) {
-				iterator.remove();
+				bullets.remove(bullet);
 				break outer;
 			}
 			bullet.drawMyself(g2d);
@@ -187,35 +186,43 @@ public class DrawPanel extends JPanel implements Runnable{
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
-				stages.set(sort, new Stage(sort, this));
-				nowStage = stages.get(sort);
 				myTanks.clear();
 				bullets.clear();
+				nowStage.clear();
+				nowStage.thread.stop();
+				for(int i = 0; i < 256; i++) keyboardPressed[i] = false;
+				nowStage = new Stage(sort, this);
 				myTanks.add(new MyTank(480, 840, 0, this));
 				myTanks.add(new MyTank(720, 840, 1, this));
 			}
-			if(nowStage.enemyTanks.isEmpty()) {
+			if(nowStage.enemyTanks.isEmpty() && (nowStage.count == nowStage.totalEenemyTankCount)) {
+				System.out.println("you win!!!");
 				try {
 					Thread.sleep(2000);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
+				bullets.clear();
+				nowStage.clear();
+				for(int i = 0; i < 256; i++) keyboardPressed[i] = false;
 				sort++;
-				nowStage = stages.get(sort);
+				nowStage = new Stage(sort, this);
 				for (MyTank myTank : myTanks) {
 					if(myTank.player == 0) {
 						myTank.tank_x = 480;
 						myTank.tank_y = 840;
+						myTank.state = State.UP_STAY;
 					}
 					if(myTank.player == 1) {
 						myTank.tank_x = 720;
 						myTank.tank_y = 840;
+						myTank.state = State.UP_STAY;
 					}
 					
 				}
 			}
 			try {
-				Thread.sleep(1);
+				Thread.sleep(5);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}

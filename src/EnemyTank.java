@@ -12,6 +12,7 @@ public class EnemyTank implements Runnable{
 	private State state = State.DOWN_MOVING;//初始方向向下运动。
 	public boolean isalive = true;
 	public Rectangle rectangle;
+	private Thread thread;
 	
 	public EnemyTank(int tank_x, int tank_y, int type, DrawPanel drawPanel) {
 		super();
@@ -20,12 +21,10 @@ public class EnemyTank implements Runnable{
 		this.tank_y = tank_y;
 		this.drawPanel = drawPanel;
 		rectangle = new Rectangle(tank_x, tank_y, 60, 60);
-		new Thread(this).start();//开启地方坦克线程。
+		thread = new Thread(this);//开启地方坦克线程。
+		thread.start();
 	}
 
-//	public List<Bullet> getBullets() {
-//		return bullets;
-//	}
 
 	public void drawMyself(Graphics2D g2d) {// 接受dpanel传来的画笔g2d，将坦克自己画在dpanel上
 		switch (state) {
@@ -69,11 +68,9 @@ public class EnemyTank implements Runnable{
 		case DOWN_STAY:
 			g2d.drawImage(ImageUtill.enemyTank[type][2], tank_x, tank_y, null);
 			break;
-
 		default:
 			break;
 		}
-		if(r.nextInt(100) > 98) drawPanel.bullets.add(new Bullet(tank_x, tank_y, state, "enemytank"));
 	}
 	
 	private boolean canMoveDown() {
@@ -131,6 +128,13 @@ public class EnemyTank implements Runnable{
 	@Override
 	public void run() {
 		while(isalive) {
+			//随机加入子弹
+			if(r.nextInt(100) > 60) drawPanel.bullets.add(new Bullet(tank_x, tank_y, state, "enemytank"));
+			try {
+				Thread.sleep(1000 + r.nextInt(1000));
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 			//随机生成坦克状态
 			state = State.values()[r.nextInt(4)];
 			try {
@@ -138,6 +142,12 @@ public class EnemyTank implements Runnable{
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
+		}
+		try {
+			thread.join();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 	

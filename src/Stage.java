@@ -1,6 +1,7 @@
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Stage implements Runnable{
 	public int sort;//当前关卡。
@@ -9,7 +10,7 @@ public class Stage implements Runnable{
 	public DrawPanel drawPanel;
 	public Thread thread;
 	public int totalEenemyTankCount, count;
-	public List<EnemyTank> enemyTanks = new ArrayList<>();
+	public List<EnemyTank> enemyTanks = new CopyOnWriteArrayList<>();
 	public List<Obstacle> obstacles = new ArrayList<>();//用于存放当前关卡的所有障碍物。
 	public static final int[][][] obstacleArray = { //一共10个关卡，每个关卡把屏幕分割成21✖15个单元。每个单元60✖60像素。用于标记障碍物的位置和type。
 			                                       //第一关
@@ -82,13 +83,6 @@ public class Stage implements Runnable{
 		base = new Base(600, 840);//生成主基地。
 		totalEenemyTankCount = (sort + 1) * 10 + 2 * sort;
 		count = 0;
-//		enemyTanks.add(new EnemyTank(0, 0, 0, drawPanel));
-//		enemyTanks.add(new EnemyTank(180, 0, 1, drawPanel));
-//		enemyTanks.add(new EnemyTank(360, 0, 2, drawPanel));
-//		enemyTanks.add(new EnemyTank(540, 0, 0, drawPanel));
-//		enemyTanks.add(new EnemyTank(720, 0, 1, drawPanel));
-//		enemyTanks.add(new EnemyTank(900, 0, 2, drawPanel));
-//		enemyTanks.add(new EnemyTank(1080, 0, 2, drawPanel));
 		thread = new Thread(this);
 		thread.start();
 	}
@@ -97,14 +91,13 @@ public class Stage implements Runnable{
 		for(EnemyTank enemyTank : enemyTanks) enemyTank.isalive = false;
 		enemyTanks.clear();
 		obstacles.clear();
-		base = null;
 	}
 
 	@Override
 	public void run() {
 		while (count < totalEenemyTankCount) {
 			try {
-				Thread.sleep(5000);
+				Thread.sleep(3000);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}

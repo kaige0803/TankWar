@@ -82,15 +82,14 @@ public class DrawPanel extends JPanel implements Runnable{
 				}
 			}
 
-			for (Iterator<EnemyTank> iterator3 = nowStage.enemyTanks.iterator(); iterator3.hasNext();) {
-				EnemyTank enemyTank = iterator3.next();
+			for (EnemyTank enemyTank : nowStage.enemyTanks) {
 				if ((bullet.owner.equals("mytank")) && (enemyTank.rectangle.contains(bullet.rectangle))) {
 					//System.out.println("enemytank!!!!");
 					blasts.add(new Blast(enemyTank.tank_x, enemyTank.tank_y, 0));
 					new Thread(() -> new PlayWav("audio/tank_blast.wav")).start();
 					enemyTank.isalive = false;
 					bullets.remove(bullet);
-					iterator3.remove();
+					nowStage.enemyTanks.remove(enemyTank);
 					break outer;
 				}
 			}

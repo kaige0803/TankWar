@@ -129,9 +129,9 @@ public class EnemyTank implements Runnable{
 	public void run() {
 		while(isalive) {
 			//随机加入子弹
-			if(r.nextInt(100) > 60) drawPanel.bullets.add(new Bullet(tank_x, tank_y, state, "enemytank"));
+			drawPanel.bullets.add(new Bullet(tank_x, tank_y, state, "enemytank"));
 			try {
-				Thread.sleep(1000 + r.nextInt(1000));
+				Thread.sleep(500 + r.nextInt(500));
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}

@@ -93,15 +93,14 @@ public class DrawPanel extends JPanel implements Runnable{
 					break outer;
 				}
 			}
-			for (Iterator<Obstacle> iterator4 = nowStage.obstacles.iterator(); iterator4.hasNext();) {
-				Obstacle obstacle = iterator4.next();
+			for (Obstacle obstacle : nowStage.obstacles) {
 				if (new Rectangle(obstacle.x, obstacle.y, 60, 60).intersects(bullet.rectangle)) {
 					//System.out.println("obstacle!!!!");
 					if (!obstacle.canCrossIn) {
 						if (obstacle.canDisdroyed) {
 							blasts.add(new Blast(obstacle.x, obstacle.y, 0));
 							new Thread(() -> new PlayWav("audio/obstacle_blast.wav")).start();
-							iterator4.remove();
+							nowStage.obstacles.remove(obstacle);
 							bullets.remove(bullet);
 						} else {
 							blasts.add(new Blast(obstacle.x, obstacle.y, 2));
@@ -175,6 +174,7 @@ public class DrawPanel extends JPanel implements Runnable{
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public void run() {
 		while (true) {

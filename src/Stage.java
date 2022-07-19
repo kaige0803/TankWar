@@ -1,4 +1,3 @@
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -11,7 +10,7 @@ public class Stage implements Runnable{
 	public Thread thread;
 	public int totalEenemyTankCount, count;
 	public List<EnemyTank> enemyTanks = new CopyOnWriteArrayList<>();
-	public List<Obstacle> obstacles = new ArrayList<>();//用于存放当前关卡的所有障碍物。
+	public List<Obstacle> obstacles = new CopyOnWriteArrayList<>();//用于存放当前关卡的所有障碍物。
 	public static final int[][][] obstacleArray = { //一共10个关卡，每个关卡把屏幕分割成21✖15个单元。每个单元60✖60像素。用于标记障碍物的位置和type。
 			                                       //第一关
 			                                      {{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},

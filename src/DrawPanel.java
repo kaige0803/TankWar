@@ -23,7 +23,7 @@ public class DrawPanel extends JPanel implements Runnable{
 	public Stage nowStage = null;// 当前关卡
 	public int sort;
 	public BufferedImage backgroundImage = null;
-	public List<MyTank> myTanks = new ArrayList<>();
+	public List<MyTank> myTanks = new CopyOnWriteArrayList<>();
 	public List<Bullet> bullets = new CopyOnWriteArrayList<>();
 	public List<Blast> blasts = new ArrayList<>();
 	private long temp, begin, time;// 用于计算帧率
@@ -69,15 +69,13 @@ public class DrawPanel extends JPanel implements Runnable{
 
 		// 子弹的碰撞检测后画出。
 		outer: for (Bullet bullet : bullets) {
-			Iterator<MyTank> iterator2 = myTanks.iterator();
-			while (iterator2.hasNext()) {
-				MyTank myTank = iterator2.next();
+			for (MyTank myTank : myTanks) {
 				if ((bullet.owner.equals("enemytank")) && (myTank.rectangle.contains(bullet.rectangle))) {
 					//System.out.println("mytank!!!!");
 					blasts.add(new Blast(myTank.tank_x, myTank.tank_y, 0));
 					new Thread(() -> new PlayWav("audio/tank_blast.wav")).start();
 					bullets.remove(bullet);
-					iterator2.remove();
+					myTanks.remove(myTank);
 					break outer;
 				}
 			}
@@ -179,6 +177,7 @@ public class DrawPanel extends JPanel implements Runnable{
 	public void run() {
 		while (true) {
 			if (nowStage.base.isalive == false || myTanks.isEmpty()) {
+				nowStage.gameover = true;
 				System.out.println("game over!!!");
 				try {
 					Thread.sleep(2000);
@@ -187,8 +186,8 @@ public class DrawPanel extends JPanel implements Runnable{
 				}
 				myTanks.clear();
 				bullets.clear();
+				blasts.clear();
 				nowStage.clear();
-				nowStage.thread.stop();
 				for(int i = 0; i < 256; i++) keyboardPressed[i] = false;
 				nowStage = new Stage(sort, this);
 				myTanks.add(new MyTank(480, 840, 0, this));

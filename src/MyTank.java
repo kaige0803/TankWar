@@ -140,7 +140,7 @@ public class MyTank implements Runnable {
 			new Thread(() -> {
 				canFire = false;
 				try {
-					Thread.sleep(700);
+					Thread.sleep(400);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}

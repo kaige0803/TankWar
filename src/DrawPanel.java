@@ -25,7 +25,7 @@ public class DrawPanel extends JPanel implements Runnable{
 	public BufferedImage backgroundImage = null;
 	public List<MyTank> myTanks = new CopyOnWriteArrayList<>();
 	public List<Bullet> bullets = new CopyOnWriteArrayList<>();
-	public List<Blast> blasts = new ArrayList<>();
+	public List<Blast> blasts = new CopyOnWriteArrayList<>();
 	private long temp, begin, time;// 用于计算帧率
 	private Font font = new Font("微软雅黑", Font.BOLD, 18);
 
@@ -132,11 +132,10 @@ public class DrawPanel extends JPanel implements Runnable{
 
 		g2d.drawImage(nowStage.base.getshow(), nowStage.base.x, nowStage.base.y, this);// 画出主基地。
 		
-		for (Iterator<Blast> iterator = blasts.iterator(); iterator.hasNext();) {//画出爆炸，每一帧画一张，一共11张图片。
-			Blast blast = iterator.next();
+		for (Blast blast : blasts) {//画出爆炸，每一帧画一张。
 			if(blast.step <= blast.sum - 1) blast.drawMyself(g2d);
 			else {
-				iterator.remove();
+				blasts.remove(blast);
 			}
 		}
 
@@ -177,13 +176,13 @@ public class DrawPanel extends JPanel implements Runnable{
 	public void run() {
 		while (true) {
 			if (nowStage.base.isalive == false || myTanks.isEmpty()) {
-				nowStage.gameover = true;
 				System.out.println("game over!!!");
 				try {
 					Thread.sleep(2000);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
+				nowStage.thread.stop();
 				myTanks.clear();
 				bullets.clear();
 				blasts.clear();

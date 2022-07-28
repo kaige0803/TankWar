@@ -9,7 +9,6 @@ public class Stage implements Runnable{
 	public DrawPanel drawPanel;
 	public Thread thread;
 	public int totalEenemyTankCount, count;
-	public boolean gameover = false;
 	public List<EnemyTank> enemyTanks = new CopyOnWriteArrayList<>();
 	public List<Obstacle> obstacles = new CopyOnWriteArrayList<>();//用于存放当前关卡的所有障碍物。
 	public static final int[][][] obstacleArray = { //一共10个关卡，每个关卡把屏幕分割成21✖15个单元。每个单元60✖60像素。用于标记障碍物的位置和type。
@@ -95,7 +94,7 @@ public class Stage implements Runnable{
 
 	@Override
 	public void run() {
-		while (count < totalEenemyTankCount && !gameover) {
+		while (count < totalEenemyTankCount) {
 			try {
 				Thread.sleep(3000);
 			} catch (InterruptedException e) {

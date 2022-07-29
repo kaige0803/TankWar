@@ -13,7 +13,7 @@ public class MyTank implements Runnable {
 	public Rectangle rectangle;
 	public boolean isalive = true;
 	private int[][] controlkeys = {{KeyEvent.VK_W, KeyEvent.VK_D, KeyEvent.VK_S, KeyEvent.VK_A, KeyEvent.VK_H},
-								   {KeyEvent.VK_UP, KeyEvent.VK_RIGHT, KeyEvent.VK_DOWN, KeyEvent.VK_LEFT, KeyEvent.VK_KP_DOWN}};
+								   {KeyEvent.VK_UP, KeyEvent.VK_RIGHT, KeyEvent.VK_DOWN, KeyEvent.VK_LEFT, KeyEvent.VK_NUMPAD0}};
 	private Thread keyboardThread;
 	private boolean canFire = true;
 

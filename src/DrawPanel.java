@@ -17,6 +17,7 @@ import javax.swing.JPanel;
 public class DrawPanel extends JPanel implements Runnable{
 	private static final int GAME_WITH = 1260;
 	private static final int GAME_HIGHT = 900;
+	public int my_tank_totol_life;
 	public boolean[] keyboardPressing;//记录正在按的键
 	public boolean[] keyboardPressed;//当键盘释放时记录这个键
 	public Stage nowStage = null;// 当前关卡
@@ -74,7 +75,8 @@ public class DrawPanel extends JPanel implements Runnable{
 					blasts.add(new Blast(myTank.tank_x, myTank.tank_y, 0));
 					new Thread(() -> new PlayWav("audio/tank_blast.wav")).start();
 					bullets.remove(bullet);
-					myTanks.remove(myTank);
+					myTank.life_count -= 1;
+					if(myTank.life_count <= 0) myTanks.remove(myTank);else myTank.rest();
 					break outer;
 				}
 			}
@@ -141,15 +143,14 @@ public class DrawPanel extends JPanel implements Runnable{
 		// 计算帧率并绘制字符串
 		g2d.setColor(Color.DARK_GRAY);
 		g2d.setFont(font);
-		g2d.drawString("爆炸数量：" + blasts.size(), 30, 770);
+		g2d.drawString("爆炸数量：" + blasts.size(), 30, 740);
 		begin = System.currentTimeMillis();
 		time = begin - temp;
 		if (time != 0)
-			g.drawString("fps：" + (int) (1000 / (time)), 30, 800);
+			g.drawString("fps：" + (int) (1000 / (time)), 30, 770);
 		temp = begin;
-		g2d.drawString("子弹数量：" + (bullets.size()), 30, 830);
-		g2d.drawString("敌方坦克数量：" + nowStage.enemyTanks.size(), 30, 860);
-		g2d.drawString("我方坦克数量：" + myTanks.size(), 30, 890);
+		g2d.drawString("子弹数量：" + (bullets.size()), 30, 800);
+		g2d.drawString("敌方坦克数量：" + nowStage.enemyTanks.size(), 30, 830);
 		g.setColor(c);
 	}
 
@@ -174,7 +175,9 @@ public class DrawPanel extends JPanel implements Runnable{
 	@Override
 	public void run() {
 		while (true) {
-			if (nowStage.base.isalive == false || myTanks.isEmpty()) {
+			for(MyTank myTank : myTanks) my_tank_totol_life += myTank.life_count;
+			System.out.println(my_tank_totol_life);
+			if (nowStage.base.isalive == false || my_tank_totol_life <= 0) {
 				System.out.println("game over!!!");
 				try {
 					Thread.sleep(2000);
@@ -203,19 +206,7 @@ public class DrawPanel extends JPanel implements Runnable{
 				for(int i = 0; i < 256; i++) keyboardPressed[i] = false;
 				sort++;
 				nowStage = new Stage(sort, this);
-				for (MyTank myTank : myTanks) {
-					if(myTank.player == 0) {
-						myTank.tank_x = 480;
-						myTank.tank_y = 840;
-						myTank.state = State.UP_STAY;
-					}
-					if(myTank.player == 1) {
-						myTank.tank_x = 720;
-						myTank.tank_y = 840;
-						myTank.state = State.UP_STAY;
-					}
-					
-				}
+				for (MyTank myTank : myTanks) myTank.rest();
 			}
 			try {
 				Thread.sleep(5);

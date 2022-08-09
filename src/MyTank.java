@@ -3,7 +3,7 @@ import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 
 public class MyTank implements Runnable {
-
+	public int life_count = 3;
 	public int tank_x, tank_y;// 坦克位置
 	private int tank_speed = 5;// 坦克速度
 	public int player;
@@ -181,6 +181,19 @@ public class MyTank implements Runnable {
 			keyboardThread.join();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
+		}
+	}
+
+	public void rest() {
+		if(player == 0) {
+			tank_x = 480;
+			tank_y = 840;
+			state = State.UP_STAY;
+		}
+		if(player == 1) {
+			tank_x = 720;
+			tank_y = 840;
+			state = State.UP_STAY;
 		}
 	}
 

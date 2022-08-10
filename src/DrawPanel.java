@@ -194,6 +194,7 @@ public class DrawPanel extends JPanel implements Runnable{
 				myTanks.add(new MyTank(480, 840, 0, this));
 				myTanks.add(new MyTank(720, 840, 1, this));
 			}
+			my_tank_totol_life = 0;
 			if(nowStage.enemyTanks.isEmpty() && (nowStage.count == nowStage.totalEenemyTankCount)) {
 				System.out.println("you win!!!");
 				try {
@@ -209,7 +210,7 @@ public class DrawPanel extends JPanel implements Runnable{
 				for (MyTank myTank : myTanks) myTank.rest();
 			}
 			try {
-				Thread.sleep(5);
+				Thread.sleep(20);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}

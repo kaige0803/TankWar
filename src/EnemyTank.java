@@ -7,6 +7,7 @@ public class EnemyTank implements Runnable{
 	public int tank_x, tank_y;//坦克位置
 	private int tank_speed = 5;//坦克速度
 	private int type;//   0:普通坦克        1：速度型坦克       2：重装坦克
+	public int blood = 1;
 	private DrawPanel drawPanel = null;
 	private Random r = new Random();//用于产生随机方向和随机的时间间隔。
 	private State state = State.DOWN_MOVING;//初始方向向下运动。
@@ -18,6 +19,7 @@ public class EnemyTank implements Runnable{
 		super();
 		this.type = type;
 		if(type == 1) this.tank_speed = 10;
+		if(type == 2) this.blood = 3;
 		this.tank_x = tank_x;
 		this.tank_y = tank_y;
 		this.drawPanel = drawPanel;

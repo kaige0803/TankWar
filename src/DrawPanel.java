@@ -3,7 +3,6 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Rectangle;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
@@ -17,7 +16,7 @@ import javax.swing.JPanel;
 public class DrawPanel extends JPanel implements Runnable{
 	private static final int GAME_WITH = 1260;
 	private static final int GAME_HIGHT = 900;
-	public static int player1_count = 3, player2_count = 3;
+	public static int player1_count, player2_count;
 	public boolean[] keyboardPressing;//记录正在按的键
 	public boolean[] keyboardPressed;//当键盘释放时记录这个键
 	public Stage nowStage = null;// 当前关卡
@@ -41,10 +40,10 @@ public class DrawPanel extends JPanel implements Runnable{
 		sort = 0;
 		nowStage = new Stage(0, this);
 		backgroundImage = ImageUtill.backgrounds[0];//根据关卡生成该关卡的背景图片。
+		player1_count = 3;
+		player2_count = 3;
 		myTanks.add(new MyTank(0, this));// 生成一辆我方坦克
 		myTanks.add(new MyTank(1, this));// 生成一辆我方坦克
-		player1_count -= 1;
-		player2_count -= 1;
 		new Thread(this).start();
 	}
 
@@ -79,16 +78,37 @@ public class DrawPanel extends JPanel implements Runnable{
 					if(myTank.blood <= 0) { 
 						myTank.isalive = false;
 						myTanks.remove(myTank);
-					    new Thread(() -> {
-					    	try {
-								Thread.sleep(3000);
-							} catch (InterruptedException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
+						switch (myTank.player) {
+						case 0:
+							player1_count -=1;
+							if(player1_count > 0) {
+								 new Thread(() -> {
+								    	try {
+											Thread.sleep(3000);
+										} catch (InterruptedException e) {
+											e.printStackTrace();
+										}
+								    	myTanks.add(new MyTank(myTank.player, this));
+								    }).start();
 							}
-					    	myTanks.add(new MyTank(myTank.player, this));
-					    }).start();
-					    
+							break;
+						case 1:
+							player2_count -=1;
+							if(player2_count > 0) {
+								 new Thread(() -> {
+								    	try {
+											Thread.sleep(3000);
+										} catch (InterruptedException e) {
+											e.printStackTrace();
+										}
+								    	myTanks.add(new MyTank(myTank.player, this));
+								    }).start();
+							}
+							break;
+						default:
+							break;
+						}
+						
 					}
 					break outer;
 				}
@@ -101,12 +121,16 @@ public class DrawPanel extends JPanel implements Runnable{
 					new Thread(() -> new PlayWav("audio/tank_blast.wav")).start();
 					enemyTank.isalive = false;
 					bullets.remove(bullet);
-					nowStage.enemyTanks.remove(enemyTank);
+					enemyTank.blood -= 1;
+					if(enemyTank.blood <= 0) { 
+						enemyTank.isalive = false;
+						nowStage.enemyTanks.remove(enemyTank);
+					}
 					break outer;
 				}
 			}
 			for (Obstacle obstacle : nowStage.obstacles) {
-				if (new Rectangle(obstacle.x, obstacle.y, 60, 60).intersects(bullet.rectangle)) {
+				if (obstacle.rectangle.intersects(bullet.rectangle)) {
 					//System.out.println("obstacle!!!!");
 					if (!obstacle.canCrossIn) {
 						if (obstacle.canDisdroyed) {
@@ -190,6 +214,7 @@ public class DrawPanel extends JPanel implements Runnable{
 		while (true) {
 			if (nowStage.base.isalive == false || (player1_count + player2_count) <= 0) {
 				System.out.println("game over!!!");
+				System.out.println(player1_count + player2_count + "");
 				try {
 					Thread.sleep(2000);
 				} catch (InterruptedException e) {
@@ -202,11 +227,14 @@ public class DrawPanel extends JPanel implements Runnable{
 				nowStage.clear();
 				for(int i = 0; i < 256; i++) keyboardPressed[i] = false;
 				nowStage = new Stage(sort, this);
+				player1_count = 3;
+				player2_count = 3;
 				myTanks.add(new MyTank(0, this));
 				myTanks.add(new MyTank(1, this));
 			}
 			if(nowStage.enemyTanks.isEmpty() && (nowStage.queueOfEnemyTanks.size() ==0)) {
 				System.out.println("you win!!!");
+				System.out.println(player1_count + player2_count + "");
 				try {
 					Thread.sleep(2000);
 				} catch (InterruptedException e) {

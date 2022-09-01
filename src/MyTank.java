@@ -1,3 +1,4 @@
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
@@ -43,6 +44,12 @@ public class MyTank implements Runnable {
 	}
 
 	public void paintMyself(Graphics2D g2d) {// 接受dpanel传来的画笔g2d，将坦克自己画在dpanel上
+		Color c = g2d.getColor();
+		g2d.drawRect(tank_x, tank_y-6, 60, 6);
+		g2d.setColor(Color.RED);
+		for(int i = 0; i < blood; i++) {
+			g2d.fillRect(tank_x + i*20, tank_y-6, 20, 6);
+		}
 		switch (state) {
 		case LEFT_MOVING:
 			g2d.drawImage(ImageUtill.myTanks[player][3], tank_x, tank_y, null);
@@ -88,7 +95,7 @@ public class MyTank implements Runnable {
 		default:
 			break;
 		}
-		if (drawPanel.keyboardPressing[controlkeys[player][4]]) fire();
+		g2d.setColor(c);
 	}
 
 	private boolean canMoveDown() {
@@ -185,6 +192,7 @@ public class MyTank implements Runnable {
 				if (drawPanel.keyboardPressed[controlkeys[player][3]])
 					state = State.LEFT_STAY;
 			}
+			if (drawPanel.keyboardPressing[controlkeys[player][4]]) fire();
 			try {
 				Thread.sleep(20);
 			} catch (InterruptedException e) {

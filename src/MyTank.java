@@ -3,26 +3,40 @@ import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 
 public class MyTank implements Runnable {
-	public int life_count = 3;
+	public int blood = 3;
+	public int start_x, start_y;//坦克起始位置
 	public int tank_x, tank_y;// 坦克位置
 	private int tank_speed = 5;// 坦克速度
-	public int player;
+	public int player;//0:player1  1:player2
 	public String name;
 	private DrawPanel drawPanel = null;
-	public State state = State.UP_STAY;// 坦克初始状态为向上静止
+	public State state;
 	public Rectangle rectangle;
 	public boolean isalive = true;
-	private int[][] controlkeys = {{KeyEvent.VK_W, KeyEvent.VK_D, KeyEvent.VK_S, KeyEvent.VK_A, KeyEvent.VK_H},
+	private static int[][] controlkeys = {{KeyEvent.VK_W, KeyEvent.VK_D, KeyEvent.VK_S, KeyEvent.VK_A, KeyEvent.VK_H},
 								   {KeyEvent.VK_UP, KeyEvent.VK_RIGHT, KeyEvent.VK_DOWN, KeyEvent.VK_LEFT, KeyEvent.VK_NUMPAD0}};
 	private Thread keyboardThread;
 	private boolean canFire = true;
 
-	public MyTank(int tank_x, int tank_y, int player, DrawPanel drawPanel) {
+	public MyTank(int player, DrawPanel drawPanel) {
 		super();
 		this.drawPanel = drawPanel;
 		this.player = player;
-		this.tank_x = tank_x;
-		this.tank_y = tank_y;
+		switch (this.player) {
+		case 0:
+			this.start_x = 480;
+			this.start_y = 840;
+			break;
+		case 1:
+			this.start_x = 720;
+			this.start_y = 840;
+			break;
+		default:
+			break;
+		}
+		this.tank_x = this.start_x;
+		this.tank_y = this.start_y;
+		this.state = State.UP_STAY;
 		rectangle = new Rectangle(tank_x, tank_y, 60, 60);
 		keyboardThread = new Thread(this);
 		keyboardThread.start();
@@ -185,16 +199,9 @@ public class MyTank implements Runnable {
 	}
 
 	public void rest() {
-		if(player == 0) {
-			tank_x = 480;
-			tank_y = 840;
+			tank_x = start_x;
+			tank_y = start_y;
 			state = State.UP_STAY;
-		}
-		if(player == 1) {
-			tank_x = 720;
-			tank_y = 840;
-			state = State.UP_STAY;
-		}
 	}
 
 }

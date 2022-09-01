@@ -1,4 +1,6 @@
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 import java.util.Random;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -8,15 +10,16 @@ public class Stage implements Runnable{
 	public Base base = null;
 	public DrawPanel drawPanel;
 	public Thread thread;
-	public int totalEenemyTankCount, count;
+	public int totalEenemyTankCount;
 	public List<EnemyTank> enemyTanks = new CopyOnWriteArrayList<>();
+	public Queue<EnemyTank> queueOfEnemyTanks = new LinkedList<>();
 	public List<Obstacle> obstacles = new CopyOnWriteArrayList<>();//用于存放当前关卡的所有障碍物。
 	public static final int[][][] obstacleArray = { //一共10个关卡，每个关卡把屏幕分割成21✖15个单元。每个单元60✖60像素。用于标记障碍物的位置和type。
-			                                       //第一关
+			                                       //第一关   1:钢铁  2：石头 3：草丛
 			                                      {{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
 			                                       {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
 			                                       {0,2,2,2,1,2,0,0,0,0,0,0,0,2,2,2,2,0,2,0,0},
-			                                       {3,3,3,1,3,3,3,1,3,1,3,3,3,3,1,3,1,1,3,1,3},
+			                                       {3,3,3,1,3,3,3,1,3,1,1,3,1,3,1,3,1,1,3,1,3},
 			                                       {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
 			                                       {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
 			                                       {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
@@ -26,8 +29,8 @@ public class Stage implements Runnable{
 			                                       {0,0,1,1,1,1,1,1,1,0,0,0,0,1,1,1,1,1,0,0,0},
 			                                       {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0},
 			                                       {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-			                                       {0,0,0,0,0,0,0,0,0,2,2,2,0,0,0,0,0,0,0,0,0},
-			                                       {0,0,0,0,0,0,0,0,0,2,0,2,0,0,0,0,0,0,0,0,0}},
+			                                       {0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0},
+			                                       {0,0,0,0,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0}},
 			                                       //第二关
 			                                      {{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
 				                                   {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
@@ -80,8 +83,11 @@ public class Stage implements Runnable{
 			}
 		}
 		base = new Base(600, 840);//生成主基地。
-		totalEenemyTankCount = (sort + 1) * 10 + 2 * sort;
-		count = 0;
+		totalEenemyTankCount = 10 + 4 * (sort + 1);
+		for (int i = 0; i < totalEenemyTankCount; i++) {
+			queueOfEnemyTanks.offer(new EnemyTank(60*r.nextInt(21), 0, r.nextInt(3), drawPanel));
+		}
+		System.out.println(queueOfEnemyTanks.size());
 		thread = new Thread(this);
 		thread.start();
 	}
@@ -94,14 +100,14 @@ public class Stage implements Runnable{
 
 	@Override
 	public void run() {
-		while (count < totalEenemyTankCount) {
+		while (queueOfEnemyTanks.size() != 0) {
 			try {
 				Thread.sleep(3000);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-			enemyTanks.add(new EnemyTank(60*r.nextInt(21), 0, r.nextInt(3), drawPanel));
-			count++;
+			queueOfEnemyTanks.element().thread.start();
+			enemyTanks.add(queueOfEnemyTanks.poll());
 		}
 		try {
 			thread.join();

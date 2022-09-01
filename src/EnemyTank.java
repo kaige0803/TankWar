@@ -6,23 +6,23 @@ public class EnemyTank implements Runnable{
 	
 	public int tank_x, tank_y;//坦克位置
 	private int tank_speed = 5;//坦克速度
-	private int type;
+	private int type;//   0:普通坦克        1：速度型坦克       2：重装坦克
 	private DrawPanel drawPanel = null;
 	private Random r = new Random();//用于产生随机方向和随机的时间间隔。
 	private State state = State.DOWN_MOVING;//初始方向向下运动。
 	public boolean isalive = true;
 	public Rectangle rectangle;
-	private Thread thread;
+	public Thread thread;
 	
 	public EnemyTank(int tank_x, int tank_y, int type, DrawPanel drawPanel) {
 		super();
 		this.type = type;
+		if(type == 1) this.tank_speed = 10;
 		this.tank_x = tank_x;
 		this.tank_y = tank_y;
 		this.drawPanel = drawPanel;
 		rectangle = new Rectangle(tank_x, tank_y, 60, 60);
-		thread = new Thread(this);//开启地方坦克线程。
-		thread.start();
+		thread = new Thread(this);//建立敌方坦克线程。
 	}
 
 
@@ -138,7 +138,7 @@ public class EnemyTank implements Runnable{
 			//随机生成坦克状态
 			state = State.values()[r.nextInt(4)];
 			try {
-				Thread.sleep(1000 + r.nextInt(1000));
+				Thread.sleep(500 + r.nextInt(1000));
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}

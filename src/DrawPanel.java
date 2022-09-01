@@ -17,7 +17,7 @@ import javax.swing.JPanel;
 public class DrawPanel extends JPanel implements Runnable{
 	private static final int GAME_WITH = 1260;
 	private static final int GAME_HIGHT = 900;
-	public int my_tank_totol_life;
+	public static int player1_count = 3, player2_count = 3;
 	public boolean[] keyboardPressing;//记录正在按的键
 	public boolean[] keyboardPressed;//当键盘释放时记录这个键
 	public Stage nowStage = null;// 当前关卡
@@ -38,13 +38,13 @@ public class DrawPanel extends JPanel implements Runnable{
 		keyboardPressing = new boolean[256];
 		keyboardPressed = new boolean[256];
 		addKeyListener(new ControlKeyListener());// 给面板添加键盘事件
-		//stages.add(new Stage(0, this));
-		//stages.add(new Stage(1, this));
 		sort = 0;
 		nowStage = new Stage(0, this);
 		backgroundImage = ImageUtill.backgrounds[0];//根据关卡生成该关卡的背景图片。
-		myTanks.add(new MyTank(480, 840, 0, this));// 生成一辆我方坦克
-		myTanks.add(new MyTank(720, 840, 1, this));// 生成一辆我方坦克
+		myTanks.add(new MyTank(0, this));// 生成一辆我方坦克
+		myTanks.add(new MyTank(1, this));// 生成一辆我方坦克
+		player1_count -= 1;
+		player2_count -= 1;
 		new Thread(this).start();
 	}
 
@@ -75,8 +75,21 @@ public class DrawPanel extends JPanel implements Runnable{
 					blasts.add(new Blast(myTank.tank_x, myTank.tank_y, 0));
 					new Thread(() -> new PlayWav("audio/tank_blast.wav")).start();
 					bullets.remove(bullet);
-					myTank.life_count -= 1;
-					if(myTank.life_count <= 0) myTanks.remove(myTank);else myTank.rest();
+					myTank.blood -= 1;
+					if(myTank.blood <= 0) { 
+						myTank.isalive = false;
+						myTanks.remove(myTank);
+					    new Thread(() -> {
+					    	try {
+								Thread.sleep(3000);
+							} catch (InterruptedException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+					    	myTanks.add(new MyTank(myTank.player, this));
+					    }).start();
+					    
+					}
 					break outer;
 				}
 			}
@@ -150,7 +163,7 @@ public class DrawPanel extends JPanel implements Runnable{
 			g.drawString("fps：" + (int) (1000 / (time)), 30, 770);
 		temp = begin;
 		g2d.drawString("子弹数量：" + (bullets.size()), 30, 800);
-		g2d.drawString("敌方坦克数量：" + nowStage.enemyTanks.size(), 30, 830);
+		g2d.drawString("敌方剩余坦克数量：" + nowStage.queueOfEnemyTanks.size(), 30, 830);
 		g.setColor(c);
 	}
 
@@ -173,11 +186,9 @@ public class DrawPanel extends JPanel implements Runnable{
 
 	@SuppressWarnings("deprecation")
 	@Override
-	public void run() {
+	public void run() {//用于控制游戏模式和进度
 		while (true) {
-			for(MyTank myTank : myTanks) my_tank_totol_life += myTank.life_count;
-			System.out.println(my_tank_totol_life);
-			if (nowStage.base.isalive == false || my_tank_totol_life <= 0) {
+			if (nowStage.base.isalive == false || (player1_count + player2_count) <= 0) {
 				System.out.println("game over!!!");
 				try {
 					Thread.sleep(2000);
@@ -191,11 +202,10 @@ public class DrawPanel extends JPanel implements Runnable{
 				nowStage.clear();
 				for(int i = 0; i < 256; i++) keyboardPressed[i] = false;
 				nowStage = new Stage(sort, this);
-				myTanks.add(new MyTank(480, 840, 0, this));
-				myTanks.add(new MyTank(720, 840, 1, this));
+				myTanks.add(new MyTank(0, this));
+				myTanks.add(new MyTank(1, this));
 			}
-			my_tank_totol_life = 0;
-			if(nowStage.enemyTanks.isEmpty() && (nowStage.count == nowStage.totalEenemyTankCount)) {
+			if(nowStage.enemyTanks.isEmpty() && (nowStage.queueOfEnemyTanks.size() ==0)) {
 				System.out.println("you win!!!");
 				try {
 					Thread.sleep(2000);

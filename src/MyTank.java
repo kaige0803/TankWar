@@ -165,7 +165,6 @@ public class MyTank implements Runnable {
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
-				System.out.println(canFire);
 				canFire = true;
 			}).start();
 		}

@@ -80,7 +80,7 @@ public class DrawPanel extends JPanel implements Runnable{
 						myTanks.remove(myTank);
 						switch (myTank.player) {
 						case 0:
-							player1_count -=1;
+							player1_count -= 1;
 							if(player1_count > 0) {
 								 new Thread(() -> {
 								    	try {
@@ -93,7 +93,7 @@ public class DrawPanel extends JPanel implements Runnable{
 							}
 							break;
 						case 1:
-							player2_count -=1;
+							player2_count -= 1;
 							if(player2_count > 0) {
 								 new Thread(() -> {
 								    	try {
@@ -108,7 +108,6 @@ public class DrawPanel extends JPanel implements Runnable{
 						default:
 							break;
 						}
-						
 					}
 					break outer;
 				}
@@ -180,7 +179,7 @@ public class DrawPanel extends JPanel implements Runnable{
 		// 计算帧率并绘制字符串
 		g2d.setColor(Color.DARK_GRAY);
 		g2d.setFont(font);
-		g2d.drawString("爆炸数量：" + blasts.size(), 30, 740);
+		g2d.drawString("我方坦克数量：" + player1_count + "   " + player2_count, 30, 740);
 		begin = System.currentTimeMillis();
 		time = begin - temp;
 		if (time != 0)
@@ -214,13 +213,14 @@ public class DrawPanel extends JPanel implements Runnable{
 		while (true) {
 			if (nowStage.base.isalive == false || (player1_count + player2_count) <= 0) {
 				System.out.println("game over!!!");
-				System.out.println(player1_count + player2_count + "");
 				try {
 					Thread.sleep(2000);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
+				nowStage.isCreating = false;
 				nowStage.thread.stop();
+				for(MyTank myTank : myTanks) myTank.isalive = false;
 				myTanks.clear();
 				bullets.clear();
 				blasts.clear();
@@ -234,13 +234,14 @@ public class DrawPanel extends JPanel implements Runnable{
 			}
 			if(nowStage.enemyTanks.isEmpty() && (nowStage.queueOfEnemyTanks.size() ==0)) {
 				System.out.println("you win!!!");
-				System.out.println(player1_count + player2_count + "");
 				try {
 					Thread.sleep(2000);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
 				bullets.clear();
+				nowStage.isCreating = false;
+				nowStage.thread.stop();
 				nowStage.clear();
 				for(int i = 0; i < 256; i++) keyboardPressed[i] = false;
 				sort++;

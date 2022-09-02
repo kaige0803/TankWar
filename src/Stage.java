@@ -8,6 +8,7 @@ public class Stage implements Runnable{
 	public int sort;//当前关卡。
 	private Random r = new Random();
 	public Base base = null;
+	public boolean isCreating = true;
 	public DrawPanel drawPanel;
 	public Thread thread;
 	public int totalEenemyTankCount;
@@ -30,7 +31,7 @@ public class Stage implements Runnable{
 			                                       {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0},
 			                                       {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
 			                                       {0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0},
-			                                       {0,0,0,0,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0}},
+			                                       {0,0,0,0,0,0,0,0,0,2,0,1,0,0,0,0,0,0,0,0,0}},
 			                                       //第二关
 			                                      {{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
 				                                   {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
@@ -87,7 +88,6 @@ public class Stage implements Runnable{
 		for (int i = 0; i < totalEenemyTankCount; i++) {
 			queueOfEnemyTanks.offer(new EnemyTank(60*r.nextInt(21), 0, r.nextInt(3), drawPanel));
 		}
-		System.out.println(queueOfEnemyTanks.size());
 		thread = new Thread(this);
 		thread.start();
 	}
@@ -100,7 +100,7 @@ public class Stage implements Runnable{
 
 	@Override
 	public void run() {
-		while (queueOfEnemyTanks.size() != 0) {
+		while (queueOfEnemyTanks.size() != 0 && isCreating) {
 			try {
 				Thread.sleep(3000);
 			} catch (InterruptedException e) {

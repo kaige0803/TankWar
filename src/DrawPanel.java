@@ -18,7 +18,6 @@ public class DrawPanel extends JPanel implements Runnable{
 	private static final int GAME_HIGHT = 900;
 	public static int player1_count, player2_count;
 	public boolean[] keyboardPressing;//记录正在按的键
-	public boolean[] keyboardPressed;//当键盘释放时记录这个键
 	public Stage nowStage = null;// 当前关卡
 	public int sort;
 	public BufferedImage backgroundImage = null;
@@ -35,7 +34,6 @@ public class DrawPanel extends JPanel implements Runnable{
 		requestFocus(true);
 		setFocusable(true);
 		keyboardPressing = new boolean[256];
-		keyboardPressed = new boolean[256];
 		addKeyListener(new ControlKeyListener());// 给面板添加键盘事件
 		sort = 0;
 		nowStage = new Stage(0, this);
@@ -196,14 +194,11 @@ public class DrawPanel extends JPanel implements Runnable{
 		@Override // 用于坦克移动
 		public void keyPressed(KeyEvent e) {
 			keyboardPressing[e.getKeyCode()] = true;
-			keyboardPressed[e.getKeyCode()] = false;
 		}
 
 		@Override // 用于坦克恢复静止以及发射子弹
 		public void keyReleased(KeyEvent e) {// 键盘抬起触发一次
 			keyboardPressing[e.getKeyCode()] = false;
-			for(int i = 0; i < 256; i++) keyboardPressed[i] = false;
-			keyboardPressed[e.getKeyCode()] = true;
 		}
 	}
 
@@ -225,7 +220,6 @@ public class DrawPanel extends JPanel implements Runnable{
 				bullets.clear();
 				blasts.clear();
 				nowStage.clear();
-				for(int i = 0; i < 256; i++) keyboardPressed[i] = false;
 				nowStage = new Stage(sort, this);
 				player1_count = 3;
 				player2_count = 3;
@@ -243,7 +237,6 @@ public class DrawPanel extends JPanel implements Runnable{
 				nowStage.isCreating = false;
 				nowStage.thread.stop();
 				nowStage.clear();
-				for(int i = 0; i < 256; i++) keyboardPressed[i] = false;
 				sort++;
 				nowStage = new Stage(sort, this);
 				for (MyTank myTank : myTanks) myTank.rest();

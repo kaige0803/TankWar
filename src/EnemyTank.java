@@ -10,7 +10,8 @@ public class EnemyTank implements Runnable{
 	public int blood = 1;
 	private DrawPanel drawPanel = null;
 	private Random r = new Random();//用于产生随机方向和随机的时间间隔。
-	private State state = State.DOWN_MOVING;//初始方向向下运动。
+	private State state = State.DOWN;//初始方向向下运动。
+	public boolean isMoving = true;
 	public boolean isalive = true;
 	public Rectangle rectangle;
 	public Thread thread;
@@ -30,45 +31,33 @@ public class EnemyTank implements Runnable{
 
 	public void drawMyself(Graphics2D g2d) {// 接受dpanel传来的画笔g2d，将坦克自己画在dpanel上
 		switch (state) {
-		case LEFT_MOVING:
+		case LEFT:
 			g2d.drawImage(ImageUtill.enemyTank[type][3], tank_x, tank_y, null);
-			if (tank_x > 0 && canMoveLeft()) {
+			if (tank_x > 0 && canMoveLeft() && isMoving) {
 				tank_x -= tank_speed;
 				rectangle.x = tank_x;
 			}
 			break;
-		case RIGHT_MOVING:
+		case RIGHT:
 			g2d.drawImage(ImageUtill.enemyTank[type][1], tank_x, tank_y, null);
-			if (tank_x < 1200 && canMoveRight()) {
+			if (tank_x < 1200 && canMoveRight() && isMoving) {
 				tank_x += tank_speed;
 				rectangle.x = tank_x;
 			}
 			break;
-		case UP_MOVING:
+		case UP:
 			g2d.drawImage(ImageUtill.enemyTank[type][0], tank_x, tank_y, null);
-			if (tank_y > 0 && canMoveUp()) {
+			if (tank_y > 0 && canMoveUp() && isMoving) {
 				tank_y -= tank_speed;
 				rectangle.y = tank_y;
 			}
 			break;
-		case DOWN_MOVING:
+		case DOWN:
 			g2d.drawImage(ImageUtill.enemyTank[type][2], tank_x, tank_y, null);
-			if (tank_y < 840 && canMoveDown()) {
+			if (tank_y < 840 && canMoveDown() && isMoving) {
 				tank_y += tank_speed;
 				rectangle.y = tank_y;
 			}
-			break;
-		case LEFT_STAY:
-			g2d.drawImage(ImageUtill.enemyTank[type][3], tank_x, tank_y, null);
-			break;
-		case RIGHT_STAY:
-			g2d.drawImage(ImageUtill.enemyTank[type][1], tank_x, tank_y, null);
-			break;
-		case UP_STAY:
-			g2d.drawImage(ImageUtill.enemyTank[type][0], tank_x, tank_y, null);
-			break;
-		case DOWN_STAY:
-			g2d.drawImage(ImageUtill.enemyTank[type][2], tank_x, tank_y, null);
 			break;
 		default:
 			break;

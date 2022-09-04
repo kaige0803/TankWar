@@ -9,9 +9,9 @@ public class MyTank implements Runnable {
 	public int tank_x, tank_y;// 坦克位置
 	private int tank_speed = 5;// 坦克速度
 	public int player;//0:player1  1:player2
-	public String name;
 	private DrawPanel drawPanel = null;
-	public State state;
+	public State state = State.UP;
+	public boolean isMoving = false;
 	public Rectangle rectangle;
 	public boolean isalive = true;
 	private static int[][] controlkeys = {{KeyEvent.VK_W, KeyEvent.VK_D, KeyEvent.VK_S, KeyEvent.VK_A, KeyEvent.VK_H},
@@ -37,7 +37,6 @@ public class MyTank implements Runnable {
 		}
 		this.tank_x = this.start_x;
 		this.tank_y = this.start_y;
-		this.state = State.UP_STAY;
 		rectangle = new Rectangle(tank_x, tank_y, 60, 60);
 		keyboardThread = new Thread(this);
 		keyboardThread.start();
@@ -51,47 +50,34 @@ public class MyTank implements Runnable {
 			g2d.fillRect(tank_x + i*20, tank_y-6, 20, 6);
 		}
 		switch (state) {
-		case LEFT_MOVING:
+		case LEFT:
 			g2d.drawImage(ImageUtill.myTanks[player][3], tank_x, tank_y, null);
-			if (tank_x > 0 && canMoveLeft()) {// 判断坦克是否到达边界或者遇到障碍物。
+			if (tank_x > 0 && canMoveLeft() && isMoving) {// 判断坦克是否到达边界或者遇到障碍物。
 				tank_x -= tank_speed;
 				rectangle.x = tank_x;
 			}
 			break;
-		case RIGHT_MOVING:
+		case RIGHT:
 			g2d.drawImage(ImageUtill.myTanks[player][1], tank_x, tank_y, null);
-			if (tank_x < 1200 && canMoveRight()) {
+			if (tank_x < 1200 && canMoveRight() && isMoving) {
 				tank_x += tank_speed;
 				rectangle.x = tank_x;
 			}
 			break;
-		case UP_MOVING:
+		case UP:
 			g2d.drawImage(ImageUtill.myTanks[player][0], tank_x, tank_y, null);
-			if (tank_y > 0 && canMoveUp()) {
+			if (tank_y > 0 && canMoveUp() && isMoving) {
 				tank_y -= tank_speed;
 				rectangle.y = tank_y;
 			}
 			break;
-		case DOWN_MOVING:
+		case DOWN:
 			g2d.drawImage(ImageUtill.myTanks[player][2], tank_x, tank_y, null);
-			if (tank_y < 840 && canMoveDown()) {
+			if (tank_y < 840 && canMoveDown() && isMoving) {
 				tank_y += tank_speed;
 				rectangle.y = tank_y;
 			}
 			break;
-		case LEFT_STAY:
-			g2d.drawImage(ImageUtill.myTanks[player][3], tank_x, tank_y, null);
-			break;
-		case RIGHT_STAY:
-			g2d.drawImage(ImageUtill.myTanks[player][1], tank_x, tank_y, null);
-			break;
-		case UP_STAY:
-			g2d.drawImage(ImageUtill.myTanks[player][0], tank_x, tank_y, null);
-			break;
-		case DOWN_STAY:
-			g2d.drawImage(ImageUtill.myTanks[player][2], tank_x, tank_y, null);
-			break;
-
 		default:
 			break;
 		}
@@ -173,23 +159,24 @@ public class MyTank implements Runnable {
 	@Override
 	public void run() {
 		while (isalive) {
-			if (drawPanel.keyboardPressing[controlkeys[player][0]])
-				state = State.UP_MOVING;
-			else if (drawPanel.keyboardPressing[controlkeys[player][1]])
-				state = State.RIGHT_MOVING;
-			else if (drawPanel.keyboardPressing[controlkeys[player][2]])
-				state = State.DOWN_MOVING;
-			else if (drawPanel.keyboardPressing[controlkeys[player][3]])
-				state = State.LEFT_MOVING;
+			if (drawPanel.keyboardPressing[controlkeys[player][0]]) {
+				isMoving = true;
+				state = State.UP;
+			}
+			else if (drawPanel.keyboardPressing[controlkeys[player][1]]) {
+				isMoving = true;
+				state = State.RIGHT;
+			}
+			else if (drawPanel.keyboardPressing[controlkeys[player][2]]) {
+				isMoving = true;
+				state = State.DOWN;
+			}
+			else if (drawPanel.keyboardPressing[controlkeys[player][3]]) {
+				isMoving = true;
+				state = State.LEFT;
+			}
 			else  {
-				if (drawPanel.keyboardPressed[controlkeys[player][0]])
-					state = State.UP_STAY;
-				if (drawPanel.keyboardPressed[controlkeys[player][1]])
-					state = State.RIGHT_STAY;
-				if (drawPanel.keyboardPressed[controlkeys[player][2]])
-					state = State.DOWN_STAY;
-				if (drawPanel.keyboardPressed[controlkeys[player][3]])
-					state = State.LEFT_STAY;
+				isMoving = false;
 			}
 			if (drawPanel.keyboardPressing[controlkeys[player][4]]) fire();
 			try {
@@ -208,7 +195,8 @@ public class MyTank implements Runnable {
 	public void rest() {
 			tank_x = start_x;
 			tank_y = start_y;
-			state = State.UP_STAY;
+			state = State.UP;
+			isMoving = false;
 	}
 
 }

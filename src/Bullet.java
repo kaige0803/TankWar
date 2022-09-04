@@ -11,16 +11,16 @@ public class Bullet {
 	public Bullet(int tank_x, int tank_y, State state, String owner) {//需要根据生成这颗子弹的时候的坦克的位置和状态，来确定子弹的初始位置和状态。
 		this.state = state;//方向和坦克的保持一致。
 		this.owner = owner;
-		if((state == State.DOWN_MOVING) || (state == State.DOWN_STAY)) {
+		if(state == State.DOWN) {
 			this.bullet_x = tank_x + 27; this.bullet_y = tank_y + 50;
 		}
-		if((state == State.LEFT_MOVING) || (state == State.LEFT_STAY)) {
+		if(state == State.LEFT) {
 			this.bullet_x = tank_x - 16; this.bullet_y = tank_y + 27;
 		}
-		if((state == State.RIGHT_MOVING) || (state == State.RIGHT_STAY)) {
+		if(state == State.RIGHT) {
 			this.bullet_x = tank_x + 50; this.bullet_y = tank_y + 27;
 		}
-		if((state == State.UP_MOVING) || (state == State.UP_STAY)) {
+		if(state == State.UP) {
 			this.bullet_x = tank_x + 27; this.bullet_y = tank_y - 16;
 		}
 		rectangle = new Rectangle(bullet_x, bullet_y, 6, 6);
@@ -29,22 +29,22 @@ public class Bullet {
 	public void drawMyself(Graphics2D g2d) {
 		// 根据坦克的状态调用不同的子弹图潘，并调整子弹位置。
 
-		if ((state == State.DOWN_MOVING) || (state == State.DOWN_STAY)) {
+		if (state == State.DOWN) {
 			g2d.drawImage(ImageUtill.bullet[2], bullet_x, bullet_y, null);
 			bullet_y += bullet_speed;
 			rectangle.y = bullet_y;
 		}
-		if ((state == State.LEFT_MOVING) || (state == State.LEFT_STAY)) {
+		if (state == State.LEFT) {
 			g2d.drawImage(ImageUtill.bullet[3], bullet_x, bullet_y, null);
 			bullet_x -= bullet_speed;
 			rectangle.x = bullet_x;
 		}
-		if ((state == State.RIGHT_MOVING) || (state == State.RIGHT_STAY)) {
+		if (state == State.RIGHT) {
 			g2d.drawImage(ImageUtill.bullet[1], bullet_x, bullet_y, null);
 			bullet_x += bullet_speed;
 			rectangle.x = bullet_x;
 		}
-		if ((state == State.UP_MOVING) || (state == State.UP_STAY)) {
+		if (state == State.UP) {
 			g2d.drawImage(ImageUtill.bullet[0], bullet_x, bullet_y, null);
 			bullet_y -= bullet_speed;
 			rectangle.y = bullet_y;

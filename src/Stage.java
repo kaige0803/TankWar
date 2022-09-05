@@ -109,7 +109,7 @@ public class Stage implements Runnable{
 			queueOfEnemyTanks.element().thread.start();
 			enemyTanks.add(queueOfEnemyTanks.poll());
 		}
-		try {
+		try { 
 			thread.join();
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block

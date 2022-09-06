@@ -2,7 +2,7 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 
 public class Bullet {
-	private int bullet_speed = 20;
+	private int bullet_speed = 30;
 	public  int bullet_x, bullet_y;//用于接收生成子弹的这一时刻坦克的位置
 	public String owner;
 	private State state;//用于接收生成子弹的这一时刻坦克的状态

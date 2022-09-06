@@ -1,5 +1,7 @@
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Properties;
 import java.util.Queue;
 import java.util.Random;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -7,6 +9,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class Stage implements Runnable{
 	public int sort;//当前关卡。
 	private Random r = new Random();
+	private Properties stageProperty = new Properties();//关卡的配置信息(包括障碍物和敌方坦克）
 	public Base base = null;
 	public boolean isCreating = true;
 	public DrawPanel drawPanel;
@@ -76,6 +79,18 @@ public class Stage implements Runnable{
 	public Stage(int sort, DrawPanel drawPanel) {
 		this.sort = sort;
 		this.drawPanel = drawPanel;
+		
+		//根据关卡加载配置文件
+		try {
+			stageProperty.load(Stage.class.getClassLoader().getResourceAsStream("stageProperties/stage" + sort + ".properies"));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		//根据配置文件生成障碍物列表obstacles。
+		
+		
 		for(int i = 0; i < 15; i++) {//根据关卡生成障碍物列表obstacles<Obstacle>。
 			for(int j = 0; j < 21; j++) {
 				if(obstacleArray[sort][i][j] != 0) {
@@ -83,11 +98,17 @@ public class Stage implements Runnable{
 				}
 			}
 		}
-		base = new Base(600, 840);//生成主基地。
+		
+		
+		//根据配置文件生成敌方坦克队列。
 		totalEenemyTankCount = 10 + 4 * (sort + 1);
 		for (int i = 0; i < totalEenemyTankCount; i++) {
 			queueOfEnemyTanks.offer(new EnemyTank(60*r.nextInt(21), 0, r.nextInt(3), drawPanel));
 		}
+		
+		base = new Base(600, 840);//生成主基地。
+		
+		//开启自动定时生成敌方坦克的线程。
 		thread = new Thread(this);
 		thread.start();
 	}
@@ -97,7 +118,8 @@ public class Stage implements Runnable{
 		enemyTanks.clear();
 		obstacles.clear();
 	}
-
+	
+	//将queueOfEnemyTanks里的敌方坦克逐个定时加入enemyTanks
 	@Override
 	public void run() {
 		while (queueOfEnemyTanks.size() != 0 && isCreating) {

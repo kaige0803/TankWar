@@ -1,4 +1,5 @@
 import java.io.IOException;
+import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
@@ -10,6 +11,7 @@ public class Stage implements Runnable{
 	public int sort;//当前关卡。
 	private Random r = new Random();
 	private Properties stageProperty = new Properties();//关卡的配置信息(包括障碍物和敌方坦克）
+	private String propertyValue;
 	public Base base = null;
 	public boolean isCreating = true;
 	public DrawPanel drawPanel;
@@ -89,7 +91,35 @@ public class Stage implements Runnable{
 		}
 		
 		//根据配置文件生成障碍物列表obstacles。
-		
+		for (Enumeration<?> enumeration = stageProperty.propertyNames(); enumeration.hasMoreElements();) {
+			switch ((String) enumeration.nextElement()) {
+			case "steel":
+				propertyValue = stageProperty.getProperty("steel");
+				System.out.println(propertyValue);
+				break;
+			case "stone":
+
+				break;
+			case "grass":
+
+				break;
+			case "totalEenemyTankCount":
+
+				break;
+			case "type0":
+
+				break;
+			case "type1":
+
+				break;
+			case "type2":
+
+				break;
+
+			default:
+				break;
+			}
+		}
 		
 		for(int i = 0; i < 15; i++) {//根据关卡生成障碍物列表obstacles<Obstacle>。
 			for(int j = 0; j < 21; j++) {

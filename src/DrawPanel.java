@@ -2,7 +2,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
@@ -46,25 +45,21 @@ public class DrawPanel extends JPanel implements Runnable {
 	}
 
 	@Override
-	protected void paintComponent(Graphics g) {
-		super.paintComponent(g);// 调用父类构造函数，绘制出基本框架（这句必须写，且必须写在第一句）
+	public void paint(Graphics g) {
 		Color c = g.getColor();
-		// System.out.println(g.hashCode());通过调用g和g2d的hashcode值我们发现是相等的，强转后指向同一对象。
-		// System.out.println(g2d.hashCode());
-		Graphics2D g2d = (Graphics2D) g;
-		g2d.drawImage(backgroundImage, 0, 0, null);// 绘制背景（注意：背景需要最先画，否则背景处于最上层，看不到其他图形了）
-
-		for (Iterator<MyTank> iterator = myTanks.iterator(); iterator.hasNext();) {// 画出我方坦克。
-			MyTank myTank = iterator.next();
-			myTank.paintMyself(g2d);
+		g.drawImage(backgroundImage, 0, 0, null);// 绘制背景（注意：背景需要最先画，否则背景处于最上层，看不到其他图形了）
+		
+		// 画出我方坦克。
+		for (Iterator<MyTank> iterator = myTanks.iterator(); iterator.hasNext();) {
+			iterator.next().drawMyself(g);
 		}
 
-		for (Iterator<EnemyTank> iterator = nowStage.enemyTanks.iterator(); iterator.hasNext();) {// 画出地方坦克。
-			EnemyTank enemyTank = iterator.next();
-			enemyTank.drawMyself(g2d);
+		// 画出敌方坦克。
+		for (Iterator<EnemyTank> iterator = nowStage.enemyTanks.iterator(); iterator.hasNext();) {
+			iterator.next().drawMyself(g);;
 		}
 
-		// 子弹的碰撞检测后画出。
+		// 子弹在碰撞检测后画出。
 		outer: for (Bullet bullet : bullets) {
 			for (MyTank myTank : myTanks) {
 				if ((bullet.owner.equals("enemytank")) && (myTank.rectangle.contains(bullet.rectangle))) {
@@ -153,40 +148,44 @@ public class DrawPanel extends JPanel implements Runnable {
 				bullets.remove(bullet);
 				break outer;
 			}
-			bullet.drawMyself(g2d);
+			bullet.drawMyself(g);
+		}
+		
+		// 画出当前关卡障碍物。
+		for (Obstacle obstacle : nowStage.obstacles) {
+			g.drawImage(obstacle.show, obstacle.x, obstacle.y, this);
 		}
 
-		for (Iterator<Obstacle> iterator = nowStage.obstacles.iterator(); iterator.hasNext();) {// 画出当前关卡障碍物。
-			Obstacle obstacle = iterator.next();
-			g2d.drawImage(obstacle.show, obstacle.x, obstacle.y, this);
-		}
+		// 画出主基地。
+		g.drawImage(nowStage.base.getshow(), nowStage.base.x, nowStage.base.y, this);
 
-		g2d.drawImage(nowStage.base.getshow(), nowStage.base.x, nowStage.base.y, this);// 画出主基地。
-
-		for (Blast blast : blasts) {// 画出爆炸，每一帧画一张。
+		// 画出爆炸，每一帧画一张。
+		for (Blast blast : blasts) {
 			if (blast.step <= blast.sum - 1)
-				blast.drawMyself(g2d);
+				blast.drawMyself(g);
 			else {
 				blasts.remove(blast);
 			}
 		}
 
 		// 计算帧率并绘制字符串
-		g2d.setColor(Color.DARK_GRAY);
-		g2d.setFont(font);
+		g.setColor(Color.DARK_GRAY);
+		g.setFont(font);
 		begin = System.currentTimeMillis();
 		time = begin - temp;
 		if (time != 0)
 			g.drawString("fps：" + (int) (1000 / (time)), 30, 740);
 		temp = begin;
-		g2d.drawString("player1剩余数量：" + player1_count, 30, 770);
-		g2d.drawString("player2剩余数量：" + player2_count, 30, 800);
-		g2d.drawString("敌方剩余坦克数量：" + nowStage.queueOfEnemyTanks.size(), 30, 830);
-		g2d.drawString("我方坦克数量：" + myTanks.size(), 30, 860);
+		
+		//绘制游戏信息字符串
+		g.drawString("player1剩余数量：" + player1_count, 30, 770);
+		g.drawString("player2剩余数量：" + player2_count, 30, 800);
+		g.drawString("敌方剩余坦克数量：" + nowStage.queueOfEnemyTanks.size(), 30, 830);
+		g.drawString("我方坦克数量：" + myTanks.size(), 30, 860);
 		g.setColor(c);
 	}
 
-	// 处理dpanel接收到的keyPressed键盘事件e，并改变控制坦克所需的state，供drawMyself函数画图
+	// 处理dpanel接收到的keyPressed键盘事件e，并改变键盘数组相应的值，供其他类访问。
 	private class ControlKeyListener extends KeyAdapter {
 
 		@Override // 用于坦克移动

@@ -1,4 +1,4 @@
-import java.awt.Graphics2D;
+import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
 public class Blast {
@@ -28,8 +28,8 @@ public class Blast {
 		sum = blasts_images.length;
 	}
 
-	public void drawMyself(Graphics2D g2d) {
-			g2d.drawImage(blasts_images[step], x, y, null);
+	public void drawMyself(Graphics g) {
+			g.drawImage(blasts_images[step], x, y, null);
 			step += 1;
 	}
 }

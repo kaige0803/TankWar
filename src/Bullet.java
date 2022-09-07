@@ -1,4 +1,4 @@
-import java.awt.Graphics2D;
+import java.awt.Graphics;
 import java.awt.Rectangle;
 
 public class Bullet {
@@ -26,26 +26,26 @@ public class Bullet {
 		rectangle = new Rectangle(bullet_x, bullet_y, 6, 6);
 	}
 
-	public void drawMyself(Graphics2D g2d) {
+	public void drawMyself(Graphics g) {
 		// 根据坦克的状态调用不同的子弹图潘，并调整子弹位置。
 
 		if (state == State.DOWN) {
-			g2d.drawImage(ImageUtill.bullet[2], bullet_x, bullet_y, null);
+			g.drawImage(ImageUtill.bullet[2], bullet_x, bullet_y, null);
 			bullet_y += bullet_speed;
 			rectangle.y = bullet_y;
 		}
 		if (state == State.LEFT) {
-			g2d.drawImage(ImageUtill.bullet[3], bullet_x, bullet_y, null);
+			g.drawImage(ImageUtill.bullet[3], bullet_x, bullet_y, null);
 			bullet_x -= bullet_speed;
 			rectangle.x = bullet_x;
 		}
 		if (state == State.RIGHT) {
-			g2d.drawImage(ImageUtill.bullet[1], bullet_x, bullet_y, null);
+			g.drawImage(ImageUtill.bullet[1], bullet_x, bullet_y, null);
 			bullet_x += bullet_speed;
 			rectangle.x = bullet_x;
 		}
 		if (state == State.UP) {
-			g2d.drawImage(ImageUtill.bullet[0], bullet_x, bullet_y, null);
+			g.drawImage(ImageUtill.bullet[0], bullet_x, bullet_y, null);
 			bullet_y -= bullet_speed;
 			rectangle.y = bullet_y;
 		}

@@ -1,4 +1,4 @@
-import java.awt.Graphics2D;
+import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.util.Random;
 
@@ -29,31 +29,31 @@ public class EnemyTank implements Runnable{
 	}
 
 
-	public void drawMyself(Graphics2D g2d) {// 接受dpanel传来的画笔g2d，将坦克自己画在dpanel上
+	public void drawMyself(Graphics g) {// 接受dpanel传来的画笔g2d，将坦克自己画在dpanel上
 		switch (state) {
 		case LEFT:
-			g2d.drawImage(ImageUtill.enemyTank[type][3], tank_x, tank_y, null);
+			g.drawImage(ImageUtill.enemyTank[type][3], tank_x, tank_y, null);
 			if (tank_x > 0 && canMoveLeft() && isMoving) {
 				tank_x -= tank_speed;
 				rectangle.x = tank_x;
 			}
 			break;
 		case RIGHT:
-			g2d.drawImage(ImageUtill.enemyTank[type][1], tank_x, tank_y, null);
+			g.drawImage(ImageUtill.enemyTank[type][1], tank_x, tank_y, null);
 			if (tank_x < 1200 && canMoveRight() && isMoving) {
 				tank_x += tank_speed;
 				rectangle.x = tank_x;
 			}
 			break;
 		case UP:
-			g2d.drawImage(ImageUtill.enemyTank[type][0], tank_x, tank_y, null);
+			g.drawImage(ImageUtill.enemyTank[type][0], tank_x, tank_y, null);
 			if (tank_y > 0 && canMoveUp() && isMoving) {
 				tank_y -= tank_speed;
 				rectangle.y = tank_y;
 			}
 			break;
 		case DOWN:
-			g2d.drawImage(ImageUtill.enemyTank[type][2], tank_x, tank_y, null);
+			g.drawImage(ImageUtill.enemyTank[type][2], tank_x, tank_y, null);
 			if (tank_y < 840 && canMoveDown() && isMoving) {
 				tank_y += tank_speed;
 				rectangle.y = tank_y;

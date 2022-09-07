@@ -1,5 +1,5 @@
 import java.awt.Color;
-import java.awt.Graphics2D;
+import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 
@@ -42,37 +42,37 @@ public class MyTank implements Runnable {
 		keyboardThread.start();
 	}
 
-	public void paintMyself(Graphics2D g2d) {// 接受dpanel传来的画笔g2d，将坦克自己画在dpanel上
-		Color c = g2d.getColor();
-		g2d.drawRect(tank_x, tank_y-6, 60, 6);
-		g2d.setColor(Color.RED);
+	public void drawMyself(Graphics g) {// 接受dpanel传来的画笔g2d，将坦克自己画在dpanel上
+		Color c = g.getColor();
+		g.drawRect(tank_x, tank_y-6, 60, 6);
+		g.setColor(Color.RED);
 		for(int i = 0; i < blood; i++) {
-			g2d.fillRect(tank_x + i*20, tank_y-6, 20, 6);
+			g.fillRect(tank_x + i*20, tank_y-6, 20, 6);
 		}
 		switch (state) {
 		case LEFT:
-			g2d.drawImage(ImageUtill.myTanks[player][3], tank_x, tank_y, null);
+			g.drawImage(ImageUtill.myTanks[player][3], tank_x, tank_y, null);
 			if (tank_x > 0 && canMoveLeft() && isMoving) {// 判断坦克是否到达边界或者遇到障碍物。
 				tank_x -= tank_speed;
 				rectangle.x = tank_x;
 			}
 			break;
 		case RIGHT:
-			g2d.drawImage(ImageUtill.myTanks[player][1], tank_x, tank_y, null);
+			g.drawImage(ImageUtill.myTanks[player][1], tank_x, tank_y, null);
 			if (tank_x < 1200 && canMoveRight() && isMoving) {
 				tank_x += tank_speed;
 				rectangle.x = tank_x;
 			}
 			break;
 		case UP:
-			g2d.drawImage(ImageUtill.myTanks[player][0], tank_x, tank_y, null);
+			g.drawImage(ImageUtill.myTanks[player][0], tank_x, tank_y, null);
 			if (tank_y > 0 && canMoveUp() && isMoving) {
 				tank_y -= tank_speed;
 				rectangle.y = tank_y;
 			}
 			break;
 		case DOWN:
-			g2d.drawImage(ImageUtill.myTanks[player][2], tank_x, tank_y, null);
+			g.drawImage(ImageUtill.myTanks[player][2], tank_x, tank_y, null);
 			if (tank_y < 840 && canMoveDown() && isMoving) {
 				tank_y += tank_speed;
 				rectangle.y = tank_y;
@@ -81,7 +81,7 @@ public class MyTank implements Runnable {
 		default:
 			break;
 		}
-		g2d.setColor(c);
+		g.setColor(c);
 	}
 
 	private boolean canMoveDown() {

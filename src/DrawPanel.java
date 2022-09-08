@@ -56,7 +56,7 @@ public class DrawPanel extends JPanel implements Runnable {
 
 		// 画出敌方坦克。
 		for (Iterator<EnemyTank> iterator = nowStage.enemyTanks.iterator(); iterator.hasNext();) {
-			iterator.next().drawMyself(g);;
+			iterator.next().drawMyself(g);
 		}
 
 		// 子弹在碰撞检测后画出。
@@ -188,12 +188,12 @@ public class DrawPanel extends JPanel implements Runnable {
 	// 处理dpanel接收到的keyPressed键盘事件e，并改变键盘数组相应的值，供其他类访问。
 	private class ControlKeyListener extends KeyAdapter {
 
-		@Override // 用于坦克移动
+		@Override // 用于坦克移动以及发射子弹
 		public void keyPressed(KeyEvent e) {
 			keyboardPressing[e.getKeyCode()] = true;
 		}
 
-		@Override // 用于坦克恢复静止以及发射子弹
+		@Override // 用于坦克恢复静止
 		public void keyReleased(KeyEvent e) {// 键盘抬起触发一次
 			keyboardPressing[e.getKeyCode()] = false;
 		}

@@ -64,7 +64,7 @@ public class DrawPanel extends JPanel implements Runnable {
 			for (MyTank myTank : myTanks) {
 				if ((bullet.owner.equals("enemytank")) && (myTank.rectangle.contains(bullet.rectangle))) {
 					blasts.add(new Blast(myTank.tank_x, myTank.tank_y, 0));
-					new Thread(() -> new PlayWav("audio/tank_blast.wav")).start();
+					new Thread(() -> new PlayWav().play_tank_blast()).start();
 					bullets.remove(bullet);
 					myTank.blood -= 1;
 					if (myTank.blood <= 0) {
@@ -108,7 +108,7 @@ public class DrawPanel extends JPanel implements Runnable {
 			for (EnemyTank enemyTank : nowStage.enemyTanks) {
 				if ((bullet.owner.equals("mytank")) && (enemyTank.rectangle.contains(bullet.rectangle))) {
 					blasts.add(new Blast(enemyTank.tank_x, enemyTank.tank_y, 0));
-					new Thread(() -> new PlayWav("audio/tank_blast.wav")).start();
+					new Thread(() -> new PlayWav().play_tank_blast()).start();
 					enemyTank.isalive = false;
 					bullets.remove(bullet);
 					enemyTank.blood -= 1;
@@ -124,12 +124,12 @@ public class DrawPanel extends JPanel implements Runnable {
 					if (!obstacle.canCrossIn) {
 						if (obstacle.canDisdroyed) {
 							blasts.add(new Blast(obstacle.x, obstacle.y, 0));
-							new Thread(() -> new PlayWav("audio/obstacle_blast.wav")).start();
+							new Thread(() -> new PlayWav().play_obstacle_blast()).start();
 							nowStage.obstacles.remove(obstacle);
 							bullets.remove(bullet);
 						} else {
 							blasts.add(new Blast(obstacle.x, obstacle.y, 2));
-							new Thread(() -> new PlayWav("audio/steel_blast.wav")).start();
+							new Thread(() -> new PlayWav().play_steel_blast()).start();
 							bullets.remove(bullet);
 						}
 						break outer;
@@ -139,7 +139,7 @@ public class DrawPanel extends JPanel implements Runnable {
 			}
 			if (nowStage.base.isalive && nowStage.base.rectangle.contains(bullet.rectangle)) {
 				blasts.add(new Blast(nowStage.base.x, nowStage.base.y, 1));
-				new Thread(() -> new PlayWav("audio/base_blast.wav")).start();
+				new Thread(() -> new PlayWav().play_base_blast()).start();
 				nowStage.base.isalive = false;
 				bullets.remove(bullet);
 				break outer;
@@ -199,18 +199,24 @@ public class DrawPanel extends JPanel implements Runnable {
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public void run() {// 用于控制游戏模式和进度
 		while (true) {
 			if (nowStage.base.isalive == false || (player1_count + player2_count) <= 0) {
 				System.out.println("game over!!!");
+				for (MyTank myTank : myTanks)
+					myTank.isalive = false;
+				for(EnemyTank enemyTank : nowStage.enemyTanks) {
+					enemyTank.isalive = false;
+				}
+				nowStage.isCreating = false;
+				nowStage.thread.stop();
 				try {
 					Thread.sleep(4000);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
-				for (MyTank myTank : myTanks)
-					myTank.isalive = false;
 				myTanks.clear();
 				cleanScrean();
 				nowStage = new Stage(sort, this);
@@ -240,10 +246,7 @@ public class DrawPanel extends JPanel implements Runnable {
 		}
 	}
 
-	@SuppressWarnings("deprecation")
 	private void cleanScrean() {
-		nowStage.isCreating = false;
-		nowStage.thread.stop();
 		bullets.clear();
 		blasts.clear();
 		nowStage.clear();

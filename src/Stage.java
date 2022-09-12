@@ -88,8 +88,6 @@ public class Stage implements Runnable {
 	}
 
 	public void clear() {
-		for (EnemyTank enemyTank : enemyTanks)
-			enemyTank.isalive = false;
 		enemyTanks.clear();
 		obstacles.clear();
 	}
@@ -103,6 +101,7 @@ public class Stage implements Runnable {
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
+			//new Thread(() -> new PlayWav().play_tank_born()).start();
 			queueOfEnemyTanks.element().thread.start();
 			enemyTanks.add(queueOfEnemyTanks.poll());
 		}

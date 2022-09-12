@@ -143,7 +143,7 @@ public class MyTank implements Runnable {
 	public void fire() {
 		if (canFire) {
 			drawPanel.bullets.add(new Bullet(tank_x, tank_y, state, "mytank"));
-			new Thread(() -> new PlayWav("audio/bullet_flying.wav")).start();
+			new Thread(() -> new PlayWav().play_bullet_flying()).start();
 			new Thread(() -> {
 				canFire = false;
 				try {

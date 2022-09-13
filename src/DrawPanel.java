@@ -64,7 +64,7 @@ public class DrawPanel extends JPanel implements Runnable {
 			for (MyTank myTank : myTanks) {
 				if ((bullet.owner.equals("enemytank")) && (myTank.rectangle.contains(bullet.rectangle))) {
 					blasts.add(new Blast(myTank.tank_x, myTank.tank_y, 0));
-					new Thread(() -> new PlayWav().play_tank_blast()).start();
+					new Thread(() -> new PlayWav(PlayWav.TANK_BLAST)).start();
 					bullets.remove(bullet);
 					myTank.blood -= 1;
 					if (myTank.blood <= 0) {
@@ -108,7 +108,7 @@ public class DrawPanel extends JPanel implements Runnable {
 			for (EnemyTank enemyTank : nowStage.enemyTanks) {
 				if ((bullet.owner.equals("mytank")) && (enemyTank.rectangle.contains(bullet.rectangle))) {
 					blasts.add(new Blast(enemyTank.tank_x, enemyTank.tank_y, 0));
-					new Thread(() -> new PlayWav().play_tank_blast()).start();
+					new Thread(() -> new PlayWav(PlayWav.TANK_BLAST)).start();
 					enemyTank.isalive = false;
 					bullets.remove(bullet);
 					enemyTank.blood -= 1;
@@ -124,12 +124,12 @@ public class DrawPanel extends JPanel implements Runnable {
 					if (!obstacle.canCrossIn) {
 						if (obstacle.canDisdroyed) {
 							blasts.add(new Blast(obstacle.x, obstacle.y, 0));
-							new Thread(() -> new PlayWav().play_obstacle_blast()).start();
+							new Thread(() -> new PlayWav(PlayWav.OBSTACLE_BLAST)).start();
 							nowStage.obstacles.remove(obstacle);
 							bullets.remove(bullet);
 						} else {
 							blasts.add(new Blast(obstacle.x, obstacle.y, 2));
-							new Thread(() -> new PlayWav().play_steel_blast()).start();
+							new Thread(() -> new PlayWav(PlayWav.STEEL_BLAST)).start();
 							bullets.remove(bullet);
 						}
 						break outer;
@@ -139,7 +139,7 @@ public class DrawPanel extends JPanel implements Runnable {
 			}
 			if (nowStage.base.isalive && nowStage.base.rectangle.contains(bullet.rectangle)) {
 				blasts.add(new Blast(nowStage.base.x, nowStage.base.y, 1));
-				new Thread(() -> new PlayWav().play_base_blast()).start();
+				new Thread(() -> new PlayWav(PlayWav.BASE_BLAST)).start();
 				nowStage.base.isalive = false;
 				bullets.remove(bullet);
 				break outer;

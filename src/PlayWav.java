@@ -1,6 +1,7 @@
-import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
@@ -8,141 +9,43 @@ import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
 public class PlayWav {
-	//SampleRate:44100.0   SampleSizeInBits:16   Channels:1   FrameSize:2   FrameRate:44100.0
-	private static AudioFormat format_base_blast;
-	private static AudioFormat format_bullet_flying;
-	private static AudioFormat format_obstacle_blast;
-	private static AudioFormat format_steel_blast;
-	private static AudioFormat format_tank_blast;
-	private static AudioFormat format_tank_born;
-	private static byte[] base_blast_array, bullet_flying_array, obstacle_blast_array, 
-							steel_blast_array, tank_blast_array, tank_born_array;
-	private static BufferedInputStream bufferedInputStream;
+	public static final int BASE_BLAST = 0, BULLET_FLYING = 1, OBSTACLE_BLAST = 2, STEEL_BLAST = 3, TANK_BLAST = 4;
+	public static final String AUDIO_DIR = System.getProperty("user.dir") + File.separator + "src" + File.separator + "audio";
+	private static int file_count = new File(AUDIO_DIR).list().length;
+	private static AudioFormat[] audui_format = new AudioFormat[file_count];
+	private static byte[][] audio_data_arrays = new byte[file_count][];
+	private static InputStream inputStream;
 	private static ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 	static {
-		int i;
+		int j;
+		for (int i = 0; i < file_count; i++) {
+			inputStream = PlayWav.class.getClassLoader().getResourceAsStream("audio" + File.separator + i + ".wav");
+			try {
+				audui_format[i] = AudioSystem.getAudioInputStream(inputStream).getFormat();
+				while ((j = inputStream.read()) != -1) {
+					byteArrayOutputStream.write(j);
+				}
+				byteArrayOutputStream.flush();
+				audio_data_arrays[i] = byteArrayOutputStream.toByteArray();
+				byteArrayOutputStream.reset();//初始化字节数组指针。
+			} catch (UnsupportedAudioFileException | IOException e) {
+				e.printStackTrace();
+			}
+		}
 		try {
-			format_base_blast = AudioSystem.getAudioInputStream(
-					PlayWav.class.getClassLoader().getResourceAsStream("audio/base_blast.wav")).getFormat();
-			format_bullet_flying = AudioSystem.getAudioInputStream(
-					PlayWav.class.getClassLoader().getResourceAsStream("audio/bullet_flying.wav")).getFormat();
-			format_obstacle_blast = AudioSystem.getAudioInputStream(
-					PlayWav.class.getClassLoader().getResourceAsStream("audio/obstacle_blast.wav")).getFormat();
-			format_steel_blast = AudioSystem.getAudioInputStream(
-					PlayWav.class.getClassLoader().getResourceAsStream("audio/steel_blast.wav")).getFormat();
-			format_tank_blast = AudioSystem.getAudioInputStream(
-					PlayWav.class.getClassLoader().getResourceAsStream("audio/tank_blast.wav")).getFormat();
-			format_tank_born = AudioSystem.getAudioInputStream(
-					PlayWav.class.getClassLoader().getResourceAsStream("audio/tank_born.wav")).getFormat();
-			
-			bufferedInputStream = new BufferedInputStream(
-					PlayWav.class.getClassLoader().getResourceAsStream("audio/bullet_flying.wav"));
-			while ((i = bufferedInputStream.read()) != -1) {
-				byteArrayOutputStream.write(i);
-			}
-			bullet_flying_array = byteArrayOutputStream.toByteArray();
-			byteArrayOutputStream.reset();
-			
-			bufferedInputStream = new BufferedInputStream(
-					PlayWav.class.getClassLoader().getResourceAsStream("audio/base_blast.wav"));
-			while ((i = bufferedInputStream.read()) != -1) {
-				byteArrayOutputStream.write(i);
-			}
-			base_blast_array = byteArrayOutputStream.toByteArray();
-			byteArrayOutputStream.reset();
-			
-			
-			bufferedInputStream = new BufferedInputStream(
-					PlayWav.class.getClassLoader().getResourceAsStream("audio/obstacle_blast.wav"));
-			while ((i = bufferedInputStream.read()) != -1) {
-				byteArrayOutputStream.write(i);
-			}
-			obstacle_blast_array = byteArrayOutputStream.toByteArray();
-			byteArrayOutputStream.reset();
-			
-			bufferedInputStream = new BufferedInputStream(
-					PlayWav.class.getClassLoader().getResourceAsStream("audio/steel_blast.wav"));
-			while ((i = bufferedInputStream.read()) != -1) {
-				byteArrayOutputStream.write(i);
-			}
-			steel_blast_array = byteArrayOutputStream.toByteArray();
-			byteArrayOutputStream.reset();
-			
-			bufferedInputStream = new BufferedInputStream(
-					PlayWav.class.getClassLoader().getResourceAsStream("audio/tank_blast.wav"));
-			while ((i = bufferedInputStream.read()) != -1) {
-				byteArrayOutputStream.write(i);
-			}
-			tank_blast_array = byteArrayOutputStream.toByteArray();
-			byteArrayOutputStream.reset();
-			
-			bufferedInputStream = new BufferedInputStream(
-					PlayWav.class.getClassLoader().getResourceAsStream("audio/tank_born.wav"));
-			while ((i = bufferedInputStream.read()) != -1) {
-				byteArrayOutputStream.write(i);
-			}
-			tank_born_array = byteArrayOutputStream.toByteArray();
-			byteArrayOutputStream.reset();
-			
-		} catch (IOException | UnsupportedAudioFileException e) {
+			byteArrayOutputStream.close();
+			inputStream.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
-	
-	public void play_base_blast() {
+
+	public PlayWav(int audio_type) {
 		try {
+			//每个线程都必须有独立的Clip（播放器）
 			Clip clip = AudioSystem.getClip();
-			clip.open(format_base_blast, base_blast_array, 0, base_blast_array.length);
-			clip.start();
-		} catch (LineUnavailableException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	public void play_bullet_flying() {
-		try {
-			Clip clip = AudioSystem.getClip();
-			clip.open(format_bullet_flying, bullet_flying_array, 0, bullet_flying_array.length);
-			clip.start();
-		} catch (LineUnavailableException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	public void play_obstacle_blast() {
-		try {
-			Clip clip = AudioSystem.getClip();
-			clip.open(format_obstacle_blast, obstacle_blast_array, 0, obstacle_blast_array.length);
-			clip.start();
-		} catch (LineUnavailableException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	public void play_steel_blast() {
-		try {
-			Clip clip = AudioSystem.getClip();
-			clip.open(format_steel_blast, steel_blast_array, 0, steel_blast_array.length);
-			clip.start();
-		} catch (LineUnavailableException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	public void play_tank_blast() {
-		try {
-			Clip clip = AudioSystem.getClip();
-			clip.open(format_tank_blast, tank_blast_array, 0, tank_blast_array.length);
-			clip.start();
-		} catch (LineUnavailableException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	public void play_tank_born() {
-		try {
-			Clip clip = AudioSystem.getClip();
-			clip.open(format_tank_born, tank_born_array, 0, tank_born_array.length);
+			clip.open(audui_format[audio_type], audio_data_arrays[audio_type], 0, audio_data_arrays[audio_type].length);
 			clip.start();
 		} catch (LineUnavailableException e) {
 			e.printStackTrace();

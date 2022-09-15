@@ -15,7 +15,7 @@ public class Obstacle {
 		this.type = type;
 		if(type == 0) canDisdroyed = false; else canDisdroyed = true;//只有钢铁无法被摧毁。
 		if(type == 2) canCrossIn = true; else canCrossIn = false;//只有草丛可以穿越。
-		show = ImageUtill.obstacles[type];
+		show = ResourceRepertory.obstacles[type];
 		rectangle = new Rectangle(x, y, 60, 60);
 	}
 	

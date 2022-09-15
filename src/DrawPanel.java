@@ -15,7 +15,7 @@ import javax.swing.JPanel;
 public class DrawPanel extends JPanel implements Runnable {
 	private static final int GAME_WITH = 1260;
 	private static final int GAME_HIGHT = 900;
-	public static int player1_count, player2_count;
+	public static int player1Count, player2Count;
 	public boolean[] keyboardPressing;// 记录正在按的键
 	public Stage nowStage = null;// 当前关卡
 	public int sort;
@@ -36,9 +36,9 @@ public class DrawPanel extends JPanel implements Runnable {
 		addKeyListener(new ControlKeyListener());// 给面板添加键盘事件
 		sort = 0;
 		nowStage = new Stage(0, this);
-		backgroundImage = ImageUtill.backgrounds[0];// 根据关卡生成该关卡的背景图片。
-		player1_count = 3;
-		player2_count = 3;
+		backgroundImage = ResourceRepertory.backgrounds[0];// 根据关卡生成该关卡的背景图片。
+		player1Count = 3;
+		player2Count = 3;
 		myTanks.add(new MyTank(0, this));// 生成一辆我方坦克
 		myTanks.add(new MyTank(1, this));// 生成一辆我方坦克
 		new Thread(this).start();
@@ -68,12 +68,12 @@ public class DrawPanel extends JPanel implements Runnable {
 					bullets.remove(bullet);
 					myTank.blood -= 1;
 					if (myTank.blood <= 0) {
-						myTank.isalive = false;
+						myTank.isAlive = false;
 						myTanks.remove(myTank);
 						switch (myTank.player) {
 						case 0:
-							player1_count -= 1;
-							if (player1_count > 0) {
+							player1Count -= 1;
+							if (player1Count > 0) {
 								new Thread(() -> {
 									try {
 										Thread.sleep(3000);
@@ -85,8 +85,8 @@ public class DrawPanel extends JPanel implements Runnable {
 							}
 							break;
 						case 1:
-							player2_count -= 1;
-							if (player2_count > 0) {
+							player2Count -= 1;
+							if (player2Count > 0) {
 								new Thread(() -> {
 									try {
 										Thread.sleep(3000);
@@ -109,11 +109,11 @@ public class DrawPanel extends JPanel implements Runnable {
 				if ((bullet.owner.equals("mytank")) && (enemyTank.rectangle.contains(bullet.rectangle))) {
 					blasts.add(new Blast(enemyTank.tank_x, enemyTank.tank_y, 0));
 					new Thread(() -> new PlayWav(PlayWav.TANK_BLAST)).start();
-					enemyTank.isalive = false;
+					enemyTank.isAlive = false;
 					bullets.remove(bullet);
 					enemyTank.blood -= 1;
 					if (enemyTank.blood <= 0) {
-						enemyTank.isalive = false;
+						enemyTank.isAlive = false;
 						nowStage.enemyTanks.remove(enemyTank);
 					}
 					break outer;
@@ -178,8 +178,8 @@ public class DrawPanel extends JPanel implements Runnable {
 		temp = begin;
 		
 		//绘制游戏信息字符串
-		g.drawString("player1剩余数量：" + player1_count, 30, 770);
-		g.drawString("player2剩余数量：" + player2_count, 30, 800);
+		g.drawString("player1剩余数量：" + player1Count, 30, 770);
+		g.drawString("player2剩余数量：" + player2Count, 30, 800);
 		g.drawString("敌方剩余坦克数量：" + nowStage.queueOfEnemyTanks.size(), 30, 830);
 		g.drawString("我方坦克数量：" + myTanks.size(), 30, 860);
 		g.setColor(c);
@@ -203,14 +203,14 @@ public class DrawPanel extends JPanel implements Runnable {
 	@Override
 	public void run() {// 用于控制游戏模式和进度
 		while (true) {
-			if (nowStage.base.isalive == false || (player1_count + player2_count) <= 0) {
+			if (nowStage.base.isalive == false || (player1Count + player2Count) <= 0) {
 				System.out.println("game over!!!");
 				nowStage.isCreating = false;
 				nowStage.thread.stop();
 				for (MyTank myTank : myTanks)
-					myTank.isalive = false;
+					myTank.isAlive = false;
 				for(EnemyTank enemyTank : nowStage.enemyTanks) {
-					enemyTank.isalive = false;
+					enemyTank.isAlive = false;
 				}
 				try {
 					Thread.sleep(4000);
@@ -220,8 +220,8 @@ public class DrawPanel extends JPanel implements Runnable {
 				myTanks.clear();
 				cleanScrean();
 				nowStage = new Stage(sort, this);
-				player1_count = 3;
-				player2_count = 3;
+				player1Count = 3;
+				player2Count = 3;
 				myTanks.add(new MyTank(0, this));
 				myTanks.add(new MyTank(1, this));
 			}

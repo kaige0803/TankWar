@@ -17,9 +17,9 @@ public class Base {
 
 	public Image getshow() {
 		if(isalive) {
-			return ImageUtill.base;
+			return ResourceRepertory.base[0];
 		}else {
-			return ImageUtill.destroyed;
+			return ResourceRepertory.base[1];
 		}
 	}
 	

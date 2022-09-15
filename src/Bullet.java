@@ -2,7 +2,7 @@ import java.awt.Graphics;
 import java.awt.Rectangle;
 
 public class Bullet {
-	private int bullet_speed = 30;
+	private int bulletSpeed = 30;
 	public  int bullet_x, bullet_y;//用于接收生成子弹的这一时刻坦克的位置
 	public String owner;
 	private State state;//用于接收生成子弹的这一时刻坦克的状态
@@ -30,23 +30,23 @@ public class Bullet {
 		// 根据坦克的状态调用不同的子弹图潘，并调整子弹位置。
 
 		if (state == State.DOWN) {
-			g.drawImage(ImageUtill.bullet[2], bullet_x, bullet_y, null);
-			bullet_y += bullet_speed;
+			g.drawImage(ResourceRepertory.bullet[2], bullet_x, bullet_y, null);
+			bullet_y += bulletSpeed;
 			rectangle.y = bullet_y;
 		}
 		if (state == State.LEFT) {
-			g.drawImage(ImageUtill.bullet[3], bullet_x, bullet_y, null);
-			bullet_x -= bullet_speed;
+			g.drawImage(ResourceRepertory.bullet[3], bullet_x, bullet_y, null);
+			bullet_x -= bulletSpeed;
 			rectangle.x = bullet_x;
 		}
 		if (state == State.RIGHT) {
-			g.drawImage(ImageUtill.bullet[1], bullet_x, bullet_y, null);
-			bullet_x += bullet_speed;
+			g.drawImage(ResourceRepertory.bullet[1], bullet_x, bullet_y, null);
+			bullet_x += bulletSpeed;
 			rectangle.x = bullet_x;
 		}
 		if (state == State.UP) {
-			g.drawImage(ImageUtill.bullet[0], bullet_x, bullet_y, null);
-			bullet_y -= bullet_speed;
+			g.drawImage(ResourceRepertory.bullet[0], bullet_x, bullet_y, null);
+			bullet_y -= bulletSpeed;
 			rectangle.y = bullet_y;
 		}
 

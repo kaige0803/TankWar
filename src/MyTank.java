@@ -7,14 +7,14 @@ public class MyTank implements Runnable {
 	public int blood = 3;
 	public int start_x, start_y;//坦克起始位置
 	public int tank_x, tank_y;// 坦克位置
-	private int tank_speed = 5;// 坦克速度
+	private int tankSpeed = 5;// 坦克速度
 	public int player;//0:player1  1:player2
 	private DrawPanel drawPanel = null;
 	public State state = State.UP;
 	public boolean isMoving = false;
 	public Rectangle rectangle;
-	public boolean isalive = true;
-	private static int[][] controlkeys = {{KeyEvent.VK_W, KeyEvent.VK_D, KeyEvent.VK_S, KeyEvent.VK_A, KeyEvent.VK_H},
+	public boolean isAlive = true;
+	private static int[][] controlKeys = {{KeyEvent.VK_W, KeyEvent.VK_D, KeyEvent.VK_S, KeyEvent.VK_A, KeyEvent.VK_H},
 								   {KeyEvent.VK_UP, KeyEvent.VK_RIGHT, KeyEvent.VK_DOWN, KeyEvent.VK_LEFT, KeyEvent.VK_NUMPAD0}};
 	private Thread keyboardThread;
 	private boolean canFire = true;
@@ -51,30 +51,30 @@ public class MyTank implements Runnable {
 		}
 		switch (state) {
 		case LEFT:
-			g.drawImage(ImageUtill.myTanks[player][3], tank_x, tank_y, null);
+			g.drawImage(ResourceRepertory.myTanks[player][3], tank_x, tank_y, null);
 			if (tank_x > 0 && canMoveLeft() && isMoving) {// 判断坦克是否到达边界或者遇到障碍物。
-				tank_x -= tank_speed;
+				tank_x -= tankSpeed;
 				rectangle.x = tank_x;
 			}
 			break;
 		case RIGHT:
-			g.drawImage(ImageUtill.myTanks[player][1], tank_x, tank_y, null);
+			g.drawImage(ResourceRepertory.myTanks[player][1], tank_x, tank_y, null);
 			if (tank_x < 1200 && canMoveRight() && isMoving) {
-				tank_x += tank_speed;
+				tank_x += tankSpeed;
 				rectangle.x = tank_x;
 			}
 			break;
 		case UP:
-			g.drawImage(ImageUtill.myTanks[player][0], tank_x, tank_y, null);
+			g.drawImage(ResourceRepertory.myTanks[player][0], tank_x, tank_y, null);
 			if (tank_y > 0 && canMoveUp() && isMoving) {
-				tank_y -= tank_speed;
+				tank_y -= tankSpeed;
 				rectangle.y = tank_y;
 			}
 			break;
 		case DOWN:
-			g.drawImage(ImageUtill.myTanks[player][2], tank_x, tank_y, null);
+			g.drawImage(ResourceRepertory.myTanks[player][2], tank_x, tank_y, null);
 			if (tank_y < 840 && canMoveDown() && isMoving) {
-				tank_y += tank_speed;
+				tank_y += tankSpeed;
 				rectangle.y = tank_y;
 			}
 			break;
@@ -158,27 +158,27 @@ public class MyTank implements Runnable {
 
 	@Override
 	public void run() {
-		while (isalive) {
-			if (drawPanel.keyboardPressing[controlkeys[player][0]]) {
+		while (isAlive) {
+			if (drawPanel.keyboardPressing[controlKeys[player][0]]) {
 				isMoving = true;
 				state = State.UP;
 			}
-			else if (drawPanel.keyboardPressing[controlkeys[player][1]]) {
+			else if (drawPanel.keyboardPressing[controlKeys[player][1]]) {
 				isMoving = true;
 				state = State.RIGHT;
 			}
-			else if (drawPanel.keyboardPressing[controlkeys[player][2]]) {
+			else if (drawPanel.keyboardPressing[controlKeys[player][2]]) {
 				isMoving = true;
 				state = State.DOWN;
 			}
-			else if (drawPanel.keyboardPressing[controlkeys[player][3]]) {
+			else if (drawPanel.keyboardPressing[controlKeys[player][3]]) {
 				isMoving = true;
 				state = State.LEFT;
 			}
 			else  {
 				isMoving = false;
 			}
-			if (drawPanel.keyboardPressing[controlkeys[player][4]]) fire();
+			if (drawPanel.keyboardPressing[controlKeys[player][4]]) fire();
 			try {
 				Thread.sleep(20);
 			} catch (InterruptedException e) {

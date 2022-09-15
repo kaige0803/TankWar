@@ -1,5 +1,4 @@
 import javax.swing.JFrame;
-import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 
 @SuppressWarnings("serial")
@@ -13,23 +12,12 @@ public final class MainWindow extends JFrame {
 		setResizable(false);// 窗口不可调整。
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setTitle("坦克大战");
-		try {
-			Class.forName("PlayWav");
-			Class.forName("ImageUtill");
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 		dPanel = new DrawPanel();
 		getContentPane().add(dPanel);// 把dpanel添加到窗体的根面板。
-		timer = new Timer(20, e -> dPanel.repaint());// 定时刷新,每20毫秒一次
 		pack();// 一定要加这句。
 		setLocationRelativeTo(null);// 窗口居中显示。这句要加在窗口添加完所有组件并打包之后。
 		setVisible(true);
+		timer = new Timer(20, e -> dPanel.repaint());// 定时刷新,每20毫秒一次
 		timer.start();// 启动定时刷新dPanel
-	}
-
-	public static void main(String[] args) {
-		SwingUtilities.invokeLater(() -> new MainWindow());
 	}
 }

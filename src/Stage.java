@@ -17,7 +17,6 @@ public class Stage implements Runnable {
 	public boolean isCreating = true;
 	public DrawPanel drawPanel;
 	public Thread thread;// 自动定时生成敌方坦克的线程。
-	public int totalEenemyTankCount;
 	public List<EnemyTank> enemyTanks = new CopyOnWriteArrayList<>();
 	public Queue<EnemyTank> queueOfEnemyTanks = new LinkedList<>();
 	public List<Obstacle> obstacles = new CopyOnWriteArrayList<>();// 用于存放当前关卡的所有障碍物。
@@ -36,7 +35,6 @@ public class Stage implements Runnable {
 		}
 
 		// 根据配置文件生成敌方坦克队列
-		totalEenemyTankCount = Integer.parseInt(stageProperty.getProperty("totalEenemyTankCount"));
 		for (int i = 0; i < Integer.parseInt(stageProperty.getProperty("type0")); i++) {
 			queueOfEnemyTanks.offer(new EnemyTank(60 * r.nextInt(21), 0, 0, drawPanel));
 		}

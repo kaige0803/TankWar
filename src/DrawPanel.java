@@ -80,7 +80,7 @@ public class DrawPanel extends JPanel implements Runnable {
 									} catch (InterruptedException e) {
 										e.printStackTrace();
 									}
-									myTanks.add(new MyTank(myTank.player, this));
+									if(nowStage.base.isalive) myTanks.add(new MyTank(myTank.player, this));
 								}).start();
 							}
 							break;
@@ -93,7 +93,7 @@ public class DrawPanel extends JPanel implements Runnable {
 									} catch (InterruptedException e) {
 										e.printStackTrace();
 									}
-									myTanks.add(new MyTank(myTank.player, this));
+									if(nowStage.base.isalive) myTanks.add(new MyTank(myTank.player, this));
 								}).start();
 							}
 							break;
@@ -205,13 +205,13 @@ public class DrawPanel extends JPanel implements Runnable {
 		while (true) {
 			if (nowStage.base.isalive == false || (player1_count + player2_count) <= 0) {
 				System.out.println("game over!!!");
+				nowStage.isCreating = false;
+				nowStage.thread.stop();
 				for (MyTank myTank : myTanks)
 					myTank.isalive = false;
 				for(EnemyTank enemyTank : nowStage.enemyTanks) {
 					enemyTank.isalive = false;
 				}
-				nowStage.isCreating = false;
-				nowStage.thread.stop();
 				try {
 					Thread.sleep(4000);
 				} catch (InterruptedException e) {
@@ -239,7 +239,7 @@ public class DrawPanel extends JPanel implements Runnable {
 					myTank.rest();
 			}
 			try {
-				Thread.sleep(20);
+				Thread.sleep(5);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}

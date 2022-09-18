@@ -1,6 +1,4 @@
-import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -8,7 +6,6 @@ import java.awt.image.BufferedImage;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
-
 import javax.swing.JPanel;
 
 @SuppressWarnings("serial")
@@ -16,15 +13,15 @@ public class DrawPanel extends JPanel implements Runnable {
 	private static final int GAME_WITH = 1260;
 	private static final int GAME_HIGHT = 900;
 	public static int player1Count, player2Count;
-	public boolean[] keyboardPressing;// 记录正在按的键
-	public Stage nowStage = null;// 当前关卡
-	public int sort;
+	public static boolean[] keyboardPressing;// 记录正在按的键
+	public static Stage nowStage = null;// 当前关卡
+	public static int sort;
 	public BufferedImage backgroundImage = null;
-	public List<MyTank> myTanks = new CopyOnWriteArrayList<>();
-	public List<Bullet> bullets = new CopyOnWriteArrayList<>();
-	public List<Blast> blasts = new CopyOnWriteArrayList<>();
-	private long temp, begin, time;// 用于计算帧率
-	private Font font = new Font("微软雅黑", Font.BOLD, 18);
+	public static List<MyTank> myTanks = new CopyOnWriteArrayList<>();
+	public static List<Bullet> bullets = new CopyOnWriteArrayList<>();
+	public static List<Blast> blasts = new CopyOnWriteArrayList<>();
+	public static int fps = 0;
+	private long begin, temp, time;// 用于计算帧率
 
 	public DrawPanel() {
 		setPreferredSize(new Dimension(GAME_WITH, GAME_HIGHT));// 当上一级容器不是绝对布局的时候，这里最好使用setPreferredSize。
@@ -35,18 +32,18 @@ public class DrawPanel extends JPanel implements Runnable {
 		keyboardPressing = new boolean[256];
 		addKeyListener(new ControlKeyListener());// 给面板添加键盘事件
 		sort = 0;
-		nowStage = new Stage(0, this);
+		nowStage = new Stage(0);
 		backgroundImage = ResourceRepertory.backgrounds[0];// 根据关卡生成该关卡的背景图片。
 		player1Count = 3;
 		player2Count = 3;
-		myTanks.add(new MyTank(0, this));// 生成一辆我方坦克
-		myTanks.add(new MyTank(1, this));// 生成一辆我方坦克
+		myTanks.add(new MyTank(0));// 生成一辆我方坦克
+		myTanks.add(new MyTank(1));// 生成一辆我方坦克
 		new Thread(this).start();
 	}
 
 	@Override
 	public void paint(Graphics g) {
-		Color c = g.getColor();
+		begin = System.currentTimeMillis();
 		g.drawImage(backgroundImage, 0, 0, null);// 绘制背景（注意：背景需要最先画，否则背景处于最上层，看不到其他图形了）
 		
 		// 画出我方坦克。
@@ -64,7 +61,7 @@ public class DrawPanel extends JPanel implements Runnable {
 			for (MyTank myTank : myTanks) {
 				if ((bullet.owner.equals("enemytank")) && (myTank.rectangle.contains(bullet.rectangle))) {
 					blasts.add(new Blast(myTank.tank_x, myTank.tank_y, 0));
-					new Thread(() -> new PlayWav(PlayWav.TANK_BLAST)).start();
+					new Thread(() -> new PlayWav(PlayWav.TANK_BLAST).play()).start();
 					bullets.remove(bullet);
 					myTank.blood -= 1;
 					if (myTank.blood <= 0) {
@@ -80,7 +77,7 @@ public class DrawPanel extends JPanel implements Runnable {
 									} catch (InterruptedException e) {
 										e.printStackTrace();
 									}
-									if(nowStage.base.isalive) myTanks.add(new MyTank(myTank.player, this));
+									if(nowStage.base.isalive) myTanks.add(new MyTank(myTank.player));
 								}).start();
 							}
 							break;
@@ -93,7 +90,7 @@ public class DrawPanel extends JPanel implements Runnable {
 									} catch (InterruptedException e) {
 										e.printStackTrace();
 									}
-									if(nowStage.base.isalive) myTanks.add(new MyTank(myTank.player, this));
+									if(nowStage.base.isalive) myTanks.add(new MyTank(myTank.player));
 								}).start();
 							}
 							break;
@@ -108,7 +105,7 @@ public class DrawPanel extends JPanel implements Runnable {
 			for (EnemyTank enemyTank : nowStage.enemyTanks) {
 				if ((bullet.owner.equals("mytank")) && (enemyTank.rectangle.contains(bullet.rectangle))) {
 					blasts.add(new Blast(enemyTank.tank_x, enemyTank.tank_y, 0));
-					new Thread(() -> new PlayWav(PlayWav.TANK_BLAST)).start();
+					new Thread(() -> new PlayWav(PlayWav.TANK_BLAST).play()).start();
 					enemyTank.isAlive = false;
 					bullets.remove(bullet);
 					enemyTank.blood -= 1;
@@ -124,12 +121,12 @@ public class DrawPanel extends JPanel implements Runnable {
 					if (!obstacle.canCrossIn) {
 						if (obstacle.canDisdroyed) {
 							blasts.add(new Blast(obstacle.x, obstacle.y, 0));
-							new Thread(() -> new PlayWav(PlayWav.OBSTACLE_BLAST)).start();
+							new Thread(() -> new PlayWav(PlayWav.OBSTACLE_BLAST).play()).start();
 							nowStage.obstacles.remove(obstacle);
 							bullets.remove(bullet);
 						} else {
 							blasts.add(new Blast(obstacle.x, obstacle.y, 2));
-							new Thread(() -> new PlayWav(PlayWav.STEEL_BLAST)).start();
+							new Thread(() -> new PlayWav(PlayWav.STEEL_BLAST).play()).start();
 							bullets.remove(bullet);
 						}
 						break outer;
@@ -139,7 +136,7 @@ public class DrawPanel extends JPanel implements Runnable {
 			}
 			if (nowStage.base.isalive && nowStage.base.rectangle.contains(bullet.rectangle)) {
 				blasts.add(new Blast(nowStage.base.x, nowStage.base.y, 1));
-				new Thread(() -> new PlayWav(PlayWav.BASE_BLAST)).start();
+				new Thread(() -> new PlayWav(PlayWav.BASE_BLAST).play()).start();
 				nowStage.base.isalive = false;
 				bullets.remove(bullet);
 				break outer;
@@ -168,21 +165,11 @@ public class DrawPanel extends JPanel implements Runnable {
 			}
 		}
 
-		// 计算帧率并绘制字符串
-		g.setColor(Color.DARK_GRAY);
-		g.setFont(font);
-		begin = System.currentTimeMillis();
-		time = begin - temp;
-		if (time != 0)
-			g.drawString("fps：" + (int) (1000 / (time)), 30, 740);
-		temp = begin;
-		
-		//绘制游戏信息字符串
-		g.drawString("player1剩余数量：" + player1Count, 30, 770);
-		g.drawString("player2剩余数量：" + player2Count, 30, 800);
-		g.drawString("敌方剩余坦克数量：" + nowStage.queueOfEnemyTanks.size(), 30, 830);
-		g.drawString("我方坦克数量：" + myTanks.size(), 30, 860);
-		g.setColor(c);
+		// 计算帧率
+		temp = System.currentTimeMillis();
+		begin = temp;
+		time = temp - begin;
+		fps = (int) (1000 / (time));
 	}
 
 	// 处理dpanel接收到的keyPressed键盘事件e，并改变键盘数组相应的值，供其他类访问。
@@ -207,8 +194,9 @@ public class DrawPanel extends JPanel implements Runnable {
 				System.out.println("game over!!!");
 				nowStage.isCreating = false;
 				nowStage.thread.stop();
-				for (MyTank myTank : myTanks)
+				for (MyTank myTank : myTanks) {
 					myTank.isAlive = false;
+				}
 				for(EnemyTank enemyTank : nowStage.enemyTanks) {
 					enemyTank.isAlive = false;
 				}
@@ -219,11 +207,11 @@ public class DrawPanel extends JPanel implements Runnable {
 				}
 				myTanks.clear();
 				cleanScrean();
-				nowStage = new Stage(sort, this);
+				nowStage = new Stage(sort);
 				player1Count = 3;
 				player2Count = 3;
-				myTanks.add(new MyTank(0, this));
-				myTanks.add(new MyTank(1, this));
+				myTanks.add(new MyTank(0));
+				myTanks.add(new MyTank(1));
 			}
 			if (nowStage.enemyTanks.isEmpty() && (nowStage.queueOfEnemyTanks.size() == 0)) {
 				System.out.println("you win!!!");
@@ -234,7 +222,7 @@ public class DrawPanel extends JPanel implements Runnable {
 				}
 				cleanScrean();
 				sort++;
-				nowStage = new Stage(sort, this);
+				nowStage = new Stage(sort);
 				for (MyTank myTank : myTanks)
 					myTank.rest();
 			}

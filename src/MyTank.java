@@ -9,19 +9,17 @@ public class MyTank implements Runnable {
 	public int tank_x, tank_y;// 坦克位置
 	private int tankSpeed = 5;// 坦克速度
 	public int player;//0:player1  1:player2
-	private DrawPanel drawPanel = null;
 	public State state = State.UP;
 	public boolean isMoving = false;
 	public Rectangle rectangle;
 	public boolean isAlive = true;
-	private static int[][] controlKeys = {{KeyEvent.VK_W, KeyEvent.VK_D, KeyEvent.VK_S, KeyEvent.VK_A, KeyEvent.VK_H},
-								   {KeyEvent.VK_UP, KeyEvent.VK_RIGHT, KeyEvent.VK_DOWN, KeyEvent.VK_LEFT, KeyEvent.VK_NUMPAD0}};
-	private Thread keyboardThread;
+	public Thread keyboardThread;
 	private boolean canFire = true;
+	private static int[][] controlKeys = {{KeyEvent.VK_W, KeyEvent.VK_D, KeyEvent.VK_S, KeyEvent.VK_A, KeyEvent.VK_H},
+			{KeyEvent.VK_UP, KeyEvent.VK_RIGHT, KeyEvent.VK_DOWN, KeyEvent.VK_LEFT, KeyEvent.VK_NUMPAD0}};
 
-	public MyTank(int player, DrawPanel drawPanel) {
+	public MyTank(int player) {
 		super();
-		this.drawPanel = drawPanel;
 		this.player = player;
 		switch (this.player) {
 		case 0:
@@ -85,12 +83,12 @@ public class MyTank implements Runnable {
 	}
 
 	private boolean canMoveDown() {
-		for (Obstacle obstacle : drawPanel.nowStage.obstacles) {
+		for (Obstacle obstacle : DrawPanel.nowStage.obstacles) {
 			if ((tank_y == obstacle.y - 60) && (tank_x < obstacle.x + 60) && (tank_x > obstacle.x - 60)
 					&& (!obstacle.canCrossIn))
 				return false;
 		}
-		for (EnemyTank enemyTank : drawPanel.nowStage.enemyTanks) {
+		for (EnemyTank enemyTank : DrawPanel.nowStage.enemyTanks) {
 			if ((tank_y == enemyTank.tank_y - 60) && (tank_x < enemyTank.tank_x + 60)
 					&& (tank_x > enemyTank.tank_x - 60))
 				return false;
@@ -99,12 +97,12 @@ public class MyTank implements Runnable {
 	}
 
 	private boolean canMoveUp() {
-		for (Obstacle obstacle : drawPanel.nowStage.obstacles) {
+		for (Obstacle obstacle : DrawPanel.nowStage.obstacles) {
 			if ((tank_y == obstacle.y + 60) && (tank_x < obstacle.x + 60) && (tank_x > obstacle.x - 60)
 					&& (!obstacle.canCrossIn))
 				return false;
 		}
-		for (EnemyTank enemyTank : drawPanel.nowStage.enemyTanks) {
+		for (EnemyTank enemyTank : DrawPanel.nowStage.enemyTanks) {
 			if ((tank_y == enemyTank.tank_y + 60) && (tank_x < enemyTank.tank_x + 60)
 					&& (tank_x > enemyTank.tank_x - 60))
 				return false;
@@ -113,12 +111,12 @@ public class MyTank implements Runnable {
 	}
 
 	private boolean canMoveRight() {
-		for (Obstacle obstacle : drawPanel.nowStage.obstacles) {
+		for (Obstacle obstacle : DrawPanel.nowStage.obstacles) {
 			if ((tank_x == obstacle.x - 60) && (tank_y < obstacle.y + 60) && (tank_y > obstacle.y - 60)
 					&& (!obstacle.canCrossIn))
 				return false;
 		}
-		for (EnemyTank enemyTank : drawPanel.nowStage.enemyTanks) {
+		for (EnemyTank enemyTank : DrawPanel.nowStage.enemyTanks) {
 			if ((tank_x == enemyTank.tank_x - 60) && (tank_y < enemyTank.tank_y + 60)
 					&& (tank_y > enemyTank.tank_y - 60))
 				return false;
@@ -127,12 +125,12 @@ public class MyTank implements Runnable {
 	}
 
 	private boolean canMoveLeft() {
-		for (Obstacle obstacle : drawPanel.nowStage.obstacles) {
+		for (Obstacle obstacle : DrawPanel.nowStage.obstacles) {
 			if ((tank_x == obstacle.x + 60) && (tank_y < obstacle.y + 60) && (tank_y > obstacle.y - 60)
 					&& (!obstacle.canCrossIn))
 				return false;
 		}
-		for (EnemyTank enemyTank : drawPanel.nowStage.enemyTanks) {
+		for (EnemyTank enemyTank : DrawPanel.nowStage.enemyTanks) {
 			if ((tank_x == enemyTank.tank_x + 60) && (tank_y < enemyTank.tank_y + 60)
 					&& (tank_y > enemyTank.tank_y - 60))
 				return false;
@@ -142,8 +140,8 @@ public class MyTank implements Runnable {
 
 	public void fire() {
 		if (canFire) {
-			drawPanel.bullets.add(new Bullet(tank_x, tank_y, state, "mytank"));
-			new Thread(() -> new PlayWav(PlayWav.BULLET_FLYING)).start();
+			DrawPanel.bullets.add(new Bullet(tank_x, tank_y, state, "mytank"));
+			new Thread(() -> new PlayWav(PlayWav.BULLET_FLYING).play()).start();
 			new Thread(() -> {
 				canFire = false;
 				try {
@@ -159,26 +157,26 @@ public class MyTank implements Runnable {
 	@Override
 	public void run() {
 		while (isAlive) {
-			if (drawPanel.keyboardPressing[controlKeys[player][0]]) {
+			if (DrawPanel.keyboardPressing[controlKeys[player][0]]) {
 				isMoving = true;
 				state = State.UP;
 			}
-			else if (drawPanel.keyboardPressing[controlKeys[player][1]]) {
+			else if (DrawPanel.keyboardPressing[controlKeys[player][1]]) {
 				isMoving = true;
 				state = State.RIGHT;
 			}
-			else if (drawPanel.keyboardPressing[controlKeys[player][2]]) {
+			else if (DrawPanel.keyboardPressing[controlKeys[player][2]]) {
 				isMoving = true;
 				state = State.DOWN;
 			}
-			else if (drawPanel.keyboardPressing[controlKeys[player][3]]) {
+			else if (DrawPanel.keyboardPressing[controlKeys[player][3]]) {
 				isMoving = true;
 				state = State.LEFT;
 			}
 			else  {
 				isMoving = false;
 			}
-			if (drawPanel.keyboardPressing[controlKeys[player][4]]) fire();
+			if (DrawPanel.keyboardPressing[controlKeys[player][4]]) fire();
 			try {
 				Thread.sleep(20);
 			} catch (InterruptedException e) {

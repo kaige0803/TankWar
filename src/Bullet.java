@@ -27,7 +27,7 @@ public class Bullet {
 	}
 
 	public void drawMyself(Graphics g) {
-		// 根据坦克的状态调用不同的子弹图潘，并调整子弹位置。
+		// 根据坦克的状态调用不同的子弹图，并调整子弹位置。
 
 		if (state == State.DOWN) {
 			g.drawImage(ResourceRepertory.bullet[2], bullet_x, bullet_y, null);

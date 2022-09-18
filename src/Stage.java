@@ -21,10 +21,8 @@ public class Stage implements Runnable {
 	public Queue<EnemyTank> queueOfEnemyTanks = new LinkedList<>();
 	public List<Obstacle> obstacles = new CopyOnWriteArrayList<>();// 用于存放当前关卡的所有障碍物。
 
-	public Stage(int sort, DrawPanel drawPanel) {
+	public Stage(int sort) {
 		this.sort = sort;
-		this.drawPanel = drawPanel;
-
 		// 根据关卡加载配置文件
 		try {
 			stageProperty.load(
@@ -36,13 +34,13 @@ public class Stage implements Runnable {
 
 		// 根据配置文件生成敌方坦克队列
 		for (int i = 0; i < Integer.parseInt(stageProperty.getProperty("type0")); i++) {
-			queueOfEnemyTanks.offer(new EnemyTank(60 * r.nextInt(21), 0, 0, drawPanel));
+			queueOfEnemyTanks.offer(new EnemyTank(60 * r.nextInt(21), 0, 0));
 		}
 		for (int i = 0; i < Integer.parseInt(stageProperty.getProperty("type1")); i++) {
-			queueOfEnemyTanks.offer(new EnemyTank(60 * r.nextInt(21), 0, 1, drawPanel));
+			queueOfEnemyTanks.offer(new EnemyTank(60 * r.nextInt(21), 0, 1));
 		}
 		for (int i = 0; i < Integer.parseInt(stageProperty.getProperty("type2")); i++) {
-			queueOfEnemyTanks.offer(new EnemyTank(60 * r.nextInt(21), 0, 2, drawPanel));
+			queueOfEnemyTanks.offer(new EnemyTank(60 * r.nextInt(21), 0, 2));
 		}
 		
 		// 根据配置文件生成障碍物列表obstacles。

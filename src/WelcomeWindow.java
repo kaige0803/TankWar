@@ -8,12 +8,14 @@ import javax.swing.SwingUtilities;
 @SuppressWarnings("serial")
 public class WelcomeWindow extends JWindow implements Runnable {
 	
+	public static int readedFileCount = 0;
+	public static final int TOTAL_FILES = 124;
 	public JProgressBar progressbar;
 	public JLabel label;
 	public WelcomeWindow() {
 		label = new JLabel();
 		label.setIcon(new ImageIcon(WelcomeWindow.class.getResource("images/Splash/Splash.jpg")));
-		progressbar = new JProgressBar(0, 100);
+		progressbar = new JProgressBar(0, TOTAL_FILES);
 		progressbar.setBorderPainted(false);
 		progressbar.setStringPainted(true);
 		this.add(label, BorderLayout.CENTER);
@@ -22,6 +24,7 @@ public class WelcomeWindow extends JWindow implements Runnable {
 		this.setLocationRelativeTo(null);
 		this.setVisible(true);
 	}
+	
 	public static void main(String[] args) {
 		SwingUtilities.invokeLater(() -> new Thread(new WelcomeWindow()).start());
 		try {
@@ -29,10 +32,17 @@ public class WelcomeWindow extends JWindow implements Runnable {
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
+		
 	}
+	
 	public void run() {
-		while(ResourceRepertory.readedFileCount < ResourceRepertory.fileCount) {
-			progressbar.setValue(ResourceRepertory.readedFileCount);
+		while(readedFileCount <= TOTAL_FILES) {
+			this.progressbar.setValue(readedFileCount);
+			try {
+				Thread.sleep(50);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 		}
 		SwingUtilities.invokeLater(() -> new MainWindow());
 		this.dispose();

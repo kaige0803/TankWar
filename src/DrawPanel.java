@@ -166,10 +166,11 @@ public class DrawPanel extends JPanel implements Runnable {
 		}
 
 		// 计算帧率
-		temp = System.currentTimeMillis();
-		begin = temp;
-		time = temp - begin;
-		fps = (int) (1000 / (time));
+		begin = System.currentTimeMillis();
+		time = begin - temp;
+		if (time != 0)
+			fps = (int) (1000 / (time));
+		temp = begin;
 	}
 
 	// 处理dpanel接收到的keyPressed键盘事件e，并改变键盘数组相应的值，供其他类访问。

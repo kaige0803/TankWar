@@ -1,4 +1,5 @@
 import java.awt.BorderLayout;
+import java.awt.Color;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JProgressBar;
@@ -18,6 +19,7 @@ public class WelcomeWindow extends JWindow implements Runnable {
 		progressbar = new JProgressBar(0, TOTAL_FILES);
 		progressbar.setBorderPainted(false);
 		progressbar.setStringPainted(true);
+		progressbar.setForeground(Color.GREEN);
 		this.add(label, BorderLayout.CENTER);
 		this.add(progressbar,BorderLayout.SOUTH);
 		this.pack();

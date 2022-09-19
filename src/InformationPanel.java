@@ -1,10 +1,14 @@
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Graphics;
 
 import javax.swing.BorderFactory;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.LineBorder;
@@ -18,6 +22,8 @@ public class InformationPanel extends JPanel implements Runnable {
 	public JLabel fpsData = new JLabel("0");
 	public JLabel stageLabel = new JLabel("STAGE : ");
 	public JLabel stageData = new JLabel();
+	public JLabel player1Icon = new JLabel(new ImageIcon(InformationPanel.class.getResource("images/icon/player1.png")));
+	public JLabel player2Icon = new JLabel(new ImageIcon(InformationPanel.class.getResource("images/icon/player2.png")));
 	private JPanel enemyInformationPanel = new JPanel();
 	private JPanel myInformationPanel = new JPanel();
 	private JPanel gameInformationPanel = new JPanel();
@@ -37,6 +43,9 @@ public class InformationPanel extends JPanel implements Runnable {
 		
 		this.setPreferredSize(new Dimension(WHITH, 900));
 		this.setLayout(new BorderLayout(0, 0));
+		
+		//设置并组装myInformationPanel面板。
+		myInformationPanel.setLayout(new BorderLayout(0,0));
 		myInformationPanel.setPreferredSize(new Dimension(WHITH,150));
 		myInformationPanel.setBackground(Color.DARK_GRAY);
 		myInformationPanel.setBorder(BorderFactory.createTitledBorder(new LineBorder(Color.WHITE, 1, true), 
@@ -44,6 +53,11 @@ public class InformationPanel extends JPanel implements Runnable {
                                                                      TitledBorder.DEFAULT_JUSTIFICATION, 
                                                                      TitledBorder.DEFAULT_POSITION, 
                                                                      font1, Color.WHITE));
+		myInformationPanel.add(player1Icon, BorderLayout.CENTER);
+		myInformationPanel.add(player2Icon, BorderLayout.SOUTH);
+		
+		
+		//设置并组装enemyInformationPanel面板。
 		enemyInformationPanel.setPreferredSize(new Dimension(WHITH, 600));
 		enemyInformationPanel.setBackground(Color.DARK_GRAY);
 		enemyInformationPanel.setBorder(BorderFactory.createTitledBorder(new LineBorder(Color.WHITE, 1, true), 
@@ -51,7 +65,9 @@ public class InformationPanel extends JPanel implements Runnable {
 				                                                       TitledBorder.DEFAULT_JUSTIFICATION, 
 				                                                       TitledBorder.DEFAULT_POSITION, 
 				                                                       font1, Color.WHITE));
+		
 		//设置并组装gameInformationPanel面板。
+		gameInformationPanel.setLayout(new BorderLayout(0,0));
 		gameInformationPanel.setPreferredSize(new Dimension(WHITH, 150));
 		gameInformationPanel.setBackground(Color.DARK_GRAY);
 		gameInformationPanel.setBorder(BorderFactory.createTitledBorder(new LineBorder(Color.WHITE, 1, true), 
@@ -64,6 +80,7 @@ public class InformationPanel extends JPanel implements Runnable {
 		gameInformationPanel.add(stageLabel,BorderLayout.SOUTH);
 		gameInformationPanel.add(stageData,BorderLayout.SOUTH);
 		
+		//组装InformationPanel面板。
 		this.add(gameInformationPanel, BorderLayout.NORTH);
 		this.add(enemyInformationPanel, BorderLayout.CENTER);
 		this.add(myInformationPanel, BorderLayout.SOUTH);

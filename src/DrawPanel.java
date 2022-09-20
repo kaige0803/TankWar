@@ -13,6 +13,7 @@ public class DrawPanel extends JPanel implements Runnable {
 	private static final int GAME_WITH = 1260;
 	private static final int GAME_HIGHT = 900;
 	public static int player1Count, player2Count;
+	public static int player1Score, player2Score;
 	public static boolean[] keyboardPressing;// 记录正在按的键
 	public static Stage nowStage = null;// 当前关卡
 	public static int sort;
@@ -59,7 +60,7 @@ public class DrawPanel extends JPanel implements Runnable {
 		// 子弹在碰撞检测后画出。
 		outer: for (Bullet bullet : bullets) {
 			for (MyTank myTank : myTanks) {
-				if ((bullet.owner.equals("enemytank")) && (myTank.rectangle.contains(bullet.rectangle))) {
+				if ("enemytank".equals(bullet.owner) && (myTank.rectangle.contains(bullet.rectangle))) {
 					blasts.add(new Blast(myTank.tank_x, myTank.tank_y, 0));
 					new Thread(() -> new PlayWav(PlayWav.TANK_BLAST).play()).start();
 					bullets.remove(bullet);
@@ -103,7 +104,7 @@ public class DrawPanel extends JPanel implements Runnable {
 			}
 
 			for (EnemyTank enemyTank : nowStage.enemyTanks) {
-				if ((bullet.owner.equals("mytank")) && (enemyTank.rectangle.contains(bullet.rectangle))) {
+				if (("mytank".equals(bullet.owner)) && (enemyTank.rectangle.contains(bullet.rectangle))) {
 					blasts.add(new Blast(enemyTank.tank_x, enemyTank.tank_y, 0));
 					new Thread(() -> new PlayWav(PlayWav.TANK_BLAST).play()).start();
 					enemyTank.isAlive = false;

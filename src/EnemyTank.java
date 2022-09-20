@@ -4,6 +4,8 @@ import java.util.Random;
 
 public class EnemyTank implements Runnable {
 
+	public static final int TYPE0 = 0, TYPY1 = 1, TYPE2 = 2;
+	public static final int[] SCORE_TABLE = {50, 100, 200};
 	public int tank_x, tank_y;// 坦克位置
 	private int tankSpeed = 5;// 坦克速度
 	private int type;// 0:普通坦克 1：速度型坦克 2：重装坦克

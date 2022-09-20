@@ -28,7 +28,6 @@ public class Stage implements Runnable {
 			stageProperty.load(
 					Stage.class.getClassLoader().getResourceAsStream("stageProperties/stage" + sort + ".properies"));
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 

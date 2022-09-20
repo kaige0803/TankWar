@@ -19,10 +19,13 @@ public class DrawPanel extends JPanel implements Runnable {
 	public static int sort;
 	public BufferedImage backgroundImage = null;
 	public static List<MyTank> myTanks = new CopyOnWriteArrayList<>();
+	public static List<Player> players = new CopyOnWriteArrayList<>();
 	public static List<Bullet> bullets = new CopyOnWriteArrayList<>();
 	public static List<Blast> blasts = new CopyOnWriteArrayList<>();
 	public static int fps = 0;
 	private long begin, temp, time;// 用于计算帧率
+	public Player player1 = new Player(0, "player1");
+	public Player player2 = new Player(1, "player2");
 
 	public DrawPanel() {
 		setPreferredSize(new Dimension(GAME_WITH, GAME_HIGHT));// 当上一级容器不是绝对布局的时候，这里最好使用setPreferredSize。
@@ -37,8 +40,8 @@ public class DrawPanel extends JPanel implements Runnable {
 		backgroundImage = ResourceRepertory.backgrounds[0];// 根据关卡生成该关卡的背景图片。
 		player1Count = 3;
 		player2Count = 3;
-		myTanks.add(new MyTank(0));// 生成一辆我方坦克
-		myTanks.add(new MyTank(1));// 生成一辆我方坦克
+		myTanks.add(new MyTank(0,""));// 生成一辆我方坦克
+		myTanks.add(new MyTank(1,""));// 生成一辆我方坦克
 		new Thread(this).start();
 	}
 
@@ -78,7 +81,7 @@ public class DrawPanel extends JPanel implements Runnable {
 									} catch (InterruptedException e) {
 										e.printStackTrace();
 									}
-									if(nowStage.base.isalive) myTanks.add(new MyTank(myTank.player));
+									if(nowStage.base.isalive) myTanks.add(new MyTank(myTank.player, ""));
 								}).start();
 							}
 							break;
@@ -91,7 +94,7 @@ public class DrawPanel extends JPanel implements Runnable {
 									} catch (InterruptedException e) {
 										e.printStackTrace();
 									}
-									if(nowStage.base.isalive) myTanks.add(new MyTank(myTank.player));
+									if(nowStage.base.isalive) myTanks.add(new MyTank(myTank.player,""));
 								}).start();
 							}
 							break;
@@ -212,8 +215,8 @@ public class DrawPanel extends JPanel implements Runnable {
 				nowStage = new Stage(sort);
 				player1Count = 3;
 				player2Count = 3;
-				myTanks.add(new MyTank(0));
-				myTanks.add(new MyTank(1));
+				myTanks.add(new MyTank(0,""));
+				myTanks.add(new MyTank(1,""));
 			}
 			if (nowStage.enemyTanks.isEmpty() && (nowStage.queueOfEnemyTanks.size() == 0)) {
 				System.out.println("you win!!!");

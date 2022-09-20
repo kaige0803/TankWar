@@ -18,9 +18,11 @@ public class MyTank implements Runnable {
 	public boolean isAlive = true;
 	public Thread keyboardThread;
 	private boolean canFire = true;
+	public String owner;
 
-	public MyTank(int player) {
+	public MyTank(int player, String owner) {
 		super();
+		this.owner = owner;
 		this.player = player;
 		switch (this.player) {
 		case 0:

@@ -84,7 +84,7 @@ public class ResourceRepertory {
 				}
 				byteArrayOutputStream.flush();
 				audioDataArrays[i] = byteArrayOutputStream.toByteArray();
-				byteArrayOutputStream.reset();//初始化字节数组指针。
+				byteArrayOutputStream.reset();//初始化流内部字节数组指针。
 				byteArrayOutputStream.close();
 				inputStream.close();
 			} catch (UnsupportedAudioFileException | IOException e) {

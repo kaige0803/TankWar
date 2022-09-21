@@ -4,12 +4,11 @@ import java.util.Random;
 
 public class EnemyTank implements Runnable {
 
-	public static final int TYPE0 = 0, TYPY1 = 1, TYPE2 = 2;
-	public static final int[] SCORE_TABLE = {50, 100, 200};// 普通坦克50分   速度型坦克100分   重装坦克200分，数组下标是坦克类型。
+	public int score;
 	public int tank_x, tank_y;// 坦克位置
-	private int tankSpeed = 5;// 坦克速度
+	private int tankSpeed;// 坦克速度
 	private int type;// 0:普通坦克 1：速度型坦克 2：重装坦克
-	public int blood = 1;
+	public int blood;
 	private Random r = new Random();// 用于产生随机方向和随机的时间间隔。
 	private State state = State.DOWN;// 初始方向向下运动。
 	public boolean isMoving = true;
@@ -20,10 +19,27 @@ public class EnemyTank implements Runnable {
 	public EnemyTank(int tank_x, int tank_y, int type) {
 		super();
 		this.type = type;
-		if (type == 1)
-			this.tankSpeed = 10;
-		if (type == 2)
-			this.blood = 3;
+		switch (type) {
+		case 0:
+			tankSpeed = 5;
+			blood = 1;
+			score = 50;
+			break;
+		case 1:
+			tankSpeed = 10;
+			blood = 1;
+			score = 100;
+			break;
+		case 2:
+			tankSpeed = 5;
+			blood = 3;
+			score = 200;
+			break;
+
+		default:
+			break;
+		}
+		
 		this.tank_x = tank_x;
 		this.tank_y = tank_y;
 		rectangle = new Rectangle(tank_x, tank_y, 60, 60);
@@ -76,8 +92,8 @@ public class EnemyTank implements Runnable {
 					&& (tank_x > enemyTank.tank_x - 60))
 				return false;
 		}
-		for (MyTank myTank : DrawPanel.myTanks) {
-			if ((tank_y == myTank.tank_y - 60) && (tank_x < myTank.tank_x + 60) && (tank_x > myTank.tank_x - 60))
+		for (Player player : DrawPanel.players) {
+			if ((player.fightingTank != null) && (tank_y == player.fightingTank.tank_y - 60) && (tank_x < player.fightingTank.tank_x + 60) && (tank_x > player.fightingTank.tank_x - 60))
 				return false;
 		}
 		return true;
@@ -94,8 +110,8 @@ public class EnemyTank implements Runnable {
 					&& (tank_x > enemyTank.tank_x - 60))
 				return false;
 		}
-		for (MyTank myTank : DrawPanel.myTanks) {
-			if ((tank_y == myTank.tank_y + 60) && (tank_x < myTank.tank_x + 60) && (tank_x > myTank.tank_x - 60))
+		for (Player player : DrawPanel.players) {
+			if ((player.fightingTank != null) && (tank_y == player.fightingTank.tank_y + 60) && (tank_x < player.fightingTank.tank_x + 60) && (tank_x > player.fightingTank.tank_x - 60))
 				return false;
 		}
 		return true;
@@ -112,8 +128,8 @@ public class EnemyTank implements Runnable {
 					&& (tank_y > enemyTank.tank_y - 60))
 				return false;
 		}
-		for (MyTank myTank : DrawPanel.myTanks) {
-			if ((tank_x == myTank.tank_x - 60) && (tank_y < myTank.tank_y + 60) && (tank_y > myTank.tank_y - 60))
+		for (Player player : DrawPanel.players) {
+			if ((player.fightingTank != null) && (tank_x == player.fightingTank.tank_x - 60) && (tank_y < player.fightingTank.tank_y + 60) && (tank_y > player.fightingTank.tank_y - 60))
 				return false;
 		}
 		return true;
@@ -130,8 +146,8 @@ public class EnemyTank implements Runnable {
 					&& (tank_y > enemyTank.tank_y - 60))
 				return false;
 		}
-		for (MyTank myTank : DrawPanel.myTanks) {
-			if ((tank_x == myTank.tank_x + 60) && (tank_y < myTank.tank_y + 60) && (tank_y > myTank.tank_y - 60))
+		for (Player player : DrawPanel.players) {
+			if ((player.fightingTank != null) && (tank_x == player.fightingTank.tank_x + 60) && (tank_y < player.fightingTank.tank_y + 60) && (tank_y > player.fightingTank.tank_y - 60))
 				return false;
 		}
 		return true;
@@ -141,7 +157,7 @@ public class EnemyTank implements Runnable {
 	public void run() {
 		while (isAlive) {
 			// 随机加入子弹
-			DrawPanel.bullets.add(new Bullet(tank_x, tank_y, state, "enemytank"));
+			DrawPanel.bullets.add(new Bullet(tank_x, tank_y, state, "enemytank", false));
 			try {
 				Thread.sleep(500 + r.nextInt(500));
 			} catch (InterruptedException e) {

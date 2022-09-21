@@ -4,7 +4,6 @@ import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 
 public class MyTank implements Runnable {
-	public static final int PLAYER1 = 0, PLYER2 = 1;
 	private static int[][] controlKeys = {{KeyEvent.VK_W, KeyEvent.VK_D, KeyEvent.VK_S, KeyEvent.VK_A, KeyEvent.VK_H},
 			{KeyEvent.VK_UP, KeyEvent.VK_RIGHT, KeyEvent.VK_DOWN, KeyEvent.VK_LEFT, KeyEvent.VK_NUMPAD0}};
 	public int blood = 3;
@@ -40,7 +39,7 @@ public class MyTank implements Runnable {
 		this.tank_y = this.start_y;
 		rectangle = new Rectangle(tank_x, tank_y, 60, 60);
 		keyboardThread = new Thread(this);
-		keyboardThread.start();
+		//keyboardThread.start();
 	}
 
 	public void drawMyself(Graphics g) {// 接受dpanel传来的画笔g2d，将坦克自己画在dpanel上
@@ -143,7 +142,7 @@ public class MyTank implements Runnable {
 
 	public void fire() {
 		if (canFire) {
-			DrawPanel.bullets.add(new Bullet(tank_x, tank_y, state, "mytank"));
+			DrawPanel.bullets.add(new Bullet(tank_x, tank_y, state, this.owner, true));
 			new Thread(() -> new PlayWav(PlayWav.BULLET_FLYING).play()).start();
 			new Thread(() -> {
 				canFire = false;

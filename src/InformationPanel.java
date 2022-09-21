@@ -94,8 +94,8 @@ public class InformationPanel extends JPanel implements Runnable {
 		while (true) {
 			fpsData.setText("<html><font size=6 color=white face=微软雅黑>" + DrawPanel.fps + "</font></html>");
 			stageData.setText("<html><font size=6 color=white face=微软雅黑>" + (DrawPanel.sort + 1) + "</font></html>");
-			player1LifeCount.setText("<html><font size=6 color=white face=微软雅黑>" + DrawPanel.player1Count + "</font></html>");
-			player2LifeCount.setText("<html><font size=6 color=white face=微软雅黑>" + DrawPanel.player2Count + "</font></html>");
+//			player1LifeCount.setText("<html><font size=6 color=white face=微软雅黑>" + DrawPanel.players.get(0).count + "</font></html>");
+//			player2LifeCount.setText("<html><font size=6 color=white face=微软雅黑>" + DrawPanel.players.get(1).count + "</font></html>");
 			try {
 				Thread.sleep(1000);
 			} catch (InterruptedException e) {

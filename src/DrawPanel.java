@@ -12,20 +12,15 @@ import javax.swing.JPanel;
 public class DrawPanel extends JPanel implements Runnable {
 	private static final int GAME_WITH = 1260;
 	private static final int GAME_HIGHT = 900;
-	public static int player1Count, player2Count;
-	public static int player1Score, player2Score;
 	public static boolean[] keyboardPressing;// 记录正在按的键
 	public static Stage nowStage = null;// 当前关卡
 	public static int sort;
 	public BufferedImage backgroundImage = null;
-	public static List<MyTank> myTanks = new CopyOnWriteArrayList<>();
 	public static List<Player> players = new CopyOnWriteArrayList<>();
 	public static List<Bullet> bullets = new CopyOnWriteArrayList<>();
 	public static List<Blast> blasts = new CopyOnWriteArrayList<>();
 	public static int fps = 0;
 	private long begin, temp, time;// 用于计算帧率
-	public Player player1 = new Player(0, "player1");
-	public Player player2 = new Player(1, "player2");
 
 	public DrawPanel() {
 		setPreferredSize(new Dimension(GAME_WITH, GAME_HIGHT));// 当上一级容器不是绝对布局的时候，这里最好使用setPreferredSize。
@@ -38,10 +33,8 @@ public class DrawPanel extends JPanel implements Runnable {
 		sort = 0;
 		nowStage = new Stage(0);
 		backgroundImage = ResourceRepertory.backgrounds[0];// 根据关卡生成该关卡的背景图片。
-		player1Count = 3;
-		player2Count = 3;
-		myTanks.add(new MyTank(0,""));// 生成一辆我方坦克
-		myTanks.add(new MyTank(1,""));// 生成一辆我方坦克
+		players.add(new Player(0, "player1"));
+		players.add(new Player(1, "player2"));
 		new Thread(this).start();
 	}
 
@@ -51,8 +44,9 @@ public class DrawPanel extends JPanel implements Runnable {
 		g.drawImage(backgroundImage, 0, 0, null);// 绘制背景（注意：背景需要最先画，否则背景处于最上层，看不到其他图形了）
 		
 		// 画出我方坦克。
-		for (Iterator<MyTank> iterator = myTanks.iterator(); iterator.hasNext();) {
-			iterator.next().drawMyself(g);
+		for (Iterator<Player> iterator = players.iterator(); iterator.hasNext();) {
+			Player player = iterator.next();
+			if(player.fightingTank != null) player.fightingTank.drawMyself(g);
 		}
 
 		// 画出敌方坦克。
@@ -62,52 +56,58 @@ public class DrawPanel extends JPanel implements Runnable {
 
 		// 子弹在碰撞检测后画出。
 		outer: for (Bullet bullet : bullets) {
-			for (MyTank myTank : myTanks) {
-				if ("enemytank".equals(bullet.owner) && (myTank.rectangle.contains(bullet.rectangle))) {
-					blasts.add(new Blast(myTank.tank_x, myTank.tank_y, 0));
+			for (Player player : players) {
+				if ((player.fightingTank != null) && !bullet.isOurs && (player.fightingTank.rectangle.contains(bullet.rectangle))) {
+					blasts.add(new Blast(player.fightingTank.tank_x, player.fightingTank.tank_y, 0));
 					new Thread(() -> new PlayWav(PlayWav.TANK_BLAST).play()).start();
 					bullets.remove(bullet);
-					myTank.blood -= 1;
-					if (myTank.blood <= 0) {
-						myTank.isAlive = false;
-						myTanks.remove(myTank);
-						switch (myTank.player) {
-						case 0:
-							player1Count -= 1;
-							if (player1Count > 0) {
-								new Thread(() -> {
-									try {
-										Thread.sleep(3000);
-									} catch (InterruptedException e) {
-										e.printStackTrace();
-									}
-									if(nowStage.base.isalive) myTanks.add(new MyTank(myTank.player, ""));
-								}).start();
-							}
-							break;
-						case 1:
-							player2Count -= 1;
-							if (player2Count > 0) {
-								new Thread(() -> {
-									try {
-										Thread.sleep(3000);
-									} catch (InterruptedException e) {
-										e.printStackTrace();
-									}
-									if(nowStage.base.isalive) myTanks.add(new MyTank(myTank.player,""));
-								}).start();
-							}
-							break;
-						default:
-							break;
+					player.fightingTank.blood -= 1;
+					if (player.fightingTank.blood <= 0) {
+						player.fightingTank.isAlive = false;
+						if(player.fightTankDestroyed()) {
+							players.remove(player);
+						}else {
+							player.creatFightTank();
 						}
+						
+//						myTanks.remove(myTank);
+//						switch (myTank.player) {
+//						case 0:
+//							player1Count -= 1;
+//							if (player1Count > 0) {
+//								new Thread(() -> {
+//									try {
+//										Thread.sleep(3000);
+//									} catch (InterruptedException e) {
+//										e.printStackTrace();
+//									}
+//									if(nowStage.base.isalive) myTanks.add(new MyTank(myTank.player, ""));
+//								}).start();
+//							}
+//							break;
+//						case 1:
+//							player2Count -= 1;
+//							if (player2Count > 0) {
+//								new Thread(() -> {
+//									try {
+//										Thread.sleep(3000);
+//									} catch (InterruptedException e) {
+//										e.printStackTrace();
+//									}
+//									if(nowStage.base.isalive) myTanks.add(new MyTank(myTank.player,""));
+//								}).start();
+//							}
+//							break;
+//						default:
+//							break;
+//						}
 					}
 					break outer;
 				}
 			}
 
 			for (EnemyTank enemyTank : nowStage.enemyTanks) {
-				if (("mytank".equals(bullet.owner)) && (enemyTank.rectangle.contains(bullet.rectangle))) {
+				if (bullet.isOurs && (enemyTank.rectangle.contains(bullet.rectangle))) {
 					blasts.add(new Blast(enemyTank.tank_x, enemyTank.tank_y, 0));
 					new Thread(() -> new PlayWav(PlayWav.TANK_BLAST).play()).start();
 					enemyTank.isAlive = false;
@@ -195,12 +195,12 @@ public class DrawPanel extends JPanel implements Runnable {
 	@Override
 	public void run() {// 用于控制游戏模式和进度
 		while (true) {
-			if (nowStage.base.isalive == false || (player1Count + player2Count) <= 0) {
+			if (nowStage.base.isalive == false || Player.totalCount <= 0) {
 				System.out.println("game over!!!");
 				nowStage.isCreating = false;
 				nowStage.thread.stop();
-				for (MyTank myTank : myTanks) {
-					myTank.isAlive = false;
+				for (Player player : players) {
+					player.fightingTank.isAlive = false;
 				}
 				for(EnemyTank enemyTank : nowStage.enemyTanks) {
 					enemyTank.isAlive = false;
@@ -210,13 +210,11 @@ public class DrawPanel extends JPanel implements Runnable {
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
-				myTanks.clear();
+				players.clear();
 				cleanScrean();
 				nowStage = new Stage(sort);
-				player1Count = 3;
-				player2Count = 3;
-				myTanks.add(new MyTank(0,""));
-				myTanks.add(new MyTank(1,""));
+				players.add(new Player(0, "player1"));
+				players.add(new Player(1, "player2"));
 			}
 			if (nowStage.enemyTanks.isEmpty() && (nowStage.queueOfEnemyTanks.size() == 0)) {
 				System.out.println("you win!!!");
@@ -228,8 +226,8 @@ public class DrawPanel extends JPanel implements Runnable {
 				cleanScrean();
 				sort++;
 				nowStage = new Stage(sort);
-				for (MyTank myTank : myTanks)
-					myTank.rest();
+				for (Player player : players)
+					player.fightingTank.rest();
 			}
 			try {
 				Thread.sleep(5);

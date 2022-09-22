@@ -4,7 +4,8 @@ import java.util.Queue;
 public class Player {
 	public static int totalCount;
 	public int score = 0;//总得分
-	public int count = 3;//坦克数量
+	public int count = 3;//初始坦克数量
+	public int start_x, start_y;// 坦克初始位置
 	public int myTankType;
 	public String name;
 	public MyTank fightingTank;//正在运行的坦克
@@ -14,23 +15,32 @@ public class Player {
 		super();
 		this.myTankType = myTankType;
 		this.name = name;
+		switch (myTankType) {
+		case 0:
+			this.start_x = 480;
+			this.start_y = 840;
+			break;
+		case 1:
+			this.start_x = 720;
+			this.start_y = 840;
+			break;
+		default:
+			break;
+		}
 		for(int i = 0; i < count; i++) {
-			myTankQueue.offer(new MyTank(this.myTankType, this.name));
+			myTankQueue.offer(new MyTank(start_x, start_y, this.myTankType, this.name));
 			totalCount++;
 		}
 		fightingTank = myTankQueue.poll();
 		fightingTank.keyboardThread.start();
 	}
 	
-	public boolean fightTankDestroyed() {
-		if (myTankQueue.size() != 0) {
-			count -= 1;
+	public void fightTankDestroyed() {
 			totalCount -= 1;
+			fightingTank.isAlive = false;
 			fightingTank = null;
-			return false;
-		}else {
-			return true;
-		}
+			System.out.println(myTankQueue.size());
+			System.out.println(totalCount);
 	}
 	
 	public void creatFightTank() {

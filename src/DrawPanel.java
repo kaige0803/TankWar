@@ -63,44 +63,12 @@ public class DrawPanel extends JPanel implements Runnable {
 					bullets.remove(bullet);
 					player.fightingTank.blood -= 1;
 					if (player.fightingTank.blood <= 0) {
-						player.fightingTank.isAlive = false;
-						if(player.fightTankDestroyed()) {
+						player.fightTankDestroyed();
+						if(player.myTankQueue.size() == 0) {
 							players.remove(player);
 						}else {
 							player.creatFightTank();
 						}
-						
-//						myTanks.remove(myTank);
-//						switch (myTank.player) {
-//						case 0:
-//							player1Count -= 1;
-//							if (player1Count > 0) {
-//								new Thread(() -> {
-//									try {
-//										Thread.sleep(3000);
-//									} catch (InterruptedException e) {
-//										e.printStackTrace();
-//									}
-//									if(nowStage.base.isalive) myTanks.add(new MyTank(myTank.player, ""));
-//								}).start();
-//							}
-//							break;
-//						case 1:
-//							player2Count -= 1;
-//							if (player2Count > 0) {
-//								new Thread(() -> {
-//									try {
-//										Thread.sleep(3000);
-//									} catch (InterruptedException e) {
-//										e.printStackTrace();
-//									}
-//									if(nowStage.base.isalive) myTanks.add(new MyTank(myTank.player,""));
-//								}).start();
-//							}
-//							break;
-//						default:
-//							break;
-//						}
 					}
 					break outer;
 				}
@@ -114,6 +82,11 @@ public class DrawPanel extends JPanel implements Runnable {
 					bullets.remove(bullet);
 					enemyTank.blood -= 1;
 					if (enemyTank.blood <= 0) {
+						for(Player player : players) {
+							if(player.name.equals(bullet.owner)) {
+								player.score += enemyTank.score;
+							}
+						}
 						enemyTank.isAlive = false;
 						nowStage.enemyTanks.remove(enemyTank);
 					}
@@ -200,7 +173,7 @@ public class DrawPanel extends JPanel implements Runnable {
 				nowStage.isCreating = false;
 				nowStage.thread.stop();
 				for (Player player : players) {
-					player.fightingTank.isAlive = false;
+					if(player.fightingTank != null) player.fightingTank.isAlive = false;
 				}
 				for(EnemyTank enemyTank : nowStage.enemyTanks) {
 					enemyTank.isAlive = false;
@@ -213,6 +186,7 @@ public class DrawPanel extends JPanel implements Runnable {
 				players.clear();
 				cleanScrean();
 				nowStage = new Stage(sort);
+				Player.totalCount = 0;
 				players.add(new Player(0, "player1"));
 				players.add(new Player(1, "player2"));
 			}

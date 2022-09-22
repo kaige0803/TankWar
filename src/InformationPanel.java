@@ -1,6 +1,7 @@
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
@@ -94,6 +95,9 @@ public class InformationPanel extends JPanel implements Runnable {
 		while (true) {
 			fpsData.setText("<html><font size=6 color=white face=微软雅黑>" + DrawPanel.fps + "</font></html>");
 			stageData.setText("<html><font size=6 color=white face=微软雅黑>" + (DrawPanel.sort + 1) + "</font></html>");
+			for(Player player : DrawPanel.players) {
+				
+			}
 //			player1LifeCount.setText("<html><font size=6 color=white face=微软雅黑>" + DrawPanel.players.get(0).count + "</font></html>");
 //			player2LifeCount.setText("<html><font size=6 color=white face=微软雅黑>" + DrawPanel.players.get(1).count + "</font></html>");
 			try {

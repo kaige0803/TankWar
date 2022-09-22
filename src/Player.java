@@ -37,10 +37,9 @@ public class Player {
 	
 	public void fightTankDestroyed() {
 			totalCount -= 1;
+			count -= 1;
 			fightingTank.isAlive = false;
 			fightingTank = null;
-			System.out.println(myTankQueue.size());
-			System.out.println(totalCount);
 	}
 	
 	public void creatFightTank() {
@@ -50,7 +49,7 @@ public class Player {
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-			if(DrawPanel.nowStage.base.isalive) {
+			if(DrawPanel.nowStage.base.isalive && myTankQueue.size() != 0) {
 				fightingTank = myTankQueue.poll();
 				fightingTank.keyboardThread.start();
 			}

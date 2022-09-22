@@ -64,7 +64,7 @@ public class DrawPanel extends JPanel implements Runnable {
 					player.fightingTank.blood -= 1;
 					if (player.fightingTank.blood <= 0) {
 						player.fightTankDestroyed();
-						if(player.myTankQueue.size() == 0) {
+						if(player.count == 0) {
 							players.remove(player);
 						}else {
 							player.creatFightTank();

@@ -23,6 +23,8 @@ public class MyTank implements Runnable {
 		super();
 		this.owner = owner;
 		this.myTankType = myTankType;
+		this.start_x = start_x;
+		this.start_y = start_y;
 		this.tank_x = start_x;
 		this.tank_y = start_y;
 		rectangle = new Rectangle(tank_x, tank_y, 60, 60);

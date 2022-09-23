@@ -7,7 +7,7 @@ public class EnemyTank implements Runnable {
 	public int score;
 	public int tank_x, tank_y;// 坦克位置
 	private int tankSpeed;// 坦克速度
-	private int type;// 0:普通坦克 1：速度型坦克 2：重装坦克
+	public int type;// 0:普通坦克 1：速度型坦克 2：重装坦克
 	public int blood;
 	private Random r = new Random();// 用于产生随机方向和随机的时间间隔。
 	private State state = State.DOWN;// 初始方向向下运动。

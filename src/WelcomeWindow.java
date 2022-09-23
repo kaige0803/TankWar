@@ -10,7 +10,7 @@ import javax.swing.SwingUtilities;
 public class WelcomeWindow extends JWindow implements Runnable {
 	
 	public static int readedFileCount = 0;
-	public static final int TOTAL_FILES = 124;
+	public static final int TOTAL_FILES = 129;
 	public JProgressBar progressbar;
 	public JLabel label;
 	public WelcomeWindow() {

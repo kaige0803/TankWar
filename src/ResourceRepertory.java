@@ -20,6 +20,8 @@ public class ResourceRepertory {
 	public static BufferedImage[] baseBlasts = new BufferedImage[70];
 	public static BufferedImage[] steelBlasts = new BufferedImage[8];
 	public static BufferedImage[] base = new BufferedImage[2];
+	public static BufferedImage[] myTankIcon = new BufferedImage[2];
+	public static BufferedImage[] enemyTankIcon = new BufferedImage[3];
 	
 	//音频
 	private static final String AUDIO_DIR = System.getProperty("user.dir") + File.separator + "src" + File.separator + "audio";
@@ -67,6 +69,14 @@ public class ResourceRepertory {
 			}
 			for(int i = 0; i < 8; i++) {
 				steelBlasts[i] = ImageIO.read(ResourceRepertory.class.getClassLoader().getResourceAsStream("images/blasts/steel/" + i + ".gif"));
+				System.out.println(++WelcomeWindow.readedFileCount);
+			}
+			for(int i = 0; i < 2; i++) {
+				myTankIcon[i] = ImageIO.read(ResourceRepertory.class.getClassLoader().getResourceAsStream("images/icon/player" + (i+1) + ".png"));
+				System.out.println(++WelcomeWindow.readedFileCount);
+			}
+			for(int i = 0; i < 3; i++) {
+				enemyTankIcon[i] = ImageIO.read(ResourceRepertory.class.getClassLoader().getResourceAsStream("images/icon/enemytank" + i + ".png"));
 				System.out.println(++WelcomeWindow.readedFileCount);
 			}
 		} catch (IOException e) {

@@ -1,4 +1,3 @@
-
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -20,8 +19,8 @@ public class InformationPanel extends JPanel implements Runnable {
 	public JLabel fpsData = new JLabel("00", JLabel.CENTER);
 	public JLabel stageLabel = new JLabel("<html><font size=6 color=white face=微软雅黑>STAGE :</font></html>", JLabel.CENTER);
 	public JLabel stageData = new JLabel("00", JLabel.CENTER);
-	public JLabel player1Icon = new JLabel(new ImageIcon(InformationPanel.class.getResource("images/icon/player1.png")));
-	public JLabel player2Icon = new JLabel(new ImageIcon(InformationPanel.class.getResource("images/icon/player2.png")));
+	public JLabel player1Icon = new JLabel(new ImageIcon(ResourceRepertory.myTankIcon[0]));
+	public JLabel player2Icon = new JLabel(new ImageIcon(ResourceRepertory.myTankIcon[1]));
 	public JLabel fieldPlayer = new JLabel("<html><font size=5 color=white face=微软雅黑>Player</font></html>", JLabel.CENTER);
 	public JLabel fieldLifeCount = new JLabel("<html><font size=5 color=white face=微软雅黑>Life</font></html>", JLabel.CENTER);
 	public JLabel fieldScore = new JLabel("<html><font size=5 color=white face=微软雅黑>Score</font></html>", JLabel.CENTER);
@@ -55,6 +54,7 @@ public class InformationPanel extends JPanel implements Runnable {
 		gameInformationPanel.add(stageData);
 		
 		//设置并组装enemyInformationPanel面板。
+		enemyInformationPanel.setLayout(new GridLayout(8, 3));
 		enemyInformationPanel.setPreferredSize(new Dimension(WHITH, 600));
 		enemyInformationPanel.setBackground(Color.DARK_GRAY);
 		enemyInformationPanel.setBorder(BorderFactory.createTitledBorder(new LineBorder(Color.WHITE, 1, true), 
@@ -93,8 +93,11 @@ public class InformationPanel extends JPanel implements Runnable {
 	@Override
 	public void run() {
 		while (true) {
+			//更新gameInformationPanel面板数据
 			fpsData.setText("<html><font size=6 color=white face=微软雅黑>" + DrawPanel.fps + "</font></html>");
 			stageData.setText("<html><font size=6 color=white face=微软雅黑>" + (DrawPanel.sort + 1) + "</font></html>");
+			
+			//更新myInformationPanel面板数据
 			for(Player player : DrawPanel.players) {
 				switch (player.name) {
 				case "player1":
@@ -110,6 +113,15 @@ public class InformationPanel extends JPanel implements Runnable {
 					break;
 				}
 			}
+			
+			//更新enemyInformationPanel面板数据
+			Component[] components = enemyInformationPanel.getComponents();
+			for(Component component : components) enemyInformationPanel.remove(component);
+			enemyInformationPanel.repaint();
+			for(EnemyTank enemyTank : DrawPanel.nowStage.queueOfEnemyTanks) {
+				enemyInformationPanel.add(new JLabel(new ImageIcon(ResourceRepertory.enemyTankIcon[enemyTank.type])));
+			}
+			
 			try {
 				Thread.sleep(500);
 			} catch (InterruptedException e) {

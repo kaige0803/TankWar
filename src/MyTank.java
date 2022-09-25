@@ -11,7 +11,7 @@ public class MyTank implements Runnable {
 	public int tank_x, tank_y;// 坦克位置
 	private int tankSpeed = 5;// 坦克速度
 	public int myTankType;//0:红  1:蓝
-	public State state = State.UP;
+	public TankState state = TankState.UP;
 	public boolean isMoving = false;
 	public Rectangle rectangle;
 	public boolean isAlive = true;
@@ -151,19 +151,19 @@ public class MyTank implements Runnable {
 		while (isAlive) {
 			if (DrawPanel.keyboardPressing[controlKeys[myTankType][0]]) {
 				isMoving = true;
-				state = State.UP;
+				state = TankState.UP;
 			}
 			else if (DrawPanel.keyboardPressing[controlKeys[myTankType][1]]) {
 				isMoving = true;
-				state = State.RIGHT;
+				state = TankState.RIGHT;
 			}
 			else if (DrawPanel.keyboardPressing[controlKeys[myTankType][2]]) {
 				isMoving = true;
-				state = State.DOWN;
+				state = TankState.DOWN;
 			}
 			else if (DrawPanel.keyboardPressing[controlKeys[myTankType][3]]) {
 				isMoving = true;
-				state = State.LEFT;
+				state = TankState.LEFT;
 			}
 			else  {
 				isMoving = false;
@@ -185,7 +185,7 @@ public class MyTank implements Runnable {
 	public void rest() {
 			tank_x = start_x;
 			tank_y = start_y;
-			state = State.UP;
+			state = TankState.UP;
 			isMoving = false;
 	}
 

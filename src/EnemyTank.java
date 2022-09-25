@@ -1,6 +1,9 @@
 import java.awt.Graphics;
 import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Random;
+import java.util.Timer;
 
 public class EnemyTank implements Runnable {
 
@@ -10,11 +13,12 @@ public class EnemyTank implements Runnable {
 	public int type;// 0:普通坦克 1：速度型坦克 2：重装坦克
 	public int blood;
 	private Random r = new Random();// 用于产生随机方向和随机的时间间隔。
-	private State state = State.DOWN;// 初始方向向下运动。
+	private TankState state = TankState.DOWN;// 初始方向向下运动。
 	public boolean isMoving = true;
 	public boolean isAlive = true;
 	public Rectangle rectangle;
 	public Thread thread;
+	public Timer enemyTankActionTimer;
 
 	public EnemyTank(int tank_x, int tank_y, int type) {
 		super();
@@ -164,7 +168,7 @@ public class EnemyTank implements Runnable {
 				e.printStackTrace();
 			}
 			// 随机生成坦克状态
-			state = State.values()[r.nextInt(4)];
+			state = TankState.values()[r.nextInt(4)];
 			try {
 				Thread.sleep(500 + r.nextInt(500));
 			} catch (InterruptedException e) {
@@ -177,6 +181,13 @@ public class EnemyTank implements Runnable {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	private class enemytankListioner implements ActionListener{
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			
+		} 
 	}
 
 }

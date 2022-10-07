@@ -1,7 +1,5 @@
 import java.awt.Dimension;
 import java.awt.Graphics;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
@@ -23,10 +21,9 @@ public class DrawPanel extends JPanel implements Runnable {
 	public static List<Bullet> bullets = new CopyOnWriteArrayList<>();
 	public static List<Blast> blasts = new CopyOnWriteArrayList<>();
 	public static int fps = 0;
-	public Timer repaintTimer;//用于控制面板刷新频率
-	public Timer gameControlTimer;//用于控制游戏模式和进度
+	public Timer timer;//用于控制面板刷新频率
 	private long begin, temp, time;// 用于计算帧率
-	public static GameState gameState;
+	public GameState gameState;
 
 	public DrawPanel() {
 		setPreferredSize(new Dimension(GAME_WITH, GAME_HIGHT));// 当上一级容器不是绝对布局的时候，这里最好使用setPreferredSize。
@@ -36,17 +33,11 @@ public class DrawPanel extends JPanel implements Runnable {
 		setFocusable(true);
 		keyboardPressing = new boolean[256];
 		addKeyListener(new ControlKeyListener());// 给面板添加键盘事件
-		sort = 0;
-		nowStage = new Stage(0);
 		backgroundImage = ResourceRepertory.backgrounds[0];// 根据关卡生成该关卡的背景图片。
-		players.add(new Player(0, "player1"));
-		players.add(new Player(1, "player2"));
-		new Thread(this).start();
-		repaintTimer = new Timer(20, e -> repaint());// 定时刷新,每20毫秒一次
-		repaintTimer.start();// 启动定时刷新
-		gameControlTimer = new Timer(20, new gemeControlListioner());
-		gameControlTimer.start();
 		gameState = GameState.GAME_START;
+		new Thread(this).start();
+		timer = new Timer(20, e -> repaint());// 定时刷新,每20毫秒一次
+		timer.start();// 启动定时刷新
 	}
 
 	@Override
@@ -170,19 +161,35 @@ public class DrawPanel extends JPanel implements Runnable {
 		}
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
 	public void run() {// 用于控制游戏模式和进度
 		while (true) {
-			if (nowStage.base.isalive == false || Player.totalCount <= 0) {
+			switch (gameState) {
+			case GAME_START:
+				sort = 0;
+				nowStage = new Stage(sort);
+				players.add(new Player(MyTank.RED_TANK, "player1"));
+				players.add(new Player(MyTank.GREEN_TANK, "player2"));
+				gameState = GameState.GAME_RUNING;
+				break;
+				
+			case GAME_RUNING:
+				if (nowStage.base.isalive == false || Player.totalCount <= 0) gameState = GameState.GAME_OVER;
+				if (nowStage.enemyTanks.isEmpty() && (nowStage.queueOfEnemyTanks.size() == 0)) gameState = GameState.SORT_WIN;
+				break;
+				
+			case GAME_OVER:
 				System.out.println("game over!!!");
 				nowStage.isCreating = false;
-				nowStage.thread.stop();
+				nowStage.timer.stop();
 				for (Player player : players) {
-					if(player.fightingTank != null) player.fightingTank.isAlive = false;
+					if (player.fightingTank != null)
+						player.fightingTank.isAlive = false;
+						player.fightingTank.isMoving = false;
 				}
-				for(EnemyTank enemyTank : nowStage.enemyTanks) {
+				for (EnemyTank enemyTank : nowStage.enemyTanks) {
 					enemyTank.isAlive = false;
+					enemyTank.isMoving = false;
 				}
 				try {
 					Thread.sleep(4000);
@@ -191,13 +198,11 @@ public class DrawPanel extends JPanel implements Runnable {
 				}
 				players.clear();
 				cleanScrean();
-				nowStage = new Stage(sort);
 				Player.totalCount = 0;
-				players.add(new Player(0, "player1"));
-				players.add(new Player(1, "player2"));
-				repaintTimer.start();
-			}
-			if (nowStage.enemyTanks.isEmpty() && (nowStage.queueOfEnemyTanks.size() == 0)) {
+				gameState = GameState.GAME_START;
+				break;
+
+			case SORT_WIN:
 				System.out.println("you win!!!");
 				try {
 					Thread.sleep(4000);
@@ -208,7 +213,19 @@ public class DrawPanel extends JPanel implements Runnable {
 				sort++;
 				nowStage = new Stage(sort);
 				for (Player player : players)
-					if(player.fightingTank != null) player.fightingTank.rest();
+					if (player.fightingTank != null)
+						player.fightingTank.rest();
+				gameState = GameState.GAME_RUNING;
+				break;
+				
+			case GAME_STOP:
+				break;
+				
+			case GAME_RESUME:
+				break;
+				
+			default:
+				break;
 			}
 			try {
 				Thread.sleep(5);
@@ -222,31 +239,5 @@ public class DrawPanel extends JPanel implements Runnable {
 		bullets.clear();
 		blasts.clear();
 		nowStage.clear();
-	}
-	
-	private class gemeControlListioner implements ActionListener{
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			if (nowStage.base.isalive == false || Player.totalCount <= 0)
-			if (nowStage.enemyTanks.isEmpty() && (nowStage.queueOfEnemyTanks.size() == 0))
-			switch (gameState) {
-			case GAME_START:
-				
-				break;
-			case GAME_STOP:
-				
-				break;
-			case GAME_OVER:
-				
-				break;
-			case SORT_START:
-				
-				break;
-
-			default:
-				break;
-			}
-		} 
 	}
 }

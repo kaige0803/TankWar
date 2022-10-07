@@ -6,7 +6,7 @@ import javax.sound.sampled.LineUnavailableException;
 public class PlayWav {
 	
 	public static final int BASE_BLAST = 0, BULLET_FLYING = 1, OBSTACLE_BLAST = 2, STEEL_BLAST = 3, TANK_BLAST = 4;
-	Clip clip;// 每个线程都必须有独立的Clip（播放器）
+	public Clip clip;// 每个线程都必须有独立的Clip（播放器）
 	
 	public PlayWav(int audio_type) {
 		try {

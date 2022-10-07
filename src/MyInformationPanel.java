@@ -1,53 +1,77 @@
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.GridLayout;
-
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.SwingConstants;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
 
 @SuppressWarnings("serial")
 public class MyInformationPanel extends JPanel implements Runnable {
-	public JLabel player1Icon = new JLabel(new ImageIcon(ResourceRepertory.myTankIcon[0]));
-	public JLabel player2Icon = new JLabel(new ImageIcon(ResourceRepertory.myTankIcon[1]));
-	public JLabel fieldPlayer = new JLabel("<html><font size=5 color=white face=微软雅黑>Player</font></html>", JLabel.CENTER);
-	public JLabel fieldLifeCount = new JLabel("<html><font size=5 color=white face=微软雅黑>Life</font></html>", JLabel.CENTER);
-	public JLabel fieldScore = new JLabel("<html><font size=5 color=white face=微软雅黑>Score</font></html>", JLabel.CENTER);
-	public JLabel player1LifeCount = new JLabel("<html><font size=5 color=white face=微软雅黑>00</font></html>", JLabel.CENTER);
-	public JLabel player2LifeCount = new JLabel("<html><font size=5 color=white face=微软雅黑>00</font></html>", JLabel.CENTER);
-	public JLabel player1Score = new JLabel("<html><font size=5 color=white face=微软雅黑>00000</font></html>", JLabel.CENTER);
-	public JLabel player2Score = new JLabel("<html><font size=5 color=white face=微软雅黑>00000</font></html>", JLabel.CENTER);
-	private Font font = new Font("微软雅黑", Font.BOLD, 14);
+	
+	public DefaultTableModel dm = new DefaultTableModel(new Object[][] {}, new Object[] {"Player", "Life", "Score"}){
+		//可以指定每个列具体的对象类型，供渲染器使用，也可以在渲染器里直接指定。
+		@Override
+		public Class<?> getColumnClass(int columnIndex) {
+			return getValueAt(0, columnIndex).getClass();
+		}
+		//指定哪些列是可以修改
+		@Override
+		public boolean isCellEditable(int row, int column) {
+				return false;
+		}
+	};
+	
+	public JTable jTable = new JTable(dm);
+	private JScrollPane jScrollPane =  new JScrollPane(jTable);
+	private JTableHeader jTableHeader = jTable.getTableHeader();
+	private DefaultTableCellRenderer myTableCellRenderer = new DefaultTableCellRenderer();
+	private Font font1 = new Font("微软雅黑", Font.BOLD, 18);
+	private Font font2 = new Font("微软雅黑", Font.BOLD, 14);
 	private Thread thread;
 	
 	public MyInformationPanel() {
 		super();
 		//设置并组装myInformationPanel面板。
-				setLayout(new GridLayout(3, 3));
-				setPreferredSize(new Dimension(InformationPanel.WIDTH,180));
-				setBackground(Color.DARK_GRAY);
-				setBorder(BorderFactory.createTitledBorder(new LineBorder(Color.WHITE, 1, true), 
-		                                                                     "My_Tanks", 
-		                                                                     TitledBorder.DEFAULT_JUSTIFICATION, 
-		                                                                     TitledBorder.DEFAULT_POSITION, 
-		                                                                     font, Color.WHITE));
-				add(fieldPlayer);
-				add(fieldLifeCount);
-				add(fieldScore);
-				
-				add(player1Icon);
-				add(player1LifeCount);
-				add(player1Score);
-				
-				add(player2Icon);
-				add(player2LifeCount);
-				add(player2Score);
-				thread = new Thread(this);
-				thread.start();
+		setLayout(new BorderLayout());
+		setPreferredSize(new Dimension(InformationPanel.WIDTH,180));
+		setBackground(Color.DARK_GRAY);
+		setBorder(BorderFactory.createTitledBorder(new LineBorder(Color.WHITE, 1, true), 
+                                                 "My_Tanks", 
+                                                 TitledBorder.DEFAULT_JUSTIFICATION, 
+                                                 TitledBorder.DEFAULT_POSITION, 
+                                                 font2, Color.WHITE));
+		myTableCellRenderer.setHorizontalAlignment(SwingConstants.CENTER);
+		jTableHeader.setReorderingAllowed(false);//列不可拖动
+		jTableHeader.setResizingAllowed(false);//列大小不可改变
+		jTableHeader.setFont(font1);
+		jTableHeader.setBackground(Color.DARK_GRAY);
+		jTableHeader.setForeground(Color.WHITE);
+		jTableHeader.setDefaultRenderer(myTableCellRenderer);
+		jTable.setEnabled(false);//禁止用户编辑和选择
+		jTable.setGridColor(Color.DARK_GRAY);
+		jTable.setBackground(Color.DARK_GRAY);
+		jTable.setRowHeight(60);
+		jTable.setForeground(Color.WHITE);
+		jTable.setFont(font1);
+		jTable.setDefaultRenderer(Object.class, myTableCellRenderer);
+		for (Player player : DrawPanel.players) {
+			dm.addRow(new Object[] {new ImageIcon(ResourceRepertory.myTankIcon[player.myTankType]), "" + player.count, "" + player.score});
+		}
+		jScrollPane.setBorder(new LineBorder(Color.WHITE, 0, true));
+		jScrollPane.setOpaque(false);
+		jScrollPane.getViewport().setOpaque(false);
+		add(jScrollPane);
+		thread = new Thread(this);
+		thread.start();
 	}
 
 	@Override
@@ -60,21 +84,13 @@ public class MyInformationPanel extends JPanel implements Runnable {
 				e.printStackTrace();
 			} 
 			for (Player player : DrawPanel.players) {
-				switch (player.name) {
-				case "player1":
-					player1LifeCount
-							.setText("<html><font size=6 color=white face=微软雅黑>" + player.count + "</font></html>");
-					player1Score.setText("<html><font size=6 color=white face=微软雅黑>" + player.score + "</font></html>");
-					break;
-				case "player2":
-					player2LifeCount
-							.setText("<html><font size=6 color=white face=微软雅黑>" + player.count + "</font></html>");
-					player2Score.setText("<html><font size=6 color=white face=微软雅黑>" + player.score + "</font></html>");
-					break;
-
-				default:
-					break;
+				if(player.count == 0) {
+					dm.setValueAt("Over", player.myTankType, 1);
+					continue;
+				}else {
+					dm.setValueAt("" + player.count, player.myTankType, 1);
 				}
+				dm.setValueAt("" + player.score, player.myTankType, 2);
 			}
 		}
 	}

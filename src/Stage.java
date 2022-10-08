@@ -99,7 +99,7 @@ public class Stage {
 		public void actionPerformed(ActionEvent e) {
 			
 			if (queueOfEnemyTanks.size() != 0 && isCreating) {
-				queueOfEnemyTanks.element().enemyTankActionTimer.start();
+				queueOfEnemyTanks.element().thread.start();
 				enemyTanks.add(queueOfEnemyTanks.poll());
 			}else {
 				timer.stop();

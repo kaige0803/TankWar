@@ -149,10 +149,20 @@ public class DrawPanel extends JPanel implements Runnable {
 
 	// 处理dpanel接收到的keyPressed键盘事件e，并改变键盘数组相应的值，供其他类访问。
 	private class ControlKeyListener extends KeyAdapter {
-
+		public boolean flag  = true;
 		@Override // 用于坦克移动以及发射子弹
 		public void keyPressed(KeyEvent e) {
 			keyboardPressing[e.getKeyCode()] = true;
+			if(e.getKeyCode() == KeyEvent.VK_SPACE) {
+				if(flag) {
+					gameState = GameState.GAME_STOP;
+					flag = false;
+				}else {
+					gameState = GameState.GAME_RESUME;
+					flag = true;
+				}
+				
+			}
 		}
 
 		@Override // 用于坦克恢复静止
@@ -161,6 +171,7 @@ public class DrawPanel extends JPanel implements Runnable {
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public void run() {// 用于控制游戏模式和进度
 		while (true) {
@@ -183,9 +194,10 @@ public class DrawPanel extends JPanel implements Runnable {
 				nowStage.isCreating = false;
 				nowStage.timer.stop();
 				for (Player player : players) {
-					if (player.fightingTank != null)
+					if (player.fightingTank != null) {
 						player.fightingTank.isAlive = false;
 						player.fightingTank.isMoving = false;
+					}
 				}
 				for (EnemyTank enemyTank : nowStage.enemyTanks) {
 					enemyTank.isAlive = false;
@@ -203,7 +215,7 @@ public class DrawPanel extends JPanel implements Runnable {
 				break;
 
 			case SORT_WIN:
-				System.out.println("you win!!!");
+				System.out.println("sort win!!!");
 				try {
 					Thread.sleep(4000);
 				} catch (InterruptedException e) {
@@ -219,9 +231,27 @@ public class DrawPanel extends JPanel implements Runnable {
 				break;
 				
 			case GAME_STOP:
+				nowStage.timer.stop();
+				this.timer.stop();
+				for(Player player : players) {
+					if(player.fightingTank != null) player.fightingTank.keyboardThread.suspend();
+				}
+				for(EnemyTank enemyTank : nowStage.enemyTanks) {
+					enemyTank.thread.suspend();
+				}
+				gameState = GameState.GAME_RUNING;
 				break;
 				
 			case GAME_RESUME:
+				nowStage.timer.start();
+				this.timer.start();
+				for(Player player : players) {
+					if(player.fightingTank != null) player.fightingTank.keyboardThread.resume();
+				}
+				for(EnemyTank enemyTank : nowStage.enemyTanks) {
+					enemyTank.thread.resume();
+				}
+				gameState = GameState.GAME_RUNING;
 				break;
 				
 			default:

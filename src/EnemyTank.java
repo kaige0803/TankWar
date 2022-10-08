@@ -48,8 +48,8 @@ public class EnemyTank implements Runnable {
 		this.tank_x = tank_x;
 		this.tank_y = tank_y;
 		rectangle = new Rectangle(tank_x, tank_y, 60, 60);
-		//thread = new Thread(this);// 建立敌方坦克线程。
-		enemyTankActionTimer = new Timer(2, new enemytankListioner());
+		thread = new Thread(this);// 建立敌方坦克线程。
+		enemyTankActionTimer = new Timer(2000, new enemytankListioner());
 	}
 
 	public void drawMyself(Graphics g) {// 接受dpanel传来的画笔g2d，将坦克自己画在dpanel上
@@ -188,18 +188,21 @@ public class EnemyTank implements Runnable {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
+			int firdelay = r.nextInt(500);
+			int dirdelay = r.nextInt(500);
+			enemyTankActionTimer.setDelay(firdelay + dirdelay);
 			if(isAlive) {
 				// 随机加入子弹
 				DrawPanel.bullets.add(new Bullet(tank_x, tank_y, state, "enemytank", false));
 				try {
-					Thread.sleep(500 + r.nextInt(500));
+					Thread.sleep(500 + firdelay);
 				} catch (InterruptedException e1) {
 					e1.printStackTrace();
 				}
 				// 随机生成坦克状态
 				state = TankState.values()[r.nextInt(4)];
 				try {
-					Thread.sleep(500 + r.nextInt(500));
+					Thread.sleep(500 + dirdelay);
 				} catch (InterruptedException e1) {
 					e1.printStackTrace();
 				}

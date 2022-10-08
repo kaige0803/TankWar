@@ -1,7 +1,11 @@
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+
+import javax.swing.Timer;
 
 public class MyTank implements Runnable {
 	public static final int RED_TANK = 0, GREEN_TANK = 1;
@@ -19,6 +23,7 @@ public class MyTank implements Runnable {
 	public Thread keyboardThread;
 	private boolean canFire = true;
 	public String owner;
+	public Timer timer;
 
 	public MyTank(int start_x, int start_y, int myTankType, String owner) {
 		super();
@@ -31,6 +36,7 @@ public class MyTank implements Runnable {
 		rectangle = new Rectangle(tank_x, tank_y, 60, 60);
 		keyboardThread = new Thread(this);
 		//keyboardThread.start();
+		timer = new Timer(20, new myTanklistener());
 	}
 
 	public void drawMyself(Graphics g) {// 接受dpanel传来的画笔g2d，将坦克自己画在dpanel上
@@ -189,5 +195,16 @@ public class MyTank implements Runnable {
 			state = TankState.UP;
 			isMoving = false;
 	}
+	public class myTanklistener implements ActionListener{
 
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			if(isAlive) {
+				
+			}else {
+				
+			}
+		}
+		
+	}
 }

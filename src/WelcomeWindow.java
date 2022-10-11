@@ -34,7 +34,6 @@ public class WelcomeWindow extends JWindow implements Runnable {
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
-		
 	}
 	
 	public void run() {

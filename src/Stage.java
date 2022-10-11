@@ -12,6 +12,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import javax.swing.Timer;
 
 public class Stage {
+	public static final int totalSort = 3;
 	public int sort;// 当前关卡。
 	private Random r = new Random();// 用于随机生成敌方坦克的状态和子弹。
 	private Properties stageProperty = new Properties();// 关卡的配置信息(包括障碍物和敌方坦克）
@@ -105,6 +106,5 @@ public class Stage {
 				timer.stop();
 			}
 		}
-		
 	}
 }

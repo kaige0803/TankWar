@@ -153,7 +153,7 @@ public class DrawPanel extends JPanel implements Runnable {
 		@Override // 用于坦克移动以及发射子弹
 		public void keyPressed(KeyEvent e) {
 			keyboardPressing[e.getKeyCode()] = true;
-			if(e.getKeyCode() == KeyEvent.VK_SPACE) {
+			if(keyboardPressing[KeyEvent.VK_SPACE]) {
 				if(flag) {
 					gameState = GameState.GAME_STOP;
 					flag = false;
@@ -161,7 +161,6 @@ public class DrawPanel extends JPanel implements Runnable {
 					gameState = GameState.GAME_RESUME;
 					flag = true;
 				}
-				
 			}
 		}
 
@@ -187,6 +186,7 @@ public class DrawPanel extends JPanel implements Runnable {
 			case GAME_RUNING:
 				if (nowStage.base.isalive == false || Player.totalCount <= 0) gameState = GameState.GAME_OVER;
 				if (nowStage.enemyTanks.isEmpty() && (nowStage.queueOfEnemyTanks.size() == 0)) gameState = GameState.SORT_WIN;
+				
 				break;
 				
 			case GAME_OVER:

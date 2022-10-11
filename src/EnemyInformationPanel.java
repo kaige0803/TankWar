@@ -9,7 +9,7 @@ import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 
 @SuppressWarnings("serial")
-public class EnemyInformationPanel extends JPanel implements Runnable{
+public class EnemyInformationPanel extends JPanel {
 	
 	public Font font = new Font("微软雅黑", Font.BOLD, 14);
 	public List<EnemyTank> CopyOfEnemyQueue;
@@ -22,8 +22,6 @@ public class EnemyInformationPanel extends JPanel implements Runnable{
 														TitledBorder.DEFAULT_JUSTIFICATION, 
 														TitledBorder.DEFAULT_POSITION, 
 														font, Color.WHITE));
-		thread = new Thread(this);
-		thread.start();
 	}
 
 	@Override
@@ -39,23 +37,8 @@ public class EnemyInformationPanel extends JPanel implements Runnable{
 			}
 			
 		}
+		repaint();
 	}
-
-	@Override
-	public void run() {
-		//更新enemyInformationPanel面板数据
-		while(true) {
-			try {
-				Thread.sleep(500);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			repaint();
-		}
-	}
-	
-	
 }
 
 

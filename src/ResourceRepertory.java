@@ -34,50 +34,50 @@ public class ResourceRepertory {
 	static {
 		try {
 			backgrounds[0] = ImageIO.read(ResourceRepertory.class.getClassLoader().getResourceAsStream("images/backgrounds/background1.jpg"));
-			System.out.println(++WelcomeWindow.readedFileCount);
+			++WelcomeWindow.readedFileCount;
 			for(int i = 0; i < 4; i++) {
 				bullet[i] = ImageIO.read(ResourceRepertory.class.getClassLoader().getResourceAsStream("images/bullet/bullet" + i + ".png"));
-				System.out.println(++WelcomeWindow.readedFileCount);
+				++WelcomeWindow.readedFileCount;
 			}
 			for(int i = 0; i < 3; i++) {
 				obstacles[i] = ImageIO.read(ResourceRepertory.class.getClassLoader().getResourceAsStream("images/obstacles/obstacles" + i + ".png"));
-				System.out.println(++WelcomeWindow.readedFileCount);
+				++WelcomeWindow.readedFileCount;
 			}
 			for(int i = 0; i < 2; i++) {
 				base[i] = ImageIO.read(ResourceRepertory.class.getClassLoader().getResourceAsStream("images/base/base" + i + ".png"));
-				System.out.println(++WelcomeWindow.readedFileCount);
+				++WelcomeWindow.readedFileCount;
 			}
 			for (int i = 0; i < 3; i++) {
 				for (int j = 0; j < 4; j++) { 
 					enemyTank[i][j] = ImageIO.read(ResourceRepertory.class.getClassLoader().getResourceAsStream("images/enemytanks/enemytank" + i + j + ".png"));
-					System.out.println(++WelcomeWindow.readedFileCount);
+					++WelcomeWindow.readedFileCount;
 				}
 			}
 			for (int i = 0; i < 2; i++) {
 				for (int j = 0; j < 4; j++) {
 					myTanks[i][j] = ImageIO.read(ResourceRepertory.class.getClassLoader().getResourceAsStream("images/mytanks/mytank" + i + j + ".png"));
-					System.out.println(++WelcomeWindow.readedFileCount);
+					++WelcomeWindow.readedFileCount;
 				}
 			}
 			for(int i = 0; i < 11; i++) {
 				tankBlasts[i] = ImageIO.read(ResourceRepertory.class.getClassLoader().getResourceAsStream("images/blasts/tank/tank_blast" + i + ".gif"));
-				System.out.println(++WelcomeWindow.readedFileCount);
+				++WelcomeWindow.readedFileCount;
 			}
 			for(int i = 0; i < 70; i++) {
 				baseBlasts[i] = ImageIO.read(ResourceRepertory.class.getClassLoader().getResourceAsStream("images/blasts/base/base" + (int)(i+1) + ".gif"));
-				System.out.println(++WelcomeWindow.readedFileCount);
+				++WelcomeWindow.readedFileCount;
 			}
 			for(int i = 0; i < 8; i++) {
 				steelBlasts[i] = ImageIO.read(ResourceRepertory.class.getClassLoader().getResourceAsStream("images/blasts/steel/" + i + ".gif"));
-				System.out.println(++WelcomeWindow.readedFileCount);
+				++WelcomeWindow.readedFileCount;
 			}
 			for(int i = 0; i < 2; i++) {
 				myTankIcon[i] = ImageIO.read(ResourceRepertory.class.getClassLoader().getResourceAsStream("images/icon/player" + (i+1) + ".png"));
-				System.out.println(++WelcomeWindow.readedFileCount);
+				++WelcomeWindow.readedFileCount;
 			}
 			for(int i = 0; i < 3; i++) {
 				enemyTankIcon[i] = ImageIO.read(ResourceRepertory.class.getClassLoader().getResourceAsStream("images/icon/enemytank" + i + ".png"));
-				System.out.println(++WelcomeWindow.readedFileCount);
+				++WelcomeWindow.readedFileCount;
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -100,9 +100,9 @@ public class ResourceRepertory {
 			} catch (UnsupportedAudioFileException | IOException e) {
 				e.printStackTrace();
 			}
-			System.out.println(++WelcomeWindow.readedFileCount);
+			++WelcomeWindow.readedFileCount;
 		}
-		System.out.println(++WelcomeWindow.readedFileCount);
+		++WelcomeWindow.readedFileCount;
 	}
 	
 	

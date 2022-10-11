@@ -1,8 +1,12 @@
+import java.io.IOException;
 import java.util.LinkedList;
+import java.util.Properties;
 import java.util.Queue;
 
 public class Player {
 	public static int totalCount;
+	private static Properties controlKeysProperty = new Properties();// 控制键配置信息
+	private int[] controlKeys = new int[5];
 	public int score = 0;//总得分
 	public int count = 3;//初始坦克数量
 	public int start_x, start_y;// 坦克初始位置
@@ -12,7 +16,8 @@ public class Player {
 	public Queue<MyTank> myTankQueue = new LinkedList<>();//坦克队列
 	
 	public Player(int myTankType, String name) {
-		super();
+		String propertyValue;
+		String[] propertyValues;
 		this.myTankType = myTankType;
 		this.name = name;
 		switch (myTankType) {
@@ -27,8 +32,19 @@ public class Player {
 		default:
 			break;
 		}
+		try {
+			controlKeysProperty.load(
+					Player.class.getClassLoader().getResourceAsStream("controlkeys.properies"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		propertyValue = controlKeysProperty.getProperty(name);
+		propertyValues = propertyValue.split(",");
+		for (int i = 0; i < propertyValues.length; i++) {
+			controlKeys[i] = Integer.parseInt(propertyValues[i]);
+		}
 		for(int i = 0; i < count; i++) {
-			myTankQueue.offer(new MyTank(start_x, start_y, this.myTankType, this.name));
+			myTankQueue.offer(new MyTank(start_x, start_y, this.myTankType, this.name, this.controlKeys));
 			totalCount++;
 		}
 		fightingTank = myTankQueue.poll();
@@ -54,9 +70,5 @@ public class Player {
 				fightingTank.keyboardThread.start();
 			}
 		}).start();
-		
 	}
-	
-	
-	
 }

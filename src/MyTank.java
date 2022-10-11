@@ -1,16 +1,11 @@
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Rectangle;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-
 import javax.swing.Timer;
 
 public class MyTank implements Runnable {
 	public static final int RED_TANK = 0, GREEN_TANK = 1;
-	private static int[][] controlKeys = {{KeyEvent.VK_W, KeyEvent.VK_D, KeyEvent.VK_S, KeyEvent.VK_A, KeyEvent.VK_H},
-			{KeyEvent.VK_UP, KeyEvent.VK_RIGHT, KeyEvent.VK_DOWN, KeyEvent.VK_LEFT, KeyEvent.VK_NUMPAD0}};
+	private int[] controlKeys;
 	public int blood = 3;
 	public int start_x, start_y;//坦克起始位置
 	public int tank_x, tank_y;// 坦克位置
@@ -25,8 +20,8 @@ public class MyTank implements Runnable {
 	public String owner;
 	public Timer timer;
 
-	public MyTank(int start_x, int start_y, int myTankType, String owner) {
-		super();
+	public MyTank(int start_x, int start_y, int myTankType, String owner, int[] controlKeys) {
+		this.controlKeys = controlKeys;
 		this.owner = owner;
 		this.myTankType = myTankType;
 		this.start_x = start_x;
@@ -35,16 +30,16 @@ public class MyTank implements Runnable {
 		this.tank_y = start_y;
 		rectangle = new Rectangle(tank_x, tank_y, 60, 60);
 		keyboardThread = new Thread(this);
-		//keyboardThread.start();
-		timer = new Timer(20, new myTanklistener());
 	}
 
 	public void drawMyself(Graphics g) {// 接受dpanel传来的画笔g2d，将坦克自己画在dpanel上
 		Color c = g.getColor();
-		g.drawRect(tank_x, tank_y-6, 60, 6);
+		for(int i = 0; i < 3; i++) {
+			g.drawRoundRect(tank_x + i*20, tank_y-6, 20, 6, 8, 8);
+		}
 		g.setColor(Color.RED);
 		for(int i = 0; i < blood; i++) {
-			g.fillRect(tank_x + i*20, tank_y-6, 20, 6);
+			g.fillRoundRect(tank_x + i*20, tank_y-6, 20, 6, 8, 8);
 		}
 		switch (state) {
 		case LEFT:
@@ -156,26 +151,26 @@ public class MyTank implements Runnable {
 	@Override
 	public void run() {
 		while (isAlive) {
-			if (DrawPanel.keyboardPressing[controlKeys[myTankType][0]]) {
+			if (DrawPanel.keyboardPressing[controlKeys[0]]) {
 				isMoving = true;
 				state = TankState.UP;
 			}
-			else if (DrawPanel.keyboardPressing[controlKeys[myTankType][1]]) {
+			else if (DrawPanel.keyboardPressing[controlKeys[1]]) {
 				isMoving = true;
 				state = TankState.RIGHT;
 			}
-			else if (DrawPanel.keyboardPressing[controlKeys[myTankType][2]]) {
+			else if (DrawPanel.keyboardPressing[controlKeys[2]]) {
 				isMoving = true;
 				state = TankState.DOWN;
 			}
-			else if (DrawPanel.keyboardPressing[controlKeys[myTankType][3]]) {
+			else if (DrawPanel.keyboardPressing[controlKeys[3]]) {
 				isMoving = true;
 				state = TankState.LEFT;
 			}
 			else  {
 				isMoving = false;
 			}
-			if (DrawPanel.keyboardPressing[controlKeys[myTankType][4]]) fire();
+			if (DrawPanel.keyboardPressing[controlKeys[4]]) fire();
 			try {
 				Thread.sleep(20);
 			} catch (InterruptedException e) {
@@ -194,17 +189,5 @@ public class MyTank implements Runnable {
 			tank_y = start_y;
 			state = TankState.UP;
 			isMoving = false;
-	}
-	public class myTanklistener implements ActionListener{
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			if(isAlive) {
-				
-			}else {
-				
-			}
-		}
-		
 	}
 }

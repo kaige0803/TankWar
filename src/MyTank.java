@@ -9,6 +9,7 @@ public class MyTank implements Runnable {
 	public int blood = 3;
 	public int start_x, start_y;//坦克起始位置
 	public int tank_x, tank_y;// 坦克位置
+	public int tank_width, tank_height;
 	private int tankSpeed = 5;// 坦克速度
 	public int myTankType;//0:红  1:蓝
 	public TankState state = TankState.UP;
@@ -28,7 +29,9 @@ public class MyTank implements Runnable {
 		this.start_y = start_y;
 		this.tank_x = start_x;
 		this.tank_y = start_y;
-		rectangle = new Rectangle(tank_x, tank_y, 60, 60);
+		tank_width = ResourceRepertory.myTanks[0][0].getWidth();
+		tank_height = ResourceRepertory.myTanks[0][0].getHeight();
+		rectangle = new Rectangle(tank_x, tank_y, tank_width, tank_height);
 		keyboardThread = new Thread(this);
 	}
 
@@ -44,28 +47,28 @@ public class MyTank implements Runnable {
 		switch (state) {
 		case LEFT:
 			g.drawImage(ResourceRepertory.myTanks[myTankType][3], tank_x, tank_y, null);
-			if (tank_x > 0 && canMoveLeft() && isMoving) {// 判断坦克是否到达边界或者遇到障碍物。
+			if (tank_x > 0 && canMove(tank_x - tankSpeed, tank_y) && isMoving) {// 判断坦克是否到达边界或者遇到障碍物。
 				tank_x -= tankSpeed;
 				rectangle.x = tank_x;
 			}
 			break;
 		case RIGHT:
 			g.drawImage(ResourceRepertory.myTanks[myTankType][1], tank_x, tank_y, null);
-			if (tank_x < 1200 && canMoveRight() && isMoving) {
+			if (tank_x < 1200 && canMove(tank_x + tankSpeed, tank_y) && isMoving) {
 				tank_x += tankSpeed;
 				rectangle.x = tank_x;
 			}
 			break;
 		case UP:
 			g.drawImage(ResourceRepertory.myTanks[myTankType][0], tank_x, tank_y, null);
-			if (tank_y > 0 && canMoveUp() && isMoving) {
+			if (tank_y > 0 && canMove(tank_x, tank_y - tankSpeed) && isMoving) {
 				tank_y -= tankSpeed;
 				rectangle.y = tank_y;
 			}
 			break;
 		case DOWN:
 			g.drawImage(ResourceRepertory.myTanks[myTankType][2], tank_x, tank_y, null);
-			if (tank_y < 840 && canMoveDown() && isMoving) {
+			if (tank_y < 840 && canMove(tank_x, tank_y + tankSpeed) && isMoving) {
 				tank_y += tankSpeed;
 				rectangle.y = tank_y;
 			}
@@ -75,58 +78,19 @@ public class MyTank implements Runnable {
 		}
 		g.setColor(c);
 	}
-
-	private boolean canMoveDown() {
+	
+	private boolean canMove(int tank_x, int tank_y) {
+		Rectangle myTankRec = new Rectangle(tank_x, tank_y, tank_height, tank_width);
 		for (Obstacle obstacle : DrawPanel.nowStage.obstacles) {
-			if ((tank_y == obstacle.y - 60) && (tank_x < obstacle.x + 60) && (tank_x > obstacle.x - 60)
-					&& (!obstacle.canCrossIn))
+			if ((myTankRec.intersects(obstacle.rectangle)) && (!obstacle.canCrossIn))
 				return false;
 		}
 		for (EnemyTank enemyTank : DrawPanel.nowStage.enemyTanks) {
-			if ((tank_y == enemyTank.tank_y - 60) && (tank_x < enemyTank.tank_x + 60)
-					&& (tank_x > enemyTank.tank_x - 60))
+			if (myTankRec.intersects(enemyTank.rectangle))
 				return false;
 		}
-		return true;
-	}
-
-	private boolean canMoveUp() {
-		for (Obstacle obstacle : DrawPanel.nowStage.obstacles) {
-			if ((tank_y == obstacle.y + 60) && (tank_x < obstacle.x + 60) && (tank_x > obstacle.x - 60)
-					&& (!obstacle.canCrossIn))
-				return false;
-		}
-		for (EnemyTank enemyTank : DrawPanel.nowStage.enemyTanks) {
-			if ((tank_y == enemyTank.tank_y + 60) && (tank_x < enemyTank.tank_x + 60)
-					&& (tank_x > enemyTank.tank_x - 60))
-				return false;
-		}
-		return true;
-	}
-
-	private boolean canMoveRight() {
-		for (Obstacle obstacle : DrawPanel.nowStage.obstacles) {
-			if ((tank_x == obstacle.x - 60) && (tank_y < obstacle.y + 60) && (tank_y > obstacle.y - 60)
-					&& (!obstacle.canCrossIn))
-				return false;
-		}
-		for (EnemyTank enemyTank : DrawPanel.nowStage.enemyTanks) {
-			if ((tank_x == enemyTank.tank_x - 60) && (tank_y < enemyTank.tank_y + 60)
-					&& (tank_y > enemyTank.tank_y - 60))
-				return false;
-		}
-		return true;
-	}
-
-	private boolean canMoveLeft() {
-		for (Obstacle obstacle : DrawPanel.nowStage.obstacles) {
-			if ((tank_x == obstacle.x + 60) && (tank_y < obstacle.y + 60) && (tank_y > obstacle.y - 60)
-					&& (!obstacle.canCrossIn))
-				return false;
-		}
-		for (EnemyTank enemyTank : DrawPanel.nowStage.enemyTanks) {
-			if ((tank_x == enemyTank.tank_x + 60) && (tank_y < enemyTank.tank_y + 60)
-					&& (tank_y > enemyTank.tank_y - 60))
+		for (Player player : DrawPanel.players) {
+			if ((player.fightingTank != null) && (player.fightingTank != this) && (myTankRec.intersects(player.fightingTank.rectangle)))
 				return false;
 		}
 		return true;

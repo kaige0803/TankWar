@@ -24,6 +24,7 @@ public class DrawPanel extends JPanel implements Runnable {
 	public Timer timer;//用于控制面板刷新频率
 	private long begin, temp, time;// 用于计算帧率
 	public GameState gameState;
+	public boolean flag  = true;
 
 	public DrawPanel() {
 		setPreferredSize(new Dimension(GAME_WITH, GAME_HIGHT));// 当上一级容器不是绝对布局的时候，这里最好使用setPreferredSize。
@@ -149,7 +150,6 @@ public class DrawPanel extends JPanel implements Runnable {
 
 	// 处理dpanel接收到的keyPressed键盘事件e，并改变键盘数组相应的值，供其他类访问。
 	private class ControlKeyListener extends KeyAdapter {
-		public boolean flag  = true;
 		@Override // 用于坦克移动以及发射子弹
 		public void keyPressed(KeyEvent e) {
 			keyboardPressing[e.getKeyCode()] = true;

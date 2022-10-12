@@ -1,4 +1,6 @@
 import java.awt.BorderLayout;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import javax.swing.JFrame;
 
 @SuppressWarnings("serial")
@@ -20,5 +22,13 @@ public final class MainWindow extends JFrame {
 		this.pack();// 一定要加这句。
 		this.setLocationRelativeTo(null);// 窗口居中显示。这句要加在窗口添加完所有组件并打包pack()之后。
 		this.setVisible(true);
+		this.addWindowListener(new WindowAdapter() {
+
+			@Override
+			public void windowIconified(WindowEvent e) {
+				dPanel.gameState = GameState.GAME_STOP;
+				dPanel.flag = false;
+			}
+		});
 	}
 }

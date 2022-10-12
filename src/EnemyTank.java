@@ -1,15 +1,12 @@
 import java.awt.Graphics;
 import java.awt.Rectangle;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.Random;
-
-import javax.swing.Timer;
 
 public class EnemyTank implements Runnable {
 	public static final int NORMAL = 0, SPEED = 1, ARMOR = 2;
 	public int score;
 	public int tank_x, tank_y;// 坦克位置
+	public int tank_width, tank_height;
 	private int tankSpeed;// 坦克速度
 	public int type;// 0:普通坦克 1：速度型坦克 2：重装坦克
 	public int blood;
@@ -19,7 +16,6 @@ public class EnemyTank implements Runnable {
 	public boolean isAlive = true;
 	public Rectangle rectangle;
 	public Thread thread;
-	public Timer enemyTankActionTimer;
 
 	public EnemyTank(int tank_x, int tank_y, int type) {
 		super();
@@ -47,37 +43,38 @@ public class EnemyTank implements Runnable {
 		
 		this.tank_x = tank_x;
 		this.tank_y = tank_y;
-		rectangle = new Rectangle(tank_x, tank_y, 60, 60);
+		tank_width = ResourceRepertory.enemyTank[0][0].getWidth();
+		tank_height = ResourceRepertory.enemyTank[0][0].getHeight();
+		rectangle = new Rectangle(tank_x, tank_y, tank_width, tank_height);
 		thread = new Thread(this);// 建立敌方坦克线程。
-		enemyTankActionTimer = new Timer(2000, new enemytankListioner());
 	}
 
 	public void drawMyself(Graphics g) {// 接受dpanel传来的画笔g2d，将坦克自己画在dpanel上
 		switch (state) {
 		case LEFT:
 			g.drawImage(ResourceRepertory.enemyTank[type][3], tank_x, tank_y, null);
-			if (tank_x > 0 && canMoveLeft() && isMoving) {
+			if (tank_x > 0 && canMove(tank_x - tankSpeed, tank_y) && isMoving) {
 				tank_x -= tankSpeed;
 				rectangle.x = tank_x;
 			}
 			break;
 		case RIGHT:
 			g.drawImage(ResourceRepertory.enemyTank[type][1], tank_x, tank_y, null);
-			if (tank_x < 1200 && canMoveRight() && isMoving) {
+			if (tank_x < 1200 && canMove(tank_x + tankSpeed, tank_y) && isMoving) {
 				tank_x += tankSpeed;
 				rectangle.x = tank_x;
 			}
 			break;
 		case UP:
 			g.drawImage(ResourceRepertory.enemyTank[type][0], tank_x, tank_y, null);
-			if (tank_y > 0 && canMoveUp() && isMoving) {
+			if (tank_y > 0 && canMove(tank_x, tank_y - tankSpeed) && isMoving) {
 				tank_y -= tankSpeed;
 				rectangle.y = tank_y;
 			}
 			break;
 		case DOWN:
 			g.drawImage(ResourceRepertory.enemyTank[type][2], tank_x, tank_y, null);
-			if (tank_y < 840 && canMoveDown() && isMoving) {
+			if (tank_y < 840 && canMove(tank_x, tank_y + tankSpeed) && isMoving) {
 				tank_y += tankSpeed;
 				rectangle.y = tank_y;
 			}
@@ -86,74 +83,19 @@ public class EnemyTank implements Runnable {
 			break;
 		}
 	}
-
-	private boolean canMoveDown() {
+	
+	private boolean canMove(int tank_x, int tank_y) {
+		Rectangle enemyTankRec = new Rectangle(tank_x, tank_y, tank_height, tank_width);
 		for (Obstacle obstacle : DrawPanel.nowStage.obstacles) {
-			if ((tank_y == obstacle.y - 60) && (tank_x < obstacle.x + 60) && (tank_x > obstacle.x - 60)
-					&& (!obstacle.canCrossIn))
+			if ((enemyTankRec.intersects(obstacle.rectangle)) && (!obstacle.canCrossIn))
 				return false;
 		}
 		for (EnemyTank enemyTank : DrawPanel.nowStage.enemyTanks) {
-			if ((tank_y == enemyTank.tank_y - 60) && (tank_x < enemyTank.tank_x + 60)
-					&& (tank_x > enemyTank.tank_x - 60))
+			if ((enemyTank != this) && enemyTankRec.intersects(enemyTank.rectangle))
 				return false;
 		}
 		for (Player player : DrawPanel.players) {
-			if ((player.fightingTank != null) && (tank_y == player.fightingTank.tank_y - 60) && (tank_x < player.fightingTank.tank_x + 60) && (tank_x > player.fightingTank.tank_x - 60))
-				return false;
-		}
-		return true;
-	}
-
-	private boolean canMoveUp() {
-		for (Obstacle obstacle : DrawPanel.nowStage.obstacles) {
-			if ((tank_y == obstacle.y + 60) && (tank_x < obstacle.x + 60) && (tank_x > obstacle.x - 60)
-					&& (!obstacle.canCrossIn))
-				return false;
-		}
-		for (EnemyTank enemyTank : DrawPanel.nowStage.enemyTanks) {
-			if ((tank_y == enemyTank.tank_y + 60) && (tank_x < enemyTank.tank_x + 60)
-					&& (tank_x > enemyTank.tank_x - 60))
-				return false;
-		}
-		for (Player player : DrawPanel.players) {
-			if ((player.fightingTank != null) && (tank_y == player.fightingTank.tank_y + 60) && (tank_x < player.fightingTank.tank_x + 60) && (tank_x > player.fightingTank.tank_x - 60))
-				return false;
-		}
-		return true;
-	}
-
-	private boolean canMoveRight() {
-		for (Obstacle obstacle : DrawPanel.nowStage.obstacles) {
-			if ((tank_x == obstacle.x - 60) && (tank_y < obstacle.y + 60) && (tank_y > obstacle.y - 60)
-					&& (!obstacle.canCrossIn))
-				return false;
-		}
-		for (EnemyTank enemyTank : DrawPanel.nowStage.enemyTanks) {
-			if ((tank_x == enemyTank.tank_x - 60) && (tank_y < enemyTank.tank_y + 60)
-					&& (tank_y > enemyTank.tank_y - 60))
-				return false;
-		}
-		for (Player player : DrawPanel.players) {
-			if ((player.fightingTank != null) && (tank_x == player.fightingTank.tank_x - 60) && (tank_y < player.fightingTank.tank_y + 60) && (tank_y > player.fightingTank.tank_y - 60))
-				return false;
-		}
-		return true;
-	}
-
-	private boolean canMoveLeft() {
-		for (Obstacle obstacle : DrawPanel.nowStage.obstacles) {
-			if ((tank_x == obstacle.x + 60) && (tank_y < obstacle.y + 60) && (tank_y > obstacle.y - 60)
-					&& (!obstacle.canCrossIn))
-				return false;
-		}
-		for (EnemyTank enemyTank : DrawPanel.nowStage.enemyTanks) {
-			if ((tank_x == enemyTank.tank_x + 60) && (tank_y < enemyTank.tank_y + 60)
-					&& (tank_y > enemyTank.tank_y - 60))
-				return false;
-		}
-		for (Player player : DrawPanel.players) {
-			if ((player.fightingTank != null) && (tank_x == player.fightingTank.tank_x + 60) && (tank_y < player.fightingTank.tank_y + 60) && (tank_y > player.fightingTank.tank_y - 60))
+			if ((player.fightingTank != null) && (enemyTankRec.intersects(player.fightingTank.rectangle)))
 				return false;
 		}
 		return true;
@@ -180,36 +122,8 @@ public class EnemyTank implements Runnable {
 		try {
 			thread.join();
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	}
-	private class enemytankListioner implements ActionListener{
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			int firdelay = r.nextInt(500);
-			int dirdelay = r.nextInt(500);
-			enemyTankActionTimer.setDelay(firdelay + dirdelay);
-			if(isAlive) {
-				// 随机加入子弹
-				DrawPanel.bullets.add(new Bullet(tank_x, tank_y, state, "enemytank", false));
-				try {
-					Thread.sleep(500 + firdelay);
-				} catch (InterruptedException e1) {
-					e1.printStackTrace();
-				}
-				// 随机生成坦克状态
-				state = TankState.values()[r.nextInt(4)];
-				try {
-					Thread.sleep(500 + dirdelay);
-				} catch (InterruptedException e1) {
-					e1.printStackTrace();
-				}
-			}else {
-				enemyTankActionTimer.stop();
-			}
-		} 
 	}
 
 }

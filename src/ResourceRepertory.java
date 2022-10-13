@@ -13,7 +13,7 @@ public class ResourceRepertory {
 	//图片
 	public static BufferedImage[][] myTanks = new BufferedImage[2][4]; 
 	public static BufferedImage[] obstacles = new BufferedImage[3]; 
-	public static BufferedImage[][] enemyTank = new BufferedImage[3][4]; 
+	public static BufferedImage[][] enemyTanks = new BufferedImage[3][4]; 
 	public static BufferedImage[] backgrounds = new BufferedImage[10]; 
 	public static BufferedImage[] bullet = new BufferedImage[4]; 
 	public static BufferedImage[] tankBlasts = new BufferedImage[11];
@@ -49,7 +49,7 @@ public class ResourceRepertory {
 			}
 			for (int i = 0; i < 3; i++) {
 				for (int j = 0; j < 4; j++) { 
-					enemyTank[i][j] = ImageIO.read(ResourceRepertory.class.getClassLoader().getResourceAsStream("images/enemytanks/enemytank" + i + j + ".png"));
+					enemyTanks[i][j] = ImageIO.read(ResourceRepertory.class.getClassLoader().getResourceAsStream("images/enemytanks/enemytank" + i + j + ".png"));
 					++WelcomeWindow.readedFileCount;
 				}
 			}

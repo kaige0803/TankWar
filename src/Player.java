@@ -4,16 +4,26 @@ import java.util.Properties;
 import java.util.Queue;
 
 public class Player {
-	public static int totalCount;
-	private static Properties controlKeysProperty = new Properties();// 控制键配置信息
-	private int[] controlKeys = new int[5];
+	public static int totalCount;//玩家坦克总数量
+	private static Properties controlKeysProperty;// 控制键配置信息
+	private int[] controlKeys = new int[5];//设置五个控制键，前四个是方向，最后一个是发射子弹。
 	public int score = 0;//总得分
 	public int count = 3;//初始坦克数量
 	public int start_x, start_y;// 坦克初始位置
-	public int myTankType;
+	public int myTankType;//所拥有的坦克类型
 	public String name;
 	public MyTank fightingTank;//正在运行的坦克
 	public Queue<MyTank> myTankQueue = new LinkedList<>();//坦克队列
+	
+	static {
+		controlKeysProperty = new Properties();
+		try {
+			controlKeysProperty.load(
+					Player.class.getClassLoader().getResourceAsStream("controlkeys.properies"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 	
 	public Player(int myTankType, String name) {
 		String propertyValue;
@@ -31,12 +41,6 @@ public class Player {
 			break;
 		default:
 			break;
-		}
-		try {
-			controlKeysProperty.load(
-					Player.class.getClassLoader().getResourceAsStream("controlkeys.properies"));
-		} catch (IOException e) {
-			e.printStackTrace();
 		}
 		propertyValue = controlKeysProperty.getProperty(name);
 		propertyValues = propertyValue.split(",");

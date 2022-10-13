@@ -6,6 +6,8 @@ import java.awt.image.BufferedImage;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
@@ -23,9 +25,10 @@ public class DrawPanel extends JPanel implements Runnable {
 	public static int fps = 0;
 	public Timer timer;//用于控制面板刷新频率
 	private long begin, temp, time;// 用于计算帧率
-	public GameState gameState;
+	public GameState gameState;//用于设置游戏进度和模式
 	public boolean flag  = true;
-
+	public Thread gameControlThead = new Thread(this);//用于控制游戏进度和模式
+	
 	public DrawPanel() {
 		setPreferredSize(new Dimension(GAME_WITH, GAME_HIGHT));// 当上一级容器不是绝对布局的时候，这里最好使用setPreferredSize。
 		setLayout(null);
@@ -36,8 +39,8 @@ public class DrawPanel extends JPanel implements Runnable {
 		addKeyListener(new ControlKeyListener());// 给面板添加键盘事件
 		backgroundImage = ResourceRepertory.backgrounds[0];// 根据关卡生成该关卡的背景图片。
 		gameState = GameState.GAME_START;
-		new Thread(this).start();
 		timer = new Timer(20, e -> repaint());// 定时刷新,每20毫秒一次
+		//gameControlThead.start();
 		timer.start();// 启动定时刷新
 	}
 
@@ -146,6 +149,7 @@ public class DrawPanel extends JPanel implements Runnable {
 		if (time != 0)
 			fps = (int) (1000 / (time));
 		temp = begin;
+		
 	}
 
 	// 处理dpanel接收到的keyPressed键盘事件e，并改变键盘数组相应的值，供其他类访问。
@@ -153,6 +157,8 @@ public class DrawPanel extends JPanel implements Runnable {
 		@Override // 用于坦克移动以及发射子弹
 		public void keyPressed(KeyEvent e) {
 			keyboardPressing[e.getKeyCode()] = true;
+			
+			//当按下空格键时游戏暂停
 			if(keyboardPressing[KeyEvent.VK_SPACE]) {
 				if(flag) {
 					gameState = GameState.GAME_STOP;
@@ -160,6 +166,28 @@ public class DrawPanel extends JPanel implements Runnable {
 				}else {
 					gameState = GameState.GAME_RESUME;
 					flag = true;
+				}
+			}
+			
+			//当按下Esc键时游戏暂停和调出主菜单
+			if(keyboardPressing[KeyEvent.VK_ESCAPE]) {
+				gameState = GameState.GAME_STOP;
+				int option = JOptionPane.showOptionDialog(DrawPanel.this, "请选择游戏进度", "游戏进度选择", 
+						JOptionPane.YES_NO_OPTION, 
+						JOptionPane.QUESTION_MESSAGE, null, new String[] {"重新游戏", "返回游戏"}, null);
+				switch (option) {
+				case 0:
+					gameState = GameState.GAME_OVER;
+					break;
+				case 1:
+					gameState = GameState.GAME_RESUME;
+					break;
+				case -1:
+					
+					break;
+
+				default:
+					break;
 				}
 			}
 		}
@@ -170,88 +198,33 @@ public class DrawPanel extends JPanel implements Runnable {
 		}
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
 	public void run() {// 用于控制游戏模式和进度
 		while (true) {
 			switch (gameState) {
 			case GAME_START:
-				sort = 0;
-				nowStage = new Stage(sort);
-				players.add(new Player(MyTank.RED_TANK, "player1"));
-				players.add(new Player(MyTank.GREEN_TANK, "player2"));
-				gameState = GameState.GAME_RUNING;
+				gameStart();
 				break;
 				
 			case GAME_RUNING:
-				if (nowStage.base.isalive == false || Player.totalCount <= 0) gameState = GameState.GAME_OVER;
-				if (nowStage.enemyTanks.isEmpty() && (nowStage.queueOfEnemyTanks.size() == 0)) gameState = GameState.SORT_WIN;
+				gameRuning();
 				
 				break;
 				
 			case GAME_OVER:
-				System.out.println("game over!!!");
-				nowStage.isCreating = false;
-				nowStage.timer.stop();
-				for (Player player : players) {
-					if (player.fightingTank != null) {
-						player.fightingTank.isAlive = false;
-						player.fightingTank.isMoving = false;
-					}
-				}
-				for (EnemyTank enemyTank : nowStage.enemyTanks) {
-					enemyTank.isAlive = false;
-					enemyTank.isMoving = false;
-				}
-				try {
-					Thread.sleep(4000);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-				players.clear();
-				cleanScrean();
-				Player.totalCount = 0;
-				gameState = GameState.GAME_START;
+				gameOver();
 				break;
 
 			case SORT_WIN:
-				System.out.println("sort win!!!");
-				try {
-					Thread.sleep(4000);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-				cleanScrean();
-				sort++;
-				nowStage = new Stage(sort);
-				for (Player player : players)
-					if (player.fightingTank != null)
-						player.fightingTank.rest();
-				gameState = GameState.GAME_RUNING;
+				sortWin();
 				break;
 				
 			case GAME_STOP:
-				nowStage.timer.stop();
-				this.timer.stop();
-				for(Player player : players) {
-					if(player.fightingTank != null) player.fightingTank.keyboardThread.suspend();
-				}
-				for(EnemyTank enemyTank : nowStage.enemyTanks) {
-					enemyTank.thread.suspend();
-				}
-				gameState = GameState.GAME_RUNING;
+				gameStop();
 				break;
 				
 			case GAME_RESUME:
-				nowStage.timer.start();
-				this.timer.start();
-				for(Player player : players) {
-					if(player.fightingTank != null) player.fightingTank.keyboardThread.resume();
-				}
-				for(EnemyTank enemyTank : nowStage.enemyTanks) {
-					enemyTank.thread.resume();
-				}
-				gameState = GameState.GAME_RUNING;
+				gameResume();
 				break;
 				
 			default:
@@ -263,6 +236,86 @@ public class DrawPanel extends JPanel implements Runnable {
 				e.printStackTrace();
 			}
 		}
+	}
+
+	@SuppressWarnings("deprecation")
+	private void gameResume() {
+		nowStage.timer.start();
+		this.timer.start();
+		for(Player player : players) {
+			if(player.fightingTank != null) player.fightingTank.keyboardThread.resume();
+		}
+		for(EnemyTank enemyTank : nowStage.enemyTanks) {
+			enemyTank.thread.resume();
+		}
+		gameState = GameState.GAME_RUNING;
+	}
+
+	@SuppressWarnings("deprecation")
+	private void gameStop() {
+		nowStage.timer.stop();
+		this.timer.stop();
+		for(Player player : players) {
+			if(player.fightingTank != null) player.fightingTank.keyboardThread.suspend();
+		}
+		for(EnemyTank enemyTank : nowStage.enemyTanks) {
+			enemyTank.thread.suspend();
+		}
+		gameState = GameState.GAME_RUNING;
+	}
+
+	private void sortWin() {
+		System.out.println("sort win!!!");
+		try {
+			Thread.sleep(4000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		cleanScrean();
+		sort++;
+		nowStage = new Stage(sort);
+		for (Player player : players)
+			if (player.fightingTank != null)
+				player.fightingTank.rest();
+		gameState = GameState.GAME_RUNING;
+	}
+
+	private void gameOver() {
+		System.out.println("game over!!!");
+		nowStage.isCreating = false;
+		nowStage.timer.stop();
+		for (Player player : players) {
+			if (player.fightingTank != null) {
+				player.fightingTank.isAlive = false;
+				player.fightingTank.isMoving = false;
+			}
+		}
+		for (EnemyTank enemyTank : nowStage.enemyTanks) {
+			enemyTank.isAlive = false;
+			enemyTank.isMoving = false;
+		}
+		try {
+			Thread.sleep(4000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		players.clear();
+		cleanScrean();
+		Player.totalCount = 0;
+		gameState = GameState.GAME_START;
+	}
+
+	private void gameRuning() {
+		if (nowStage.base.isalive == false || Player.totalCount <= 0) gameState = GameState.GAME_OVER;
+		if (nowStage.enemyTanks.isEmpty() && (nowStage.queueOfEnemyTanks.size() == 0)) gameState = GameState.SORT_WIN;
+	}
+
+	private void gameStart() {
+		sort = 0;
+		nowStage = new Stage(sort);
+		players.add(new Player(MyTank.RED_TANK, "player1"));
+		players.add(new Player(MyTank.GREEN_TANK, "player2"));
+		gameState = GameState.GAME_RUNING;
 	}
 
 	private void cleanScrean() {

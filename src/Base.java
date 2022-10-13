@@ -4,6 +4,7 @@ import java.awt.image.BufferedImage;
 
 public class Base {
 	public int x, y;
+	public int width, height;
 	public boolean isalive;
 	public BufferedImage show = null;
 	public Rectangle rectangle;
@@ -12,7 +13,9 @@ public class Base {
 		isalive = true;
 		this.x = x;
 		this.y = y;
-		rectangle = new Rectangle(x, y, 60, 60);
+		this.width = ResourceRepertory.base[0].getWidth();
+		this.height = ResourceRepertory.base[0].getHeight();
+		rectangle = new Rectangle(x, y, width, height);
 	}
 
 	public Image getshow() {

@@ -8,16 +8,34 @@ public class Obstacle {
 	public BufferedImage show;
 	public boolean canDisdroyed;
 	public boolean canCrossIn;
+	public int width, height;
 	public Rectangle rectangle;
 	
 	public Obstacle(int x, int y, int type) {
 		this.x = x;
 		this.y = y;
 		this.type = type;
-		if(type == STEEL) canDisdroyed = false; else canDisdroyed = true;//只有钢铁无法被摧毁。
-		if(type == GRASS) canCrossIn = true; else canCrossIn = false;//只有草丛可以穿越。
+		switch (this.type) {
+		case STEEL:
+			this.canCrossIn = false;
+			this.canDisdroyed = false;
+			break;
+		case STONE:
+			this.canCrossIn = false;
+			this.canDisdroyed = true;
+			break;
+		case GRASS:
+			this.canCrossIn = true;
+			this.canDisdroyed = false;
+			break;
+
+		default:
+			break;
+		}
 		show = ResourceRepertory.obstacles[type];
-		rectangle = new Rectangle(x, y, 60, 60);
+		width = ResourceRepertory.obstacles[type].getWidth();
+		height = ResourceRepertory.obstacles[type].getHeight();
+		rectangle = new Rectangle(x, y, width, height);
 	}
 	
 }

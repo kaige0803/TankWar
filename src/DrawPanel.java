@@ -15,6 +15,7 @@ import javax.swing.Timer;
 public class DrawPanel extends JPanel implements Runnable {
 	private static final int GAME_WITH = 1260;
 	private static final int GAME_HIGHT = 900;
+	public static final int totalSort = 3;//一共3关
 	public static boolean[] keyboardPressing;// 记录正在按的键
 	public static Stage nowStage = null;// 当前关卡
 	public static int sort;
@@ -40,8 +41,9 @@ public class DrawPanel extends JPanel implements Runnable {
 		backgroundImage = ResourceRepertory.backgrounds[0];// 根据关卡生成该关卡的背景图片。
 		gameState = GameState.GAME_START;
 		timer = new Timer(20, e -> repaint());// 定时刷新,每20毫秒一次
-		//gameControlThead.start();
 		timer.start();// 启动定时刷新
+		gameStart();
+		//gameControlThead.start();
 	}
 
 	@Override
@@ -143,13 +145,16 @@ public class DrawPanel extends JPanel implements Runnable {
 			}
 		}
 
+		
 		// 计算帧率
 		begin = System.currentTimeMillis();
 		time = begin - temp;
 		if (time != 0)
 			fps = (int) (1000 / (time));
 		temp = begin;
-		
+		if (nowStage.base.isalive == false || Player.totalCount <= 0) gameOver();
+		if (nowStage.enemyTanks.isEmpty() && (nowStage.queueOfEnemyTanks.size() == 0)) sortWin();
+		System.out.println(fps);
 	}
 
 	// 处理dpanel接收到的keyPressed键盘事件e，并改变键盘数组相应的值，供其他类访问。
@@ -159,31 +164,34 @@ public class DrawPanel extends JPanel implements Runnable {
 			keyboardPressing[e.getKeyCode()] = true;
 			
 			//当按下空格键时游戏暂停
-			if(keyboardPressing[KeyEvent.VK_SPACE]) {
+			if(e.getKeyCode() == KeyEvent.VK_SPACE) {
 				if(flag) {
-					gameState = GameState.GAME_STOP;
+					gameStop();
 					flag = false;
 				}else {
-					gameState = GameState.GAME_RESUME;
+					gameResume();
 					flag = true;
 				}
 			}
 			
 			//当按下Esc键时游戏暂停和调出主菜单
-			if(keyboardPressing[KeyEvent.VK_ESCAPE]) {
-				gameState = GameState.GAME_STOP;
+			if(e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+				gameStop();
 				int option = JOptionPane.showOptionDialog(DrawPanel.this, "请选择游戏进度", "游戏进度选择", 
 						JOptionPane.YES_NO_OPTION, 
 						JOptionPane.QUESTION_MESSAGE, null, new String[] {"重新游戏", "返回游戏"}, null);
 				switch (option) {
 				case 0:
-					gameState = GameState.GAME_OVER;
+					gameResume();
+					stopAllThread();
+					clearStage();
+					gameStart();
 					break;
 				case 1:
-					gameState = GameState.GAME_RESUME;
+					gameResume();
 					break;
 				case -1:
-					
+					gameResume();
 					break;
 
 				default:
@@ -204,11 +212,6 @@ public class DrawPanel extends JPanel implements Runnable {
 			switch (gameState) {
 			case GAME_START:
 				gameStart();
-				break;
-				
-			case GAME_RUNING:
-				gameRuning();
-				
 				break;
 				
 			case GAME_OVER:
@@ -248,7 +251,6 @@ public class DrawPanel extends JPanel implements Runnable {
 		for(EnemyTank enemyTank : nowStage.enemyTanks) {
 			enemyTank.thread.resume();
 		}
-		gameState = GameState.GAME_RUNING;
 	}
 
 	@SuppressWarnings("deprecation")
@@ -261,7 +263,6 @@ public class DrawPanel extends JPanel implements Runnable {
 		for(EnemyTank enemyTank : nowStage.enemyTanks) {
 			enemyTank.thread.suspend();
 		}
-		gameState = GameState.GAME_RUNING;
 	}
 
 	private void sortWin() {
@@ -273,17 +274,70 @@ public class DrawPanel extends JPanel implements Runnable {
 		}
 		cleanScrean();
 		sort++;
-		nowStage = new Stage(sort);
-		for (Player player : players)
-			if (player.fightingTank != null)
-				player.fightingTank.rest();
-		gameState = GameState.GAME_RUNING;
+		if (sort > totalSort) {
+			gameWin();
+		} else {
+			nowStage = new Stage(sort);
+			for (Player player : players)
+				if (player.fightingTank != null)
+					player.fightingTank.rest();
+		}
+	}
+
+	private void gameWin() {
+		int option = JOptionPane.showOptionDialog(DrawPanel.this, "请选择游戏进度", "游戏进度选择", 
+				JOptionPane.YES_NO_OPTION, 
+				JOptionPane.QUESTION_MESSAGE, null, new String[] {"重新游戏", "返回游戏"}, null);
+		switch (option) {
+		case 0:
+			gameResume();
+			stopAllThread();
+			clearStage();
+			gameStart();
+			break;
+		case 1:
+			gameResume();
+			break;
+		case -1:
+			gameResume();
+			break;
+
+		default:
+			break;
+		}
+		
 	}
 
 	private void gameOver() {
 		System.out.println("game over!!!");
+		stopAllThread();
+		gameStop();
+		try {
+			Thread.sleep(4000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		int option = JOptionPane.showOptionDialog(DrawPanel.this, "请选择游戏进度", "你输了", 
+				JOptionPane.YES_NO_OPTION, 
+				JOptionPane.QUESTION_MESSAGE, null, new String[] {"重新游戏", "返回主菜单"}, null);
+		switch (option) {
+		case 0:
+			clearStage();
+			gameResume();
+			gameStart();
+			break;
+		case 1:
+			break;
+		case -1:
+			break;
+
+		default:
+			break;
+		}
+	}
+
+	private void stopAllThread() {
 		nowStage.isCreating = false;
-		nowStage.timer.stop();
 		for (Player player : players) {
 			if (player.fightingTank != null) {
 				player.fightingTank.isAlive = false;
@@ -294,20 +348,12 @@ public class DrawPanel extends JPanel implements Runnable {
 			enemyTank.isAlive = false;
 			enemyTank.isMoving = false;
 		}
-		try {
-			Thread.sleep(4000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+	}
+
+	private void clearStage() {
 		players.clear();
 		cleanScrean();
 		Player.totalCount = 0;
-		gameState = GameState.GAME_START;
-	}
-
-	private void gameRuning() {
-		if (nowStage.base.isalive == false || Player.totalCount <= 0) gameState = GameState.GAME_OVER;
-		if (nowStage.enemyTanks.isEmpty() && (nowStage.queueOfEnemyTanks.size() == 0)) gameState = GameState.SORT_WIN;
 	}
 
 	private void gameStart() {
@@ -315,7 +361,6 @@ public class DrawPanel extends JPanel implements Runnable {
 		nowStage = new Stage(sort);
 		players.add(new Player(MyTank.RED_TANK, "player1"));
 		players.add(new Player(MyTank.GREEN_TANK, "player2"));
-		gameState = GameState.GAME_RUNING;
 	}
 
 	private void cleanScrean() {

@@ -26,9 +26,15 @@ public final class MainWindow extends JFrame {
 
 			@Override
 			public void windowIconified(WindowEvent e) {
-				dPanel.gameState = GameState.GAME_STOP;
-				dPanel.flag = false;
+				dPanel.gameStop();
 			}
+
+			@Override
+			public void windowDeiconified(WindowEvent e) {
+				dPanel.gameResume();
+			}
+
+			
 		});
 	}
 }

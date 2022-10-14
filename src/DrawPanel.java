@@ -12,7 +12,7 @@ import javax.swing.JPanel;
 import javax.swing.Timer;
 
 @SuppressWarnings("serial")
-public class DrawPanel extends JPanel implements Runnable {
+public class DrawPanel extends JPanel {
 	private static final int GAME_WITH = 1260;
 	private static final int GAME_HIGHT = 900;
 	public static final int totalSort = 3;//一共3关
@@ -26,9 +26,6 @@ public class DrawPanel extends JPanel implements Runnable {
 	public static int fps = 0;
 	public Timer timer;//用于控制面板刷新频率
 	private long begin, temp, time;// 用于计算帧率
-	public GameState gameState;//用于设置游戏进度和模式
-	public boolean flag  = true;
-	public Thread gameControlThead = new Thread(this);//用于控制游戏进度和模式
 	
 	public DrawPanel() {
 		setPreferredSize(new Dimension(GAME_WITH, GAME_HIGHT));// 当上一级容器不是绝对布局的时候，这里最好使用setPreferredSize。
@@ -39,7 +36,6 @@ public class DrawPanel extends JPanel implements Runnable {
 		keyboardPressing = new boolean[256];
 		addKeyListener(new ControlKeyListener());// 给面板添加键盘事件
 		backgroundImage = ResourceRepertory.backgrounds[0];// 根据关卡生成该关卡的背景图片。
-		gameState = GameState.GAME_START;
 		timer = new Timer(20, e -> repaint());// 定时刷新,每20毫秒一次
 		timer.start();// 启动定时刷新
 		gameStart();
@@ -154,7 +150,6 @@ public class DrawPanel extends JPanel implements Runnable {
 		temp = begin;
 		if (nowStage.base.isalive == false || Player.totalCount <= 0) gameOver();
 		if (nowStage.enemyTanks.isEmpty() && (nowStage.queueOfEnemyTanks.size() == 0)) sortWin();
-		System.out.println(fps);
 	}
 
 	// 处理dpanel接收到的keyPressed键盘事件e，并改变键盘数组相应的值，供其他类访问。
@@ -162,17 +157,6 @@ public class DrawPanel extends JPanel implements Runnable {
 		@Override // 用于坦克移动以及发射子弹
 		public void keyPressed(KeyEvent e) {
 			keyboardPressing[e.getKeyCode()] = true;
-			
-			//当按下空格键时游戏暂停
-			if(e.getKeyCode() == KeyEvent.VK_SPACE) {
-				if(flag) {
-					gameStop();
-					flag = false;
-				}else {
-					gameResume();
-					flag = true;
-				}
-			}
 			
 			//当按下Esc键时游戏暂停和调出主菜单
 			if(e.getKeyCode() == KeyEvent.VK_ESCAPE) {
@@ -183,7 +167,7 @@ public class DrawPanel extends JPanel implements Runnable {
 				switch (option) {
 				case 0:
 					gameResume();
-					stopAllThread();
+					stopAllTanksRuning();
 					clearStage();
 					gameStart();
 					break;
@@ -193,7 +177,6 @@ public class DrawPanel extends JPanel implements Runnable {
 				case -1:
 					gameResume();
 					break;
-
 				default:
 					break;
 				}
@@ -206,43 +189,8 @@ public class DrawPanel extends JPanel implements Runnable {
 		}
 	}
 
-	@Override
-	public void run() {// 用于控制游戏模式和进度
-		while (true) {
-			switch (gameState) {
-			case GAME_START:
-				gameStart();
-				break;
-				
-			case GAME_OVER:
-				gameOver();
-				break;
-
-			case SORT_WIN:
-				sortWin();
-				break;
-				
-			case GAME_STOP:
-				gameStop();
-				break;
-				
-			case GAME_RESUME:
-				gameResume();
-				break;
-				
-			default:
-				break;
-			}
-			try {
-				Thread.sleep(5);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
-	}
-
 	@SuppressWarnings("deprecation")
-	private void gameResume() {
+	public void gameResume() {
 		nowStage.timer.start();
 		this.timer.start();
 		for(Player player : players) {
@@ -254,7 +202,7 @@ public class DrawPanel extends JPanel implements Runnable {
 	}
 
 	@SuppressWarnings("deprecation")
-	private void gameStop() {
+	public void gameStop() {
 		nowStage.timer.stop();
 		this.timer.stop();
 		for(Player player : players) {
@@ -287,11 +235,11 @@ public class DrawPanel extends JPanel implements Runnable {
 	private void gameWin() {
 		int option = JOptionPane.showOptionDialog(DrawPanel.this, "请选择游戏进度", "游戏进度选择", 
 				JOptionPane.YES_NO_OPTION, 
-				JOptionPane.QUESTION_MESSAGE, null, new String[] {"重新游戏", "返回游戏"}, null);
+				JOptionPane.QUESTION_MESSAGE, null, new String[] {"重新游戏", "返回主菜单"}, null);
 		switch (option) {
 		case 0:
 			gameResume();
-			stopAllThread();
+			stopAllTanksRuning();
 			clearStage();
 			gameStart();
 			break;
@@ -310,7 +258,7 @@ public class DrawPanel extends JPanel implements Runnable {
 
 	private void gameOver() {
 		System.out.println("game over!!!");
-		stopAllThread();
+		stopAllTanksRuning();
 		gameStop();
 		try {
 			Thread.sleep(4000);
@@ -336,7 +284,7 @@ public class DrawPanel extends JPanel implements Runnable {
 		}
 	}
 
-	private void stopAllThread() {
+	private void stopAllTanksRuning() {
 		nowStage.isCreating = false;
 		for (Player player : players) {
 			if (player.fightingTank != null) {

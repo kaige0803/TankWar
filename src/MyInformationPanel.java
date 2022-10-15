@@ -39,7 +39,6 @@ public class MyInformationPanel extends JPanel implements Runnable {
 	private Thread thread;
 	
 	public MyInformationPanel() {
-		super();
 		//设置并组装myInformationPanel面板。
 		setLayout(new BorderLayout());
 		setPreferredSize(new Dimension(InformationPanel.WIDTH,180));

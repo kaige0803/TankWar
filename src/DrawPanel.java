@@ -35,11 +35,10 @@ public class DrawPanel extends JPanel {
 		setFocusable(true);
 		keyboardPressing = new boolean[256];
 		addKeyListener(new ControlKeyListener());// 给面板添加键盘事件
-		backgroundImage = ResourceRepertory.backgrounds[0];// 根据关卡生成该关卡的背景图片。
+		backgroundImage = ResourceRepertory.backgrounds[0];// 背景图片。
 		timer = new Timer(20, e -> repaint());// 定时刷新,每20毫秒一次
 		timer.start();// 启动定时刷新
 		gameStart();
-		//gameControlThead.start();
 	}
 
 	@Override
@@ -69,6 +68,7 @@ public class DrawPanel extends JPanel {
 						player.fightTankDestroyed();
 						player.creatFightTank();
 					}
+					if (Player.totalCount <= 0) new Thread(() -> gameOver()).start();
 					break outer;
 				}
 			}
@@ -88,6 +88,8 @@ public class DrawPanel extends JPanel {
 						}
 						enemyTank.isAlive = false;
 						nowStage.enemyTanks.remove(enemyTank);
+						if (nowStage.enemyTanks.isEmpty() && (nowStage.queueOfEnemyTanks.size() == 0)) 
+							new Thread(() -> sortWin()).start();
 					}
 					break outer;
 				}
@@ -115,6 +117,7 @@ public class DrawPanel extends JPanel {
 				new Thread(() -> new PlayWav(PlayWav.BASE_BLAST).play()).start();
 				nowStage.base.isalive = false;
 				bullets.remove(bullet);
+				new Thread(() -> gameOver()).start();
 				break outer;
 			}
 			if (bullet.bullet_x < 0 || bullet.bullet_x > 1260 || bullet.bullet_y < 0 || bullet.bullet_y > 900) {
@@ -148,8 +151,6 @@ public class DrawPanel extends JPanel {
 		if (time != 0)
 			fps = (int) (1000 / (time));
 		temp = begin;
-		if (nowStage.base.isalive == false || Player.totalCount <= 0) gameOver();
-		if (nowStage.enemyTanks.isEmpty() && (nowStage.queueOfEnemyTanks.size() == 0)) sortWin();
 	}
 
 	// 处理dpanel接收到的keyPressed键盘事件e，并改变键盘数组相应的值，供其他类访问。
@@ -167,8 +168,8 @@ public class DrawPanel extends JPanel {
 				switch (option) {
 				case 0:
 					gameResume();
-					stopAllTanksRuning();
-					clearStage();
+					endAllTanksThread();
+					clearScrean();
 					gameStart();
 					break;
 				case 1:
@@ -188,17 +189,12 @@ public class DrawPanel extends JPanel {
 			keyboardPressing[e.getKeyCode()] = false;
 		}
 	}
-
-	@SuppressWarnings("deprecation")
-	public void gameResume() {
-		nowStage.timer.start();
-		this.timer.start();
-		for(Player player : players) {
-			if(player.fightingTank != null) player.fightingTank.keyboardThread.resume();
-		}
-		for(EnemyTank enemyTank : nowStage.enemyTanks) {
-			enemyTank.thread.resume();
-		}
+	
+	private void gameStart() {
+		sort = 0;
+		nowStage = new Stage(sort);
+		players.add(new Player(MyTank.RED_TANK, "player1"));
+		players.add(new Player(MyTank.GREEN_TANK, "player2"));
 	}
 
 	@SuppressWarnings("deprecation")
@@ -212,6 +208,18 @@ public class DrawPanel extends JPanel {
 			enemyTank.thread.suspend();
 		}
 	}
+	
+	@SuppressWarnings("deprecation")
+	public void gameResume() {
+		nowStage.timer.start();
+		this.timer.start();
+		for(Player player : players) {
+			if(player.fightingTank != null) player.fightingTank.keyboardThread.resume();
+		}
+		for(EnemyTank enemyTank : nowStage.enemyTanks) {
+			enemyTank.thread.resume();
+		}
+	}
 
 	private void sortWin() {
 		System.out.println("sort win!!!");
@@ -220,7 +228,7 @@ public class DrawPanel extends JPanel {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		cleanScrean();
+		cleanStage();
 		sort++;
 		if (sort > totalSort) {
 			gameWin();
@@ -239,8 +247,8 @@ public class DrawPanel extends JPanel {
 		switch (option) {
 		case 0:
 			gameResume();
-			stopAllTanksRuning();
-			clearStage();
+			endAllTanksThread();
+			clearScrean();
 			gameStart();
 			break;
 		case 1:
@@ -258,8 +266,7 @@ public class DrawPanel extends JPanel {
 
 	private void gameOver() {
 		System.out.println("game over!!!");
-		stopAllTanksRuning();
-		gameStop();
+		endAllTanksThread();
 		try {
 			Thread.sleep(4000);
 		} catch (InterruptedException e) {
@@ -270,8 +277,7 @@ public class DrawPanel extends JPanel {
 				JOptionPane.QUESTION_MESSAGE, null, new String[] {"重新游戏", "返回主菜单"}, null);
 		switch (option) {
 		case 0:
-			clearStage();
-			gameResume();
+			clearScrean();
 			gameStart();
 			break;
 		case 1:
@@ -284,7 +290,7 @@ public class DrawPanel extends JPanel {
 		}
 	}
 
-	private void stopAllTanksRuning() {
+	private void endAllTanksThread() {
 		nowStage.isCreating = false;
 		for (Player player : players) {
 			if (player.fightingTank != null) {
@@ -298,20 +304,15 @@ public class DrawPanel extends JPanel {
 		}
 	}
 
-	private void clearStage() {
-		players.clear();
-		cleanScrean();
+	//清除屏幕所有元素
+	private void clearScrean() {
 		Player.totalCount = 0;
+		players.clear();
+		cleanStage();
 	}
-
-	private void gameStart() {
-		sort = 0;
-		nowStage = new Stage(sort);
-		players.add(new Player(MyTank.RED_TANK, "player1"));
-		players.add(new Player(MyTank.GREEN_TANK, "player2"));
-	}
-
-	private void cleanScrean() {
+    
+    //清除关卡元素
+	private void cleanStage() {
 		bullets.clear();
 		blasts.clear();
 		nowStage.clear();

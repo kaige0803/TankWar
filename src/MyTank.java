@@ -82,15 +82,18 @@ public class MyTank implements Runnable {
 	private boolean canMove(int tank_x, int tank_y) {
 		nextRectangle.x = tank_x;
 		nextRectangle.y = tank_y;
+		
+	    //检测坦克下一个状态矩形是否遇到障碍物
 		for (Obstacle obstacle : DrawPanel.nowStage.obstacles) {
 			if ((nextRectangle.intersects(obstacle.rectangle)) && (!obstacle.canCrossIn))
 				return false;
 		}
+		//检测坦克下一个状态矩形是否遇到敌方坦克
 		for (EnemyTank enemyTank : DrawPanel.nowStage.enemyTanks) {
 			if (nextRectangle.intersects(enemyTank.rectangle))
 				return false;
 		}
-		
+		//检测坦克下一个状态矩形是否遇到我方坦克
 	    //判断条件：1.玩家的运行坦克不为空。2.去除和自身的碰撞检测。3.如果目前位置已经和其他玩家相交了，那么就不用去检测就可以自有移动，以防止在生成玩家坦克时和其他玩家卡死。
 		for (Player player : DrawPanel.players) {
 			if ((player.fightingTank != null) 

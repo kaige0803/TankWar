@@ -65,7 +65,7 @@ public class Player {
 	public void creatFightTank() {
 		new Thread(() -> {
 			try {
-				Thread.sleep(3000);
+				Thread.sleep(2500);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}

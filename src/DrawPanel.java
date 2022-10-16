@@ -15,7 +15,7 @@ import javax.swing.Timer;
 public class DrawPanel extends JPanel {
 	private static final int GAME_WITH = 1260;
 	private static final int GAME_HIGHT = 900;
-	public static final int totalSort = 3;//一共3关
+	public static final int totalSort = 2;//一共3关
 	public static boolean[] keyboardPressing;// 记录正在按的键
 	public static Stage nowStage = null;// 当前关卡
 	public static int sort;
@@ -36,8 +36,6 @@ public class DrawPanel extends JPanel {
 		keyboardPressing = new boolean[256];
 		addKeyListener(new ControlKeyListener());// 给面板添加键盘事件
 		backgroundImage = ResourceRepertory.backgrounds[0];// 背景图片。
-		timer = new Timer(20, e -> repaint());// 定时刷新,每20毫秒一次
-		timer.start();// 启动定时刷新
 		gameStart();
 	}
 
@@ -77,7 +75,6 @@ public class DrawPanel extends JPanel {
 				if (bullet.isOurs && (enemyTank.rectangle.contains(bullet.rectangle))) {
 					blasts.add(new Blast(enemyTank.tank_x, enemyTank.tank_y, 0));
 					new Thread(() -> new PlayWav(PlayWav.TANK_BLAST).play()).start();
-					enemyTank.isAlive = false;
 					bullets.remove(bullet);
 					enemyTank.blood -= 1;
 					if (enemyTank.blood <= 0) {
@@ -144,13 +141,19 @@ public class DrawPanel extends JPanel {
 			}
 		}
 
-		
 		// 计算帧率
 		begin = System.currentTimeMillis();
 		time = begin - temp;
 		if (time != 0)
 			fps = (int) (1000 / (time));
 		temp = begin;
+		
+		try {
+			Thread.sleep(15);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		repaint();
 	}
 
 	// 处理dpanel接收到的keyPressed键盘事件e，并改变键盘数组相应的值，供其他类访问。
@@ -224,15 +227,16 @@ public class DrawPanel extends JPanel {
 	private void sortWin() {
 		System.out.println("sort win!!!");
 		try {
-			Thread.sleep(4000);
+			Thread.sleep(3000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		cleanStage();
-		sort++;
-		if (sort > totalSort) {
+		if (sort + 1 > totalSort) {
+			System.out.println("game win!!!");
 			gameWin();
 		} else {
+			cleanStage();
+			sort += 1;
 			nowStage = new Stage(sort);
 			for (Player player : players)
 				if (player.fightingTank != null)
@@ -241,7 +245,7 @@ public class DrawPanel extends JPanel {
 	}
 
 	private void gameWin() {
-		int option = JOptionPane.showOptionDialog(DrawPanel.this, "请选择游戏进度", "游戏进度选择", 
+		int option = JOptionPane.showOptionDialog(DrawPanel.this, "请选择游戏进度", "恭喜！你已经通关了！", 
 				JOptionPane.YES_NO_OPTION, 
 				JOptionPane.QUESTION_MESSAGE, null, new String[] {"重新游戏", "返回主菜单"}, null);
 		switch (option) {
@@ -268,7 +272,7 @@ public class DrawPanel extends JPanel {
 		System.out.println("game over!!!");
 		endAllTanksThread();
 		try {
-			Thread.sleep(4000);
+			Thread.sleep(3000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}

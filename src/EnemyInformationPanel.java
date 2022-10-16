@@ -2,7 +2,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
-import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 import javax.swing.border.LineBorder;
@@ -12,8 +11,6 @@ import javax.swing.border.TitledBorder;
 public class EnemyInformationPanel extends JPanel {
 	
 	public Font font = new Font("微软雅黑", Font.BOLD, 14);
-	public List<EnemyTank> CopyOfEnemyQueue;
-	public Thread thread;
 	public EnemyInformationPanel() {
 		this.setPreferredSize(new Dimension(InformationPanel.WIDTH, 600));
 		this.setBackground(Color.DARK_GRAY);

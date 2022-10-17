@@ -16,6 +16,7 @@ public class DrawPanel extends JPanel {
 	private static final int GAME_WITH = 1260;
 	private static final int GAME_HIGHT = 900;
 	public static final int totalSort = 2;//一共3关
+	public static boolean isRuning;
 	public static boolean[] keyboardPressing;// 记录正在按的键
 	public static Stage nowStage = null;// 当前关卡
 	public static int sort;
@@ -36,6 +37,8 @@ public class DrawPanel extends JPanel {
 		keyboardPressing = new boolean[256];
 		addKeyListener(new ControlKeyListener());// 给面板添加键盘事件
 		backgroundImage = ResourceRepertory.backgrounds[0];// 背景图片。
+		timer = new Timer(20, e -> repaint());
+		timer.start();
 		gameStart();
 	}
 
@@ -147,13 +150,6 @@ public class DrawPanel extends JPanel {
 		if (time != 0)
 			fps = (int) (1000 / (time));
 		temp = begin;
-		
-		try {
-			Thread.sleep(15);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		repaint();
 	}
 
 	// 处理dpanel接收到的keyPressed键盘事件e，并改变键盘数组相应的值，供其他类访问。
@@ -164,25 +160,27 @@ public class DrawPanel extends JPanel {
 			
 			//当按下Esc键时游戏暂停和调出主菜单
 			if(e.getKeyCode() == KeyEvent.VK_ESCAPE) {
-				gameStop();
-				int option = JOptionPane.showOptionDialog(DrawPanel.this, "请选择游戏进度", "游戏进度选择", 
-						JOptionPane.YES_NO_OPTION, 
-						JOptionPane.QUESTION_MESSAGE, null, new String[] {"重新游戏", "返回游戏"}, null);
-				switch (option) {
-				case 0:
-					gameResume();
-					endAllTanksThread();
-					clearScrean();
-					gameStart();
-					break;
-				case 1:
-					gameResume();
-					break;
-				case -1:
-					gameResume();
-					break;
-				default:
-					break;
+				if (isRuning) {
+					gameStop();
+					int option = JOptionPane.showOptionDialog(DrawPanel.this, "请选择游戏进度", "游戏进度选择",
+							JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null,
+							new String[] { "重新游戏", "返回游戏" }, null);
+					switch (option) {
+					case 0:
+						gameResume();
+						endAllTanksThread();
+						clearScrean();
+						gameStart();
+						break;
+					case 1:
+						gameResume();
+						break;
+					case -1:
+						gameResume();
+						break;
+					default:
+						break;
+					}
 				}
 			}
 		}
@@ -198,6 +196,7 @@ public class DrawPanel extends JPanel {
 		nowStage = new Stage(sort);
 		players.add(new Player(MyTank.RED_TANK, "player1"));
 		players.add(new Player(MyTank.GREEN_TANK, "player2"));
+		isRuning = true;
 	}
 
 	@SuppressWarnings("deprecation")
@@ -226,6 +225,7 @@ public class DrawPanel extends JPanel {
 
 	private void sortWin() {
 		System.out.println("sort win!!!");
+		isRuning = false;
 		try {
 			Thread.sleep(3000);
 		} catch (InterruptedException e) {
@@ -241,6 +241,7 @@ public class DrawPanel extends JPanel {
 			for (Player player : players)
 				if (player.fightingTank != null)
 					player.fightingTank.rest();
+			isRuning = true;
 		}
 	}
 
@@ -270,6 +271,7 @@ public class DrawPanel extends JPanel {
 
 	private void gameOver() {
 		System.out.println("game over!!!");
+		isRuning = false;
 		endAllTanksThread();
 		try {
 			Thread.sleep(3000);
@@ -287,6 +289,7 @@ public class DrawPanel extends JPanel {
 		case 1:
 			break;
 		case -1:
+			System.out.println("返回主菜单");
 			break;
 
 		default:

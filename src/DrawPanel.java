@@ -279,8 +279,8 @@ public class DrawPanel extends JPanel {
 			e.printStackTrace();
 		}
 		int option = JOptionPane.showOptionDialog(DrawPanel.this, "请选择游戏进度", "你输了", 
-				JOptionPane.YES_NO_OPTION, 
-				JOptionPane.QUESTION_MESSAGE, null, new String[] {"重新游戏", "返回主菜单"}, null);
+												 JOptionPane.YES_NO_OPTION, 
+												 JOptionPane.QUESTION_MESSAGE, null, new String[] {"重新游戏", "返回主菜单"}, null);
 		switch (option) {
 		case 0:
 			clearScrean();

@@ -12,7 +12,7 @@ public class EnemyInformationPanel extends JPanel {
 	
 	public Font font = new Font("微软雅黑", Font.BOLD, 14);
 	public EnemyInformationPanel() {
-		this.setPreferredSize(new Dimension(InformationPanel.WIDTH, 600));
+		this.setPreferredSize(new Dimension(InformationPanel.WIDTH, 660));
 		this.setBackground(Color.DARK_GRAY);
 		this.setBorder(BorderFactory.createTitledBorder(new LineBorder(Color.WHITE, 1, true), 
 														"Enemy_Tanks", 

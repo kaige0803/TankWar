@@ -19,7 +19,6 @@ public class Stage {
 	private String[] propertyValueXY;// 用于存放障碍物坐标字符串。
 	public Base base = null;
 	public boolean isCreating = true;
-	public DrawPanel drawPanel;
 	public Thread thread;// 自动定时生成敌方坦克的线程。
 	public List<EnemyTank> enemyTanks = new CopyOnWriteArrayList<>();
 	public Queue<EnemyTank> queueOfEnemyTanks = new LinkedList<>();

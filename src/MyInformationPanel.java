@@ -33,6 +33,7 @@ public class MyInformationPanel extends JPanel implements Runnable {
 	public JTable jTable = new JTable(dm);
 	private JScrollPane jScrollPane =  new JScrollPane(jTable);
 	private JTableHeader jTableHeader = jTable.getTableHeader();
+	//创建默认渲染器，使得表格和表头的样式一致
 	private DefaultTableCellRenderer myTableCellRenderer = new DefaultTableCellRenderer();
 	private Font font1 = new Font("微软雅黑", Font.BOLD, 18);
 	private Font font2 = new Font("微软雅黑", Font.BOLD, 14);
@@ -62,6 +63,7 @@ public class MyInformationPanel extends JPanel implements Runnable {
 		jTable.setForeground(Color.WHITE);
 		jTable.setFont(font1);
 		jTable.setDefaultRenderer(Object.class, myTableCellRenderer);
+		//添加玩家数据行
 		for (Player player : DrawPanel.players) {
 			dm.addRow(new Object[] {new ImageIcon(ResourceRepertory.myTankIcon[player.myTankType]), "" + player.count, "" + player.score});
 		}

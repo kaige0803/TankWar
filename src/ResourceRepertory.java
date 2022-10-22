@@ -1,4 +1,5 @@
 import java.awt.image.BufferedImage;
+import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,12 +24,9 @@ public class ResourceRepertory {
 	public static BufferedImage[] enemyTankIcon = new BufferedImage[3];
 	
 	//音频
-	//private static final String AUDIO_DIR = System.getProperty("user.dir") + "/src/" + "audio";
-	private static int audioFileCount = 5;//new File(AUDIO_DIR).list().length;
-	private static InputStream inputStream;
-	public static AudioFormat[] auduiFormat = new AudioFormat[audioFileCount];
-	private static ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-	public static byte[][] audioDataArrays = new byte[audioFileCount][];
+	private static int audioFileCount = 5;
+	public static AudioFormat[] auduiFormatArray = new AudioFormat[audioFileCount];//存放音频文件的格式
+	public static byte[][] audioDataArrays = new byte[audioFileCount][];//存放音频文件的字节数组
 	 
 	static {
 		try {
@@ -83,27 +81,24 @@ public class ResourceRepertory {
 		}
 		
 		for (int i = 0; i < audioFileCount; i++) {
-			inputStream = PlayWav.class.getClassLoader().getResourceAsStream("audio/" + i + ".wav");
+			InputStream inputStream = PlayWav.class.getClassLoader().getResourceAsStream("audio/" + i + ".wav");
+			BufferedInputStream bi = new BufferedInputStream(inputStream);
+			ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 			try {
-				auduiFormat[i] = AudioSystem.getAudioInputStream(inputStream).getFormat();
+				auduiFormatArray[i] = AudioSystem.getAudioInputStream(bi).getFormat();
 				int j;
-				while ((j = inputStream.read()) != -1) {
+				while ((j = bi.read()) != -1) {
 					byteArrayOutputStream.write(j);
 				}
 				byteArrayOutputStream.flush();
 				audioDataArrays[i] = byteArrayOutputStream.toByteArray();
-				byteArrayOutputStream.reset();//初始化流内部字节数组指针。
 				inputStream.close();
+				bi.close();
+				byteArrayOutputStream.close();
 			} catch (UnsupportedAudioFileException | IOException e) {
 				e.printStackTrace();
 			}
 			++WelcomeWindow.readedFileCount;
-		}
-		try {
-			byteArrayOutputStream.flush();
-			byteArrayOutputStream.close();
-		} catch (IOException e) {
-			e.printStackTrace();
 		}
 		++WelcomeWindow.readedFileCount;
 	}

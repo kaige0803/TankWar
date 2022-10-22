@@ -103,7 +103,7 @@ public class DrawPanel extends JPanel {
 							nowStage.obstacles.remove(obstacle);
 							bullets.remove(bullet);
 						} else {
-							blasts.add(new Blast(obstacle.x, obstacle.y, 2));
+							blasts.add(new Blast(bullet.bulletHeader.x, bullet.bulletHeader.y, 2));
 							new Thread(() -> new PlayWav(PlayWav.STEEL_BLAST).play()).start();
 							bullets.remove(bullet);
 						}

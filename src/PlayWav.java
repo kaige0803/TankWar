@@ -11,7 +11,7 @@ public class PlayWav {
 	public PlayWav(int audio_type) {
 		try {
 			clip = AudioSystem.getClip();
-			clip.open(ResourceRepertory.auduiFormat[audio_type], 
+			clip.open(ResourceRepertory.auduiFormatArray[audio_type], 
 					  ResourceRepertory.audioDataArrays[audio_type], 
 					  0,
 					  ResourceRepertory.audioDataArrays[audio_type].length);

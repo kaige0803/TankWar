@@ -22,8 +22,8 @@ public class Blast {
 		}
 		if (type == 2) {
 			blastsImages = ResourceRepertory.steelBlasts;
-			this.x = x + 15;
-			this.y = y + 10;
+			this.x = x;
+			this.y = y;
 		}
 		sum = blastsImages.length;
 	}

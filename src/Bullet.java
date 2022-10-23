@@ -7,6 +7,8 @@ public class Bullet {
 	public  int bullet_x, bullet_y;//用于接收生成子弹的这一时刻坦克的位置
 	public String owner;
 	private TankState state;//用于接收生成子弹的这一时刻坦克的状态
+	public int width = ResourceRepertory.bullet[0].getWidth();//6
+	public int height = ResourceRepertory.bullet[0].getHeight();//26
 	public Rectangle rectangle;
 	public Point bulletHeader = new Point();
 	public boolean isOurs;
@@ -17,26 +19,26 @@ public class Bullet {
 		switch (this.state) {
 			case DOWN:
 				this.bullet_x = tank_x + 27; this.bullet_y = tank_y + 50;
-				rectangle = new Rectangle(bullet_x, bullet_y, 6, 26);
-				bulletHeader.x = bullet_x + 3;
-				bulletHeader.y = bullet_y + 26;
+				rectangle = new Rectangle(bullet_x, bullet_y, width, height);
+				bulletHeader.x = bullet_x + width/2;
+				bulletHeader.y = bullet_y + height;
 				break;
 			case LEFT:
 				this.bullet_x = tank_x - 16; this.bullet_y = tank_y + 27;
-				rectangle = new Rectangle(bullet_x, bullet_y, 26, 6);
+				rectangle = new Rectangle(bullet_x, bullet_y, height, width);
 				bulletHeader.x = bullet_x;
-				bulletHeader.y = bullet_y + 3;
+				bulletHeader.y = bullet_y + width/2;
 				break;
 			case RIGHT:
 				this.bullet_x = tank_x + 50; this.bullet_y = tank_y + 27;
-				rectangle = new Rectangle(bullet_x, bullet_y, 26, 6);
-				bulletHeader.x = bullet_x + 26;
-				bulletHeader.y = bullet_y + 3;
+				rectangle = new Rectangle(bullet_x, bullet_y, height, width);
+				bulletHeader.x = bullet_x + height;
+				bulletHeader.y = bullet_y + width/2;
 				break;
 			case UP:
 				this.bullet_x = tank_x + 27; this.bullet_y = tank_y - 16;
-				rectangle = new Rectangle(bullet_x, bullet_y, 6, 26);
-				bulletHeader.x = bullet_x + 3;
+				rectangle = new Rectangle(bullet_x, bullet_y, width, height);
+				bulletHeader.x = bullet_x + width/2;
 				bulletHeader.y = bullet_y;
 				break;
 	
@@ -76,7 +78,6 @@ public class Bullet {
 		default:
 			break;
 		}
-
 	}
 
 }

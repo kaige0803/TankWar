@@ -60,7 +60,7 @@ public class DrawPanel extends JPanel {
 		// 子弹在碰撞检测后画出。
 		outer: for (Bullet bullet : bullets) {
 			for (Player player : players) {
-				if ((player.fightingTank != null) && !bullet.isOurs && (player.fightingTank.rectangle.contains(bullet.rectangle))) {
+				if ((player.fightingTank != null) && !bullet.isOurs && (player.fightingTank.rectangle.intersects(bullet.rectangle))) {
 					blasts.add(new Blast(player.fightingTank.tank_x, player.fightingTank.tank_y, 0));
 					new Thread(() -> new PlayWav(PlayWav.TANK_BLAST).play()).start();
 					bullets.remove(bullet);
@@ -75,7 +75,7 @@ public class DrawPanel extends JPanel {
 			}
 
 			for (EnemyTank enemyTank : nowStage.enemyTanks) {
-				if (bullet.isOurs && (enemyTank.rectangle.contains(bullet.rectangle))) {
+				if (bullet.isOurs && (enemyTank.rectangle.intersects(bullet.rectangle))) {
 					blasts.add(new Blast(enemyTank.tank_x, enemyTank.tank_y, 0));
 					new Thread(() -> new PlayWav(PlayWav.TANK_BLAST).play()).start();
 					bullets.remove(bullet);

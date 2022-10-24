@@ -20,25 +20,25 @@ public class Bullet {
 			case DOWN:
 				this.bullet_x = tank_x + 27; this.bullet_y = tank_y + 50;
 				rectangle = new Rectangle(bullet_x, bullet_y, width, height);
-				bulletHeader.x = bullet_x + width/2;
-				bulletHeader.y = bullet_y + height;
+				bulletHeader.x = bullet_x + width/2 - 20;
+				bulletHeader.y = bullet_y + height - 30;
 				break;
 			case LEFT:
 				this.bullet_x = tank_x - 16; this.bullet_y = tank_y + 27;
 				rectangle = new Rectangle(bullet_x, bullet_y, height, width);
-				bulletHeader.x = bullet_x;
-				bulletHeader.y = bullet_y + width/2;
+				bulletHeader.x = bullet_x - 15;
+				bulletHeader.y = bullet_y + width/2 - 15;
 				break;
 			case RIGHT:
 				this.bullet_x = tank_x + 50; this.bullet_y = tank_y + 27;
 				rectangle = new Rectangle(bullet_x, bullet_y, height, width);
-				bulletHeader.x = bullet_x + height;
-				bulletHeader.y = bullet_y + width/2;
+				bulletHeader.x = bullet_x + height - 20;
+				bulletHeader.y = bullet_y + width/2 - 15;
 				break;
 			case UP:
 				this.bullet_x = tank_x + 27; this.bullet_y = tank_y - 16;
 				rectangle = new Rectangle(bullet_x, bullet_y, width, height);
-				bulletHeader.x = bullet_x + width/2;
+				bulletHeader.x = bullet_x + width/2 - 15;
 				bulletHeader.y = bullet_y;
 				break;
 	

@@ -56,7 +56,10 @@ public class GameInformationPanel extends JPanel implements Runnable{
 			} 
 			//更新gameInformationPanel面板数据
 			fpsData.setText("<html><font size=6 color=white face=微软雅黑>" + DrawPanel.fps + "</font></html>");
-			stageData.setText("<html><font size=6 color=white face=微软雅黑>" + "0" + (DrawPanel.sort + 1) + "</font></html>");
+			stageData.setText("<html><font size=6 color=white face=微软雅黑>" 
+			+ "0" + (DrawPanel.sort + 1) 
+			+ "/0" + (DrawPanel.totalSort + 1) 
+			+ "</font></html>");
 		}		
 	}
 	

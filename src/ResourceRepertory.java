@@ -92,11 +92,17 @@ public class ResourceRepertory {
 				}
 				byteArrayOutputStream.flush();
 				audioDataArrays[i] = byteArrayOutputStream.toByteArray();
-				inputStream.close();
-				bi.close();
-				byteArrayOutputStream.close();
 			} catch (UnsupportedAudioFileException | IOException e) {
 				e.printStackTrace();
+			}
+			finally {
+				try {
+					inputStream.close();
+					bi.close();
+					byteArrayOutputStream.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
 			++WelcomeWindow.readedFileCount;
 		}
